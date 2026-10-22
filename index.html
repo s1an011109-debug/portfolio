@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portfolio</title>
+  <meta name="description" content="게임 기획자 포트폴리오">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="skip" href="#works">본문으로 건너뛰기</a>
+
+  <header class="top">
+    <div class="shell top-inner">
+      <span class="mono" data-bind="year"></span>
+      <a class="top-name" href="#top">Portfolio of<br><b data-bind="nameEn"></b></a>
+      <nav class="top-nav" aria-label="주요 메뉴">
+        <a href="#glance">한눈에</a>
+        <a href="#works">대표작</a>
+        <a href="#projects">프로젝트</a>
+        <a href="#gamelog">게임 로그</a>
+        <a href="#resume">이력</a>
+      </nav>
+      <button class="theme-btn" type="button" aria-label="밝은/어두운 화면 전환">
+        <span class="theme-dot"></span><span class="mono theme-label"></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero shell">
+      <p class="eyebrow mono"><span data-bind="role"></span> · <span data-bind="roleKo"></span></p>
+      <h1 class="hero-title" id="headline"></h1>
+      <div class="hero-bottom">
+        <div class="hero-rule" aria-hidden="true"></div>
+        <p class="hero-intro" data-bind="intro"></p>
+        <ul class="hero-keywords" id="keywords"></ul>
+        <ol class="hero-index mono">
+          <li><a href="#works"><span>01</span>대표작</a></li>
+          <li><a href="#projects"><span>02</span>프로젝트</a></li>
+          <li><a href="#gamelog"><span>03</span>게임 로그</a></li>
+          <li><a href="#resume"><span>04</span>이력</a></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- AT A GLANCE -->
+    <section class="sec shell" id="glance">
+      <div class="sec-head reveal">
+        <span class="sec-idx mono">00 / At a glance</span>
+        <h2>숫자로 먼저 보는 저</h2>
+      </div>
+      <div class="glance" id="glanceGrid"></div>
+    </section>
+
+    <!-- SELECTED WORKS -->
+    <section class="sec shell" id="works">
+      <div class="sec-head reveal">
+        <span class="sec-idx mono">01 / Selected Works</span>
+        <h2>대표작</h2>
+        <p class="sec-sub">줄에 마우스를 올리면 미리보기가, 누르면 자세한 내용이 열립니다.</p>
+      </div>
+      <ol class="works-list" id="worksList"></ol>
+      <div class="works-preview" id="worksPreview" aria-hidden="true"></div>
+    </section>
+
+    <!-- PORTFOLIO FILES -->
+    <section class="sec shell files-sec" id="files">
+      <div class="files-copy reveal">
+        <span class="sec-idx mono">Files</span>
+        <h2>여기까지 보셨다면,<br>파일을 열어 보세요.</h2>
+        <p class="sec-sub">급하시면 요약본을, 궁금하시면 상세본을. 둘 다 PDF로도 받을 수 있습니다.</p>
+      </div>
+      <div class="files-stack" id="filesStack"></div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="sec shell" id="projects">
+      <div class="sec-head reveal">
+        <span class="sec-idx mono">02 / Projects</span>
+        <h2>프로젝트</h2>
+        <p class="sec-sub">카드가 화면에 들어오면 영상이 재생됩니다.</p>
+      </div>
+      <div class="cards" id="projectCards"></div>
+    </section>
+
+    <!-- GAME LOG -->
+    <section class="sec shell" id="gamelog">
+      <div class="sec-head reveal">
+        <span class="sec-idx mono">03 / Game Log</span>
+        <h2>게임 로그</h2>
+        <p class="sec-sub">오래 플레이한 게임과, 그 안에서 기획자로서 본 것들.</p>
+      </div>
+      <div class="chips-filter" id="logFilter" role="group" aria-label="장르 필터"></div>
+      <div class="cards cards-log" id="logCards"></div>
+    </section>
+
+    <!-- RESUME -->
+    <section class="sec shell" id="resume">
+      <div class="sec-head reveal">
+        <span class="sec-idx mono">04 / Resume</span>
+        <h2>이력</h2>
+      </div>
+      <div class="resume" id="resumeList"></div>
+    </section>
+  </main>
+
+  <footer class="foot shell" id="contact">
+    <p class="foot-big">함께 만들 게임이 있다면<br><button class="copy-mail" type="button"><span data-bind="email"></span><span class="mono copy-hint">복사</span></button></p>
+    <ul class="foot-links" id="footLinks"></ul>
+    <p class="mono foot-meta">© <span data-bind="year"></span> <span data-bind="name"></span></p>
+  </footer>
+
+  <!-- 떠다니는 포트폴리오 파일 -->
+  <div class="dock" id="dock">
+    <button class="dock-btn" type="button" aria-expanded="false" aria-controls="dockTray">
+      <span class="dock-papers" aria-hidden="true"><i></i><i></i></span>
+      <span class="dock-label"><b>포트폴리오 열기</b><small class="mono">2 files</small></span>
+    </button>
+    <div class="dock-tray" id="dockTray" role="dialog" aria-label="포트폴리오 파일"></div>
+  </div>
+
+  <!-- 상세 모달 -->
+  <dialog class="modal" id="modal" aria-labelledby="modalTitle">
+    <button class="modal-close" type="button" aria-label="닫기" autofocus>✕</button>
+    <div class="modal-inner" id="modalBody"></div>
+  </dialog>
+
+  <div class="toast mono" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="content.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
