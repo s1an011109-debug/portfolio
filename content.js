@@ -145,7 +145,7 @@ window.PORTFOLIO = {
         "팀장",
         "출시"
       ],
-      "oneLine": "기획부터 배송까지 팀장으로 책임지고 내놓은 보드게임. 후원자 516명이 함께했습니다.",
+      "oneLine": "기획부터 배송까지 팀장으로 책임지고 내놓은 보드게임. \n후원자 516명과 13,098,000원으로 최종 달성률 727%를 기록했습니다.",
       "media": {
         "type": "image",
         "src": "assets/mvoxnaxpbpz-eyjidwnrzxqioij0dw1ibgj1zy1pbw.webp"
