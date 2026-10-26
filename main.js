@@ -142,7 +142,7 @@
     const b = e.target.closest(".yt-play");
     if (!b || PF.editing || b.closest("[data-work]")) return;
     e.preventDefault(); e.stopPropagation();
-    b.parentElement.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${b.dataset.yt}?autoplay=1&rel=0" title="YouTube 영상" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+    b.parentElement.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${b.dataset.yt}?rel=0" title="YouTube 영상" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
   });
 
   /* ---------- 화면 그리기 (편집 후 다시 호출됨) ---------- */
