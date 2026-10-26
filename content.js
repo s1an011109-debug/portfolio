@@ -11,7 +11,7 @@ window.PORTFOLIO = {
     "nameEn": "jung sian",
     "role": "Game Designer",
     "roleKo": "게임 컨텐츠 기획 · 서브컬처 RPG",
-    "heroImage": "assets/mvox83ok8p3-998aa800-3729-4b97-ab06-840171.png",
+    "heroImage": "assets/mvox5zfshml-998aa800-3729-4b97-ab06-840171.png",
     "slideSeconds": 5,
     "email": "s1an011109@gmail.com",
     "keywords": [
@@ -160,7 +160,8 @@ window.PORTFOLIO = {
           "label": "텀블벅 페이지",
           "url": "https://tumblbug.com/constellation_want_die"
         }
-      ]
+      ],
+      "blocks": []
     },
     {
       "id": "luka",
@@ -416,9 +417,9 @@ window.PORTFOLIO = {
   "sections": [],
   "layout": {
     "art": {
-      "x": 4.1,
-      "y": 6.45,
-      "z": 0.6
+      "z": 0.4,
+      "x": 9.06,
+      "y": 2.56
     }
   }
 };
