@@ -372,6 +372,7 @@
     if (/^resume\.\d+\.items$/.test(p)) return { period: "", title: "새 항목", desc: "", badge: "" };
     if (p === "sections") return { idx: "Notes", title: "새 섹션", sub: "", blocks: [{ type: "p", text: "" }] };
     if (/links$/.test(p)) return { label: "링크", url: "#" };
+    if (/facts$/.test(p)) return { label: "항목", value: "" };
     return "";
   };
   addEventListener("click", (e) => {

@@ -25,6 +25,7 @@
         <a href="#projects">프로젝트</a>
         <a href="#gamelog">게임 로그</a>
         <a href="#resume">이력</a>
+        <a href="#about">About</a>
       </nav>
       <button class="theme-btn" type="button" aria-label="밝은/어두운 화면 전환">
         <span class="theme-dot"></span><span class="mono theme-label"></span>
@@ -53,16 +54,6 @@
       </div>
     </section>
 
-    <!-- PORTFOLIO FILES -->
-    <section class="sec shell files-sec" id="files">
-      <div class="files-copy reveal">
-        <span class="sec-idx mono">Files</span>
-        <h2>여기까지 보셨다면,<br>파일을 열어 보세요.</h2>
-        <p class="sec-sub">급하시면 요약본을, 궁금하시면 상세본을. 둘 다 PDF로도 받을 수 있습니다.</p>
-      </div>
-      <div class="files-stack" id="filesStack"></div>
-    </section>
-
     <!-- PROJECTS -->
     <section class="sec shell" id="projects">
       <div class="sec-head reveal">
@@ -71,6 +62,16 @@
         <p class="sec-sub">카드가 화면에 들어오면 영상이 재생됩니다.</p>
       </div>
       <div class="cards" id="projectCards"></div>
+    </section>
+
+    <!-- PORTFOLIO FILES -->
+    <section class="sec shell files-sec" id="files">
+      <div class="files-copy reveal">
+        <span class="sec-idx mono">Files</span>
+        <h2>여기까지 보셨다면,<br>파일을 열어 보세요.</h2>
+        <p class="sec-sub">급하시면 요약본을, 궁금하시면 상세본을. 둘 다 PDF로도 받을 수 있습니다.</p>
+      </div>
+      <div class="files-stack" id="filesStack"></div>
     </section>
 
     <!-- GAME LOG -->
@@ -95,13 +96,16 @@
       </div>
       <div class="resume" id="resumeList"></div>
     </section>
-  </main>
 
-  <footer class="foot shell" id="contact">
-    <p class="foot-big">함께 만들 게임이 있다면<br><span class="copy-mail" role="button" tabindex="0"><span data-bind="email"></span><span class="mono copy-hint">복사</span></span></p>
-    <ul class="foot-links" id="footLinks"></ul>
-    <p class="mono foot-meta">© <span data-bind="year"></span> <span data-bind="name"></span></p>
-  </footer>
+    <!-- ABOUT ME -->
+    <section class="sec shell" id="about">
+      <div class="sec-head reveal">
+        <span class="sec-idx mono">04 / About Me</span>
+        <h2 id="aboutTitle"></h2>
+      </div>
+      <div class="about reveal" id="aboutBody"></div>
+    </section>
+  </main>
 
   <!-- 떠다니는 포트폴리오 파일 -->
   <div class="dock" id="dock">

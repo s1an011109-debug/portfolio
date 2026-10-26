@@ -456,5 +456,33 @@ window.PORTFOLIO = {
       "x": -3.44,
       "y": 1.44
     }
+  },
+  "about": {
+    "title": "About Me",
+    "photo": null,
+    "blocks": [
+      {
+        "type": "p",
+        "text": "⟪어떤 게임을 좋아하고, 어떤 기획자가 되고 싶은지 자유롭게 써 주세요.⟫"
+      },
+      {
+        "type": "p",
+        "text": "니케 · 에반게리온 · 버튜버 등 피규어와 굿즈를 10개 넘게 모을 만큼 서브컬처를 좋아합니다. 유저로서 지갑을 여는 순간을 기억해 두었다가 기획에 씁니다."
+      }
+    ],
+    "facts": [
+      {
+        "label": "학교",
+        "value": "청강문화산업대학교 게임콘텐츠스쿨"
+      },
+      {
+        "label": "관심",
+        "value": "서브컬처 RPG · 캐릭터 연출 · 필드 컨텐츠"
+      },
+      {
+        "label": "도구",
+        "value": "Unreal Engine 5 · Unity · Excel · Photoshop"
+      }
+    ]
   }
 };

@@ -107,8 +107,29 @@
       `<span class="line"><span style="animation-delay:${0.1 + i * 0.12}s" ${E("meta.headline." + i)} data-em>${fmt(l).replace(/\*(.+?)\*/g, "<em>$1</em>")}</span></span>`).join("");
     $("#keywords").dataset.list = "meta.keywords";
     $("#keywords").innerHTML = D.meta.keywords.map((k, i) => `<li ${E("meta.keywords." + i)}>${fmt(k)}</li>`).join("");
-    $("#footLinks").dataset.list = "meta.links";
-    $("#footLinks").innerHTML = D.meta.links.map((l, i) => `<li data-item="meta.links.${i}"><a ${href(`meta.links.${i}.url`)} target="_blank" rel="noopener"><span ${E(`meta.links.${i}.label`)}>${fmt(l.label)}</span> ↗</a></li>`).join("");
+    /* About Me (맨 끝): 사진 · 자유 글/그림 블록 · 한눈 정보 · 연락처 */
+    const ab = D.about;
+    if (ab && $("#aboutBody")) {
+      const t = $("#aboutTitle");
+      t.dataset.path = "about.title";
+      t.innerHTML = fmt(ab.title);
+      ab.blocks = ab.blocks || [];
+      ab.facts = ab.facts || [];
+      $("#aboutBody").classList.toggle("no-photo", !ab.photo && !PF.editing);
+      $("#aboutBody").innerHTML = `
+        ${ab.photo || PF.editing ? `<div class="about-photo" data-slot="about.photo"></div>` : ""}
+        <div class="about-main">
+          ${blocks("about.blocks")}
+          <dl class="about-facts" data-list="about.facts">${ab.facts.map((f, i) => `
+            <div data-item="about.facts.${i}"><dt ${E(`about.facts.${i}.label`)}>${fmt(f.label)}</dt><dd ${E(`about.facts.${i}.value`)}>${fmt(f.value)}</dd></div>`).join("")}</dl>
+          <div class="about-contact">
+            <p class="mono about-contact-label">CONTACT</p>
+            <span class="copy-mail" role="button" tabindex="0"><span ${E("meta.email")}>${fmt(D.meta.email)}</span><span class="mono copy-hint">복사</span></span>
+            <ul class="about-links" data-list="meta.links">${D.meta.links.map((l, i) => `<li data-item="meta.links.${i}"><a ${href(`meta.links.${i}.url`)} target="_blank" rel="noopener"><span ${E(`meta.links.${i}.label`)}>${fmt(l.label)}</span> ↗</a></li>`).join("")}</ul>
+          </div>
+        </div>`;
+      fillSlots($("#aboutBody"));
+    }
 
     /* ★ 켠 프로젝트 = 첫 화면 슬라이드 */
     const featured = D.works.map((w, j) => [w, j]).filter(([w]) => w.featured);
@@ -406,11 +427,12 @@
     clearTimeout(toast._t);
     toast._t = setTimeout(() => toast.classList.remove("on"), 2200);
   };
-  $(".copy-mail").addEventListener("click", async () => {
-    if (PF.editing) return;
+  const copyMail = async () => {
     try { await navigator.clipboard.writeText(plain(D.meta.email)); PF.toast("이메일을 복사했어요"); }
     catch (e) { PF.toast(plain(D.meta.email)); }
-  });
+  };
+  document.addEventListener("click", (e) => { if (!PF.editing && e.target.closest(".copy-mail")) copyMail(); });
+  document.addEventListener("keydown", (e) => { if (!PF.editing && e.key === "Enter" && e.target.closest && e.target.closest(".copy-mail")) copyMail(); });
 
   render();
   onScroll();

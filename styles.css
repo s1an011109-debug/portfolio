@@ -414,3 +414,28 @@ mark.todo { background: var(--todo); color: inherit; border-radius: 4px; padding
   .hero-name { scale: var(--s, 1); transform-origin: left top; }
   .hero-art img { width: calc(187.5% * var(--az, 1)); left: calc(55% + var(--ax, 0%)); top: calc(36% + var(--ay, 0%)); }
 }
+
+/* ---------- About Me ---------- */
+.about { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
+.about.no-photo { grid-template-columns: minmax(0, 1fr); max-width: 860px; }
+.about-photo { position: relative; aspect-ratio: 4 / 5; border-radius: var(--radius); overflow: hidden; background: var(--surface-2); }
+.about-photo .media { position: absolute; inset: 0; }
+.about-main { display: grid; gap: 32px; }
+.about-main .blocks { gap: 14px 24px; }
+.about-main .b-p { font-size: 17px; line-height: 1.8; color: var(--ink-2); max-width: 720px; }
+.about-main .b-h { margin-top: 4px; }
+.about-facts { display: grid; border-top: 2px solid var(--ink); margin: 0; }
+.about-facts > div { display: grid; grid-template-columns: 120px 1fr; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.about-facts dt { font-family: var(--mono); font-size: 12px; color: var(--ink-3); padding-top: 3px; }
+.about-facts dd { margin: 0; font-weight: 600; }
+.about-contact { display: grid; gap: 10px; }
+.about-contact-label { color: var(--accent); letter-spacing: .08em; }
+.about-contact .copy-mail { font-size: clamp(24px, 3.2vw, 40px); letter-spacing: -0.04em; line-height: 1.2; cursor: pointer; }
+.about-links { display: flex; flex-wrap: wrap; gap: 8px 24px; font-weight: 600; }
+.about-links a:hover { color: var(--accent); }
+#about { padding-bottom: clamp(96px, 16vh, 160px); }
+@media (max-width: 760px) {
+  .about { grid-template-columns: 1fr; }
+  .about-photo { max-width: 320px; }
+  .about-facts > div { grid-template-columns: 90px 1fr; }
+}
