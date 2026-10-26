@@ -103,6 +103,9 @@
       <div class="cards cards-log" id="logCards"></div>
     </section>
 
+    <!-- 자유 섹션 (편집 모드에서 추가) -->
+    <div id="customSections"></div>
+
     <!-- RESUME -->
     <section class="sec shell" id="resume">
       <div class="sec-head reveal">
@@ -114,7 +117,7 @@
   </main>
 
   <footer class="foot shell" id="contact">
-    <p class="foot-big">함께 만들 게임이 있다면<br><button class="copy-mail" type="button"><span data-bind="email"></span><span class="mono copy-hint">복사</span></button></p>
+    <p class="foot-big">함께 만들 게임이 있다면<br><span class="copy-mail" role="button" tabindex="0"><span data-bind="email"></span><span class="mono copy-hint">복사</span></span></p>
     <ul class="foot-links" id="footLinks"></ul>
     <p class="mono foot-meta">© <span data-bind="year"></span> <span data-bind="name"></span></p>
   </footer>
@@ -138,5 +141,12 @@
 
   <script src="content.js"></script>
   <script src="main.js"></script>
+  <script>
+    /* 주소 끝에 ?edit 를 붙이거나 내 컴퓨터(localhost)에서 열면 편집 도구를 불러옵니다 */
+    if (/[?&]edit\b/.test(location.search) || /^(localhost|127\.0\.0\.1)$/.test(location.hostname) || location.protocol === "file:") {
+      var l = document.createElement("link"); l.rel = "stylesheet"; l.href = "editor.css"; document.head.appendChild(l);
+      var s = document.createElement("script"); s.src = "editor.js"; document.body.appendChild(s);
+    }
+  </script>
 </body>
 </html>

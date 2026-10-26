@@ -142,7 +142,7 @@ mark.todo { background: var(--todo); color: inherit; border-radius: 4px; padding
 /* ---------- selected works (list) ---------- */
 .works-list { border-top: 2px solid var(--ink); }
 .work-row { border-bottom: 1px solid var(--line); }
-.work-row button { width: 100%; text-align: left; display: grid; grid-template-columns: 56px minmax(0, 1.3fr) minmax(0, 1fr) auto; align-items: center; gap: 24px; padding: 30px 0; transition: padding .4s var(--ease), color .3s; }
+.work-row .w-btn { cursor: pointer; width: 100%; text-align: left; display: grid; grid-template-columns: 56px minmax(0, 1.3fr) minmax(0, 1fr) auto; align-items: center; gap: 24px; padding: 30px 0; transition: padding .4s var(--ease), color .3s; }
 .work-row .w-no { color: var(--ink-3); }
 .work-row .w-title { font-size: clamp(22px, 2.8vw, 34px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.25; }
 .work-row .w-genre { display: block; font-size: 14px; color: var(--ink-2); font-weight: 400; letter-spacing: -0.01em; margin-top: 4px; }
@@ -151,15 +151,15 @@ mark.todo { background: var(--todo); color: inherit; border-radius: 4px; padding
 .work-row .w-meta { text-align: right; color: var(--ink-3); white-space: nowrap; }
 .work-row .w-arrow { display: inline-block; margin-left: 10px; transition: transform .3s var(--ease); color: var(--ink); }
 .work-row .w-thumb { display: none; }
-.works-list:hover .work-row button { color: var(--ink-3); }
-.works-list:hover .work-row button:hover, .works-list .work-row button:focus-visible { color: var(--ink); padding-left: 16px; }
-.work-row button:hover .w-arrow { transform: translate(4px, -4px); color: var(--accent); }
+.works-list:hover .work-row .w-btn { color: var(--ink-3); }
+.works-list:hover .work-row .w-btn:hover, .works-list .work-row .w-btn:focus-visible { color: var(--ink); padding-left: 16px; }
+.work-row .w-btn:hover .w-arrow { transform: translate(4px, -4px); color: var(--accent); }
 .works-preview { position: fixed; left: 0; top: 0; width: 340px; aspect-ratio: 16 / 10; border-radius: 12px; overflow: hidden; pointer-events: none; z-index: 30; opacity: 0; transform: translate(-50%, -50%) scale(.85); transition: opacity .25s, transform .35s var(--ease); box-shadow: var(--shadow); background: var(--surface-2); }
 .works-preview.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 .works-preview .media { position: absolute; inset: 0; }
 @media (hover: none), (max-width: 860px) {
   .works-preview { display: none; }
-  .work-row button { grid-template-columns: 1fr; gap: 10px; }
+  .work-row .w-btn { grid-template-columns: 1fr; gap: 10px; }
   .work-row .w-thumb { display: block; position: relative; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; }
   .work-row .w-meta { text-align: left; }
 }
@@ -338,3 +338,20 @@ mark.todo { background: var(--todo); color: inherit; border-radius: 4px; padding
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* ---------- 글 · 그림 블록 (프로젝트 상세 · 자유 섹션) ---------- */
+.tags-wrap { display: contents; }
+[data-path] { white-space: pre-line; }
+.blocks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 24px; }
+.blocks > * { grid-column: 1 / -1; }
+.blocks > .b-fig:not(.wide) { grid-column: auto; }
+.b-h { font-size: 22px; font-weight: 750; letter-spacing: -0.03em; margin-top: 12px; }
+.b-p { color: var(--ink-2); max-width: 760px; }
+.b-fig { margin: 0; display: grid; gap: 8px; }
+.b-media { position: relative; aspect-ratio: 16 / 10; border-radius: 12px; overflow: hidden; background: var(--surface-2); }
+.b-media .media { position: absolute; inset: 0; }
+.b-media .media img, .b-media .media video { object-fit: contain; }
+.b-fig figcaption { font-size: 13px; color: var(--ink-3); }
+.modal-blocks .blocks { gap: 14px 18px; }
+.modal-blocks .b-h { font-size: 18px; }
+@media (max-width: 640px) { .blocks > .b-fig:not(.wide) { grid-column: 1 / -1; } }
