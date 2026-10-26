@@ -146,10 +146,12 @@ mark.todo { background: var(--todo); color: inherit; border-radius: 4px; padding
 .hero-keywords li { font-size: 12px; padding: 3px 10px; border: 1px solid var(--line); border-radius: 99px; color: var(--ink-2); }
 
 /* 일러스트: 오른쪽에 크게, 화면 밖으로 넘치게 */
-.hero-art { position: absolute; top: 0; right: 0; bottom: 0; width: 52%; z-index: 0; pointer-events: none; overflow: hidden; transform: translateY(var(--py, 0px)); }
-.hero-art img { position: absolute; width: 340%; height: auto; max-width: none; left: 36%; top: 32%; translate: -54.5% -34%; animation: art-in 1.4s .1s var(--ease) both; }
+.hero-art { position: absolute; top: 0; right: 0; bottom: 0; width: 54%; z-index: 0; pointer-events: none; overflow: hidden; transform: translateY(var(--py, 0px));
+  /* 오른쪽 위는 그대로, 왼쪽 아래로 갈수록 부드럽게 사라짐 (단일 마스크라 대부분 브라우저에서 안전) */
+  --fade: radial-gradient(135% 120% at 100% 0%, #000 0%, #000 46%, rgba(0, 0, 0, .9) 56%, rgba(0, 0, 0, .68) 66%, rgba(0, 0, 0, .4) 76%, rgba(0, 0, 0, .16) 86%, rgba(0, 0, 0, .04) 93%, transparent 99%);
+  -webkit-mask-image: var(--fade); mask-image: var(--fade); }
+.hero-art img { position: absolute; width: 250%; height: auto; max-width: none; left: 40%; top: 36%; translate: -54.5% -34%; image-rendering: auto; animation: art-in 1.4s .1s var(--ease) both; }
 @keyframes art-in { from { opacity: 0; scale: 1.03; } }
-.hero-art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 58%, var(--bg) 96%), linear-gradient(to right, var(--bg) 0%, transparent 16%); }
 :root[data-theme="dark"] .hero-art img { filter: drop-shadow(0 0 1px rgba(255, 255, 255, .35)); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hero-art img { filter: drop-shadow(0 0 1px rgba(255, 255, 255, .35)); } }
 
@@ -158,8 +160,8 @@ mark.todo { background: var(--todo); color: inherit; border-radius: 4px; padding
   .hero-name { min-height: min(46vw, 380px); }
   .showcase, .hero-note { grid-column: 1; grid-row: auto; align-self: auto; }
   .hero-art { width: 100%; bottom: auto; height: min(62vw, 520px); transform: none; }
-  .hero-art img { width: 230%; left: 60%; top: 40%; }
-  .hero-art::after { background: linear-gradient(to bottom, transparent 45%, var(--bg) 96%), linear-gradient(to right, var(--bg) 0%, transparent 40%); }
+  .hero-art img { width: 200%; left: 62%; top: 44%; }
+  .hero-art { --fade: radial-gradient(120% 100% at 100% 0%, #000 0%, #000 40%, rgba(0, 0, 0, .75) 58%, rgba(0, 0, 0, .35) 76%, rgba(0, 0, 0, .08) 90%, transparent 99%); }
 }
 @media (max-width: 520px) {
   .showcase { padding: 12px 12px 10px; margin: 0 -4px; }
