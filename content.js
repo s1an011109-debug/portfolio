@@ -8,7 +8,7 @@ window.PORTFOLIO = {
   "meta": {
     "year": "2026",
     "name": "정시안",
-    "nameEn": "jung sian",
+    "nameEn": "Jung Sian",
     "role": "Game Designer",
     "roleKo": "게임 콘텐츠 기획 · 시스템 기획",
     "heroImage": "assets/mvoxhl71ae7-1161e04c-8088-4c28-9047-e99977.png",
@@ -108,7 +108,7 @@ window.PORTFOLIO = {
         "캐릭터 연출",
         "검수"
       ],
-      "oneLine": "제작 비용 때문에 빠질 뻔한 연출을 설득해 넣었고, \n출시 후 해당 연출이 유저들의 밈, 공식 4컷 만화에도 차용 됐습니다.",
+      "oneLine": "제작 비용 때문에 빠질 뻔한 연출을 설득한 경험이 있습니다. \n출시 후 해당 연출이 유저들의 밈, 공식 4컷 만화에도 차용됐습니다.",
       "media": {
         "type": "image",
         "src": "assets/mvovsu2ndn2-ogtag-1200-default.jpg"
@@ -146,7 +146,10 @@ window.PORTFOLIO = {
         "출시"
       ],
       "oneLine": "기획부터 배송까지 팀장으로 책임지고 내놓은 보드게임. 후원자 516명이 함께했습니다.",
-      "media": null,
+      "media": {
+        "type": "image",
+        "src": "assets/mvoxnaxpbpz-eyjidwnrzxqioij0dw1ibgj1zy1pbw.webp"
+      },
       "problem": "⟪어떤 게임을 만들고 싶었고, 무엇이 어려웠나⟫",
       "approach": "⟪핵심 규칙 · 컨셉 · 팀 운영에서 내린 판단⟫",
       "result": "후원자 516명, 후원금 13,098,000원으로 펀딩에 성공해 출시했고, 2022 보드게임 페스타에 전시했습니다.",
@@ -418,8 +421,8 @@ window.PORTFOLIO = {
   "layout": {
     "art": {},
     "note": {
-      "x": -4.68,
-      "y": 1.49
+      "x": -3.44,
+      "y": 1.44
     }
   }
 };
