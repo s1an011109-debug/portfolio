@@ -10,7 +10,7 @@ window.PORTFOLIO = {
     "name": "정시안",
     "nameEn": "jung sian",
     "role": "Game Designer",
-    "roleKo": "게임 컨텐츠 기획 · 서브컬처 RPG",
+    "roleKo": "게임 콘텐츠 기획 · 시스템 기획",
     "heroImage": "assets/mvoxhl71ae7-1161e04c-8088-4c28-9047-e99977.png",
     "slideSeconds": 5,
     "email": "s1an011109@gmail.com",
@@ -108,7 +108,7 @@ window.PORTFOLIO = {
         "캐릭터 연출",
         "검수"
       ],
-      "oneLine": "제작 비용 때문에 빠질 뻔한 연출을 설득해 넣었고, 출시 후 해당 연출이 유저들의 밈, \n공식 4컷 만화에도 차용 됐습니다.",
+      "oneLine": "제작 비용 때문에 빠질 뻔한 연출을 설득해 넣었고, \n출시 후 해당 연출이 유저들의 밈, 공식 4컷 만화에도 차용 됐습니다.",
       "media": {
         "type": "image",
         "src": "assets/mvovsu2ndn2-ogtag-1200-default.jpg"
@@ -416,6 +416,10 @@ window.PORTFOLIO = {
   ],
   "sections": [],
   "layout": {
-    "art": {}
+    "art": {},
+    "note": {
+      "x": -4.68,
+      "y": 1.49
+    }
   }
 };
