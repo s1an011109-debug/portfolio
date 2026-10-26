@@ -59,18 +59,6 @@ window.PORTFOLIO = {
       "unit": "개월",
       "label": "라이브 타이틀 개발 참여",
       "sub": "슈퍼크리에이티브 컨텐츠 부서 인턴"
-    },
-    {
-      "value": "285",
-      "unit": "레벨",
-      "label": "니케 지휘관 레벨",
-      "sub": "스쿼드 전투력 260K"
-    },
-    {
-      "value": "1",
-      "unit": "등",
-      "label": "교내 프로젝트 대회",
-      "sub": "알발 페스타 · 미소녀 연애 시뮬레이션"
     }
   ],
   "files": {
@@ -209,7 +197,10 @@ window.PORTFOLIO = {
         "연애 시뮬레이션"
       ],
       "oneLine": "교내 프로젝트 대회 제2회 알발 페스타에서 1등을 받은 미소녀 연애 시뮬레이션.",
-      "media": null,
+      "media": {
+        "type": "image",
+        "src": "assets/mvoyhx89ls7-1.png"
+      },
       "problem": "⟪⟫",
       "approach": "⟪⟫",
       "result": "청강문화산업대학교 제2회 알발 페스타 1등",
@@ -310,6 +301,44 @@ window.PORTFOLIO = {
         "스토리 연출",
         "캐릭터"
       ],
+      "media": null
+    },
+    {
+      "title": "사이퍼즈",
+      "genre": "",
+      "platform": "",
+      "period": "",
+      "stats": [
+        {
+          "label": "기록",
+          "value": ""
+        },
+        {
+          "label": "기록",
+          "value": ""
+        }
+      ],
+      "insight": "",
+      "tags": [],
+      "media": null
+    },
+    {
+      "title": "Final Fantasy XIV",
+      "genre": "",
+      "platform": "",
+      "period": "",
+      "stats": [
+        {
+          "label": "기록",
+          "value": ""
+        },
+        {
+          "label": "기록",
+          "value": ""
+        }
+      ],
+      "insight": "",
+      "tags": [],
       "media": null
     },
     {
