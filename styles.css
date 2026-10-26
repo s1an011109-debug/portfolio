@@ -355,3 +355,25 @@ mark.todo { background: var(--todo); color: inherit; border-radius: 4px; padding
 .modal-blocks .blocks { gap: 14px 18px; }
 .modal-blocks .b-h { font-size: 18px; }
 @media (max-width: 640px) { .blocks > .b-fig:not(.wide) { grid-column: 1 / -1; } }
+
+/* ---------- 첫 화면 월페이퍼 ---------- */
+main { position: relative; }
+.hero-art { position: absolute; top: 0; right: 0; z-index: 0; width: min(62vw, 1180px); height: min(calc(100vh - 64px), 860px); pointer-events: none; will-change: transform, opacity; }
+.hero-art img { width: 100%; height: 100%; object-fit: contain; object-position: right center; -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 30%), linear-gradient(to bottom, #000 78%, transparent 100%); -webkit-mask-composite: source-in; mask-image: linear-gradient(to right, transparent 0%, #000 30%), linear-gradient(to bottom, #000 78%, transparent 100%); mask-composite: intersect; animation: art-in 1.6s .15s var(--ease) both; }
+@keyframes art-in { from { opacity: 0; transform: translateX(28px) scale(.985); } }
+.hero { position: relative; z-index: 1; }
+.has-art .hero-title { font-size: clamp(38px, 5.2vw, 80px); max-width: 11.5em; }
+.has-art .hero-title, .has-art .hero-intro, .has-art .eyebrow { text-shadow: 0 0 18px var(--bg), 0 0 36px var(--bg); }
+.has-art .hero-bottom { grid-template-columns: 1px minmax(0, min(480px, 38vw)) 1fr; }
+.has-art .hero-keywords li { background: color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter: blur(4px); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .hero-art img { filter: drop-shadow(0 0 1px rgba(255, 255, 255, .35)) drop-shadow(0 24px 60px rgba(0, 0, 0, .55)); }
+}
+:root[data-theme="dark"] .hero-art img { filter: drop-shadow(0 0 1px rgba(255, 255, 255, .35)) drop-shadow(0 24px 60px rgba(0, 0, 0, .55)); }
+@media (max-width: 1024px) {
+  .has-art .hero-bottom { grid-template-columns: 1px minmax(0, 560px) 1fr; }
+  .has-art .hero-title { max-width: none; }
+  .hero-art { position: relative; width: min(100%, 760px); margin: 0 auto; height: auto; aspect-ratio: 1742 / 1088; transform: none !important; opacity: 1 !important; }
+  .hero-art img { object-position: center; -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent); -webkit-mask-composite: source-over; mask-image: linear-gradient(to bottom, #000 72%, transparent); mask-composite: add; }
+  .has-art .hero { padding-top: 8px; }
+}

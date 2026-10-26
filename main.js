@@ -97,6 +97,10 @@
   function render() {
     $$("[data-bind]").forEach((el) => { el.dataset.path = "meta." + el.dataset.bind; el.innerHTML = show(el.dataset.path); });
     document.title = `${plain(D.meta.name)} — ${plain(D.meta.role)} Portfolio`;
+    const art = $("#heroArt");
+    art.dataset.cover = "meta.heroImage";
+    art.innerHTML = D.meta.heroImage ? `<img src="${src(D.meta.heroImage)}" alt="" fetchpriority="high" decoding="async">` : "";
+    document.body.classList.toggle("has-art", !!D.meta.heroImage);
     $("#headline").dataset.list = "meta.headline";
     $("#headline").innerHTML = D.meta.headline.map((l, i) =>
       `<span class="line"><span style="animation-delay:${0.1 + i * 0.12}s" ${E("meta.headline." + i)} data-em>${fmt(l).replace(/\*(.+?)\*/g, "<em>$1</em>")}</span></span>`).join("");
@@ -318,6 +322,13 @@
     dock.classList.toggle("on", past && !filesVisible && !PF.editing);
     if (!dock.classList.contains("on")) setDock(false);
     $(".top").classList.toggle("scrolled", window.scrollY > 10);
+    // 월페이퍼: 스크롤하면 천천히 밀려나며 흐려짐
+    const art = $("#heroArt");
+    if (!reduceMotion && art && window.scrollY < window.innerHeight * 1.2) {
+      const y = window.scrollY;
+      art.style.transform = `translateY(${y * 0.18}px)`;
+      art.style.opacity = String(Math.max(0, 1 - y / (window.innerHeight * 0.9)));
+    }
   }
   addEventListener("scroll", onScroll, { passive: true });
 

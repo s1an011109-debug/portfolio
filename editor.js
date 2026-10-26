@@ -358,7 +358,7 @@
     snapshot();
     if (/\.blocks$/.test(target)) {
       files.filter(okFile).forEach((f) => PF.get(target).push({ type: "img", media: mediaOf([f]), caption: "", wide: false }));
-    } else if (/\.(cover)$/.test(target)) {
+    } else if (/\.(cover|heroImage)$/.test(target)) {
       set(target, addFile(files.find(okFile) || files[0]));
     } else if (/(url|pdf)$/.test(target)) {
       set(target, addFile(files[0]));
