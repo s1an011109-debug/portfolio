@@ -1,6 +1,10 @@
 (function () {
   "use strict";
   const D = window.PORTFOLIO;
+  if (!D || !D.meta) {
+    document.body.insertAdjacentHTML("afterbegin", `<p class="load-error">내용 파일(content.js)을 불러오지 못했어요. 새로고침(Ctrl+F5) 해 주세요.</p>`);
+    return;
+  }
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -95,156 +99,172 @@
 
   /* ---------- 화면 그리기 (편집 후 다시 호출됨) ---------- */
   function render() {
-    $$("[data-bind]").forEach((el) => { el.dataset.path = "meta." + el.dataset.bind; el.innerHTML = show(el.dataset.path); });
-    document.title = `${plain(D.meta.name)} — ${plain(D.meta.role)} Portfolio`;
-    const art = $("#heroArt");
-    art.dataset.cover = "meta.heroImage";
-    art.innerHTML = D.meta.heroImage ? `<img src="${src(D.meta.heroImage)}" alt="" fetchpriority="high" decoding="async">` : "";
-    document.body.classList.toggle("has-art", !!D.meta.heroImage);
-    applyLayout();
-    $("#headline").dataset.list = "meta.headline";
-    $("#headline").innerHTML = D.meta.headline.map((l, i) =>
-      `<span class="line"><span style="animation-delay:${0.1 + i * 0.12}s" ${E("meta.headline." + i)} data-em>${fmt(l).replace(/\*(.+?)\*/g, "<em>$1</em>")}</span></span>`).join("");
-    $("#keywords").dataset.list = "meta.keywords";
-    $("#keywords").innerHTML = D.meta.keywords.map((k, i) => `<li ${E("meta.keywords." + i)}>${fmt(k)}</li>`).join("");
-    /* About Me (맨 끝): 사진 · 자유 글/그림 블록 · 한눈 정보 · 연락처 */
-    const ab = D.about;
-    if (ab && $("#aboutBody")) {
-      const t = $("#aboutTitle");
-      t.dataset.path = "about.title";
-      t.innerHTML = fmt(ab.title);
-      ab.blocks = ab.blocks || [];
-      ab.facts = ab.facts || [];
-      $("#aboutBody").classList.toggle("no-photo", !ab.photo && !PF.editing);
-      $("#aboutBody").innerHTML = `
-        ${ab.photo || PF.editing ? `<div class="about-photo" data-slot="about.photo"></div>` : ""}
-        <div class="about-main">
-          ${blocks("about.blocks")}
-          <dl class="about-facts" data-list="about.facts">${ab.facts.map((f, i) => `
-            <div data-item="about.facts.${i}"><dt ${E(`about.facts.${i}.label`)}>${fmt(f.label)}</dt><dd ${E(`about.facts.${i}.value`)}>${fmt(f.value)}</dd></div>`).join("")}</dl>
-          <div class="about-contact">
-            <p class="mono about-contact-label">CONTACT</p>
-            <span class="copy-mail" role="button" tabindex="0"><span ${E("meta.email")}>${fmt(D.meta.email)}</span><span class="mono copy-hint">복사</span></span>
-            <ul class="about-links" data-list="meta.links">${D.meta.links.map((l, i) => `<li data-item="meta.links.${i}"><a ${href(`meta.links.${i}.url`)} target="_blank" rel="noopener"><span ${E(`meta.links.${i}.label`)}>${fmt(l.label)}</span> ↗</a></li>`).join("")}</ul>
+    try {
+      $$("[data-bind]").forEach((el) => { el.dataset.path = "meta." + el.dataset.bind; el.innerHTML = show(el.dataset.path); });
+      document.title = `${plain(D.meta.name)} — ${plain(D.meta.role)} Portfolio`;
+      const art = $("#heroArt");
+      art.dataset.cover = "meta.heroImage";
+      art.innerHTML = D.meta.heroImage ? `<img src="${src(D.meta.heroImage)}" alt="" fetchpriority="high" decoding="async">` : "";
+      document.body.classList.toggle("has-art", !!D.meta.heroImage);
+      applyLayout();
+      $("#headline").dataset.list = "meta.headline";
+      $("#headline").innerHTML = D.meta.headline.map((l, i) =>
+        `<span class="line"><span style="animation-delay:${0.1 + i * 0.12}s" ${E("meta.headline." + i)} data-em>${fmt(l).replace(/\*(.+?)\*/g, "<em>$1</em>")}</span></span>`).join("");
+      $("#keywords").dataset.list = "meta.keywords";
+      $("#keywords").innerHTML = D.meta.keywords.map((k, i) => `<li ${E("meta.keywords." + i)}>${fmt(k)}</li>`).join("");
+    } catch (e) { console.error("[첫 화면 글자] 그리기 실패", e); }
+    try {
+      /* About Me (맨 끝): 사진 · 자유 글/그림 블록 · 한눈 정보 · 연락처 */
+      const ab = D.about;
+      if (ab && $("#aboutBody")) {
+        const t = $("#aboutTitle");
+        t.dataset.path = "about.title";
+        t.innerHTML = fmt(ab.title);
+        ab.blocks = ab.blocks || [];
+        ab.facts = ab.facts || [];
+        $("#aboutBody").classList.toggle("no-photo", !ab.photo && !PF.editing);
+        $("#aboutBody").innerHTML = `
+          ${ab.photo || PF.editing ? `<div class="about-photo" data-slot="about.photo"></div>` : ""}
+          <div class="about-main">
+            ${blocks("about.blocks")}
+            <dl class="about-facts" data-list="about.facts">${ab.facts.map((f, i) => `
+              <div data-item="about.facts.${i}"><dt ${E(`about.facts.${i}.label`)}>${fmt(f.label)}</dt><dd ${E(`about.facts.${i}.value`)}>${fmt(f.value)}</dd></div>`).join("")}</dl>
+            <div class="about-contact">
+              <p class="mono about-contact-label">CONTACT</p>
+              <span class="copy-mail" role="button" tabindex="0"><span ${E("meta.email")}>${fmt(D.meta.email)}</span><span class="mono copy-hint">복사</span></span>
+              <ul class="about-links" data-list="meta.links">${D.meta.links.map((l, i) => `<li data-item="meta.links.${i}"><a ${href(`meta.links.${i}.url`)} target="_blank" rel="noopener"><span ${E(`meta.links.${i}.label`)}>${fmt(l.label)}</span> ↗</a></li>`).join("")}</ul>
+            </div>
+          </div>`;
+        fillSlots($("#aboutBody"));
+      }
+
+    } catch (e) { console.error("[About Me] 그리기 실패", e); }
+    try {
+      /* ★ 켠 프로젝트 = 첫 화면 슬라이드 */
+      const featured = D.works.map((w, j) => [w, j]).filter(([w]) => w.featured);
+
+      /* 첫 화면 대표 프로젝트 슬라이드 (★ 대표작이 순서대로) */
+      const sc = $("#showcase");
+      if (scIndex >= featured.length) scIndex = 0;
+      sc.innerHTML = featured.length ? `
+        <div class="sc-stage">${featured.map(([w, j], i) => `
+          <div class="sc-slide ${i === scIndex ? "on" : ""}" role="link" tabindex="${i === scIndex ? 0 : -1}" aria-label="${esc(plain(w.title))} 자세히 보기" data-work="${j}" data-slot="works.${j}.media"></div>`).join("")}
+          <span class="sc-go mono">자세히 보기 ↗</span>
+        </div>
+        <div class="sc-cap">
+          ${featured.map(([w, j], i) => `
+            <div class="sc-text ${i === scIndex ? "on" : ""}" data-work="${j}">
+              <p class="sc-meta mono"><span ${E(`works.${j}.period`)}>${fmt(w.period)}</span> · <span ${E(`works.${j}.role`)}>${fmt(w.role)}</span></p>
+              <h2 class="sc-title" ${E(`works.${j}.title`)}>${fmt(w.title)}</h2>
+              <p class="sc-one" ${E(`works.${j}.oneLine`)}>${fmt(w.oneLine)}</p>
+            </div>`).join("")}
+          <div class="sc-dots" role="tablist">${featured.map(([w], i) => `<button type="button" role="tab" aria-selected="${i === scIndex}" aria-label="${i + 1}번째: ${esc(plain(w.title))}" data-sc="${i}"><i></i></button>`).join("")}</div>
+        </div>` : `<div class="sc-empty">프로젝트 카드의 ★을 켜면 여기에 슬라이드로 나옵니다.</div>`;
+      $$(".sc-slide", sc).forEach((s) => s.appendChild(makeMedia(get(s.dataset.slot), plain(D.works[+s.dataset.work].title), s.dataset.slot)));
+      restartSlides();
+
+    } catch (e) { console.error("[첫 화면 슬라이드] 그리기 실패", e); }
+    try {
+      /* 포트폴리오 파일 */
+      $("#filesStack").innerHTML = fileKinds.map(([k, name, en]) => {
+        const f = D.files[k], p = `files.${k}`;
+        const sheet = f.cover
+          ? `<span class="file-sheet" data-cover="${p}.cover"><img src="${src(f.cover)}" alt=""></span>`
+          : `<span class="file-sheet" data-cover="${p}.cover"><i class="l big"></i><i class="l w80"></i><i class="l w60"></i><i class="blk"></i><i class="l w40"></i></span>`;
+        return `
+          <div class="file is-${k} reveal">
+            <span class="file-tab mono">${en} · <span ${E(p + ".pages")}>${fmt(f.pages)}</span>p</span>
+            <a class="file-pdf mono" ${href(p + ".pdf")} target="_blank" rel="noopener">PDF ↓</a>
+            <a class="file-body" ${href(p + ".url")} target="_blank" rel="noopener">
+              <span class="file-hook" ${E(p + ".hook")}>${fmt(f.hook)}</span>
+              <span class="file-sheets"><span class="file-sheet"></span><span class="file-sheet"></span>${sheet}</span>
+              <span class="file-info">
+                <h3>${name} <span class="mono"><span ${E(p + ".readTime")}>${fmt(f.readTime)}</span> ↗</span></h3>
+                <p ${E(p + ".teaser")}>${fmt(f.teaser)}</p>
+              </span>
+            </a>
+          </div>`;
+      }).join("");
+
+      $("#dockTray").innerHTML = fileKinds.map(([k, name]) => {
+        const f = D.files[k];
+        return `<a class="tray-item is-${k}" href="${esc(f.url)}" target="_blank" rel="noopener">
+          <span class="tray-ico">${fmt(f.pages)}p</span>
+          <span><b>${name}</b><small>${fmt(f.teaser)}</small><small class="mono">읽는 시간 ${fmt(f.readTime)}</small></span>
+          <span class="go">↗</span></a>`;
+      }).join("") + `<div class="tray-foot mono"><span>PDF</span><span><a href="${esc(D.files.summary.pdf)}">요약본</a> · <a href="${esc(D.files.detail.pdf)}">상세본</a></span></div>`;
+
+    } catch (e) { console.error("[파일] 그리기 실패", e); }
+    try {
+      /* 프로젝트 카드 */
+      $("#projectCards").dataset.list = "works";
+      $("#projectCards").innerHTML = D.works.map((w, j) => `
+        <div class="card reveal" role="button" tabindex="0" data-work="${j}" data-item="works.${j}">
+          <div class="card-media" data-slot="works.${j}.media"><span class="card-status" ${E(`works.${j}.status`)}>${fmt(w.status)}</span><span class="card-play mono">PLAYING</span></div>
+          <div class="card-body">
+            <div class="card-top mono"><span ${E(`works.${j}.period`)}>${fmt(w.period)}</span><span ${E(`works.${j}.team`)}>${fmt(w.team)}</span></div>
+            <h3 ${E(`works.${j}.title`)}>${fmt(w.title)}</h3>
+            <p class="one" ${E(`works.${j}.oneLine`)}>${fmt(w.oneLine)}</p>
+            <div class="tags">${tags(`works.${j}.tags`)}</div>
+            <span class="card-more">자세히 보기 →</span>
           </div>
-        </div>`;
-      fillSlots($("#aboutBody"));
-    }
+        </div>`).join("");
+      $$("#projectCards .card").forEach((c) => {
+        const j = +c.dataset.work;
+        $(".card-media", c).prepend(makeMedia(D.works[j].media, plain(D.works[j].title), `works.${j}.media`));
+      });
 
-    /* ★ 켠 프로젝트 = 첫 화면 슬라이드 */
-    const featured = D.works.map((w, j) => [w, j]).filter(([w]) => w.featured);
+    } catch (e) { console.error("[프로젝트 카드] 그리기 실패", e); }
+    try {
+      /* 게임 로그 */
+      $("#logCards").dataset.list = "gameLogs";
+      $("#logCards").innerHTML = D.gameLogs.map((g, i) => `
+        <article class="card reveal" data-genre="${esc(plain(g.genre))}" data-item="gameLogs.${i}">
+          <div class="card-media" data-slot="gameLogs.${i}.media"><span class="card-status" ${E(`gameLogs.${i}.platform`)}>${fmt(g.platform)}</span><span class="card-play mono">PLAYING</span></div>
+          <div class="card-body">
+            <div class="card-top mono"><span ${E(`gameLogs.${i}.genre`)}>${fmt(g.genre)}</span><span ${E(`gameLogs.${i}.period`)}>${fmt(g.period)}</span></div>
+            <h3 ${E(`gameLogs.${i}.title`)}>${fmt(g.title)}</h3>
+            <dl class="log-stats">${(g.stats || []).slice(0, 2).map((s, k) => `<div><dt ${E(`gameLogs.${i}.stats.${k}.label`)}>${fmt(s.label)}</dt><dd ${E(`gameLogs.${i}.stats.${k}.value`)}>${fmt(s.value)}</dd></div>`).join("")}</dl>
+            <p class="log-insight" ${E(`gameLogs.${i}.insight`)}>${fmt(g.insight)}</p>
+            <div class="tags">${tags(`gameLogs.${i}.tags`)}</div>
+          </div>
+        </article>`).join("");
+      $$("#logCards .card").forEach((c, i) => $(".card-media", c).prepend(makeMedia(D.gameLogs[i].media, plain(D.gameLogs[i].title), `gameLogs.${i}.media`)));
 
-    /* 첫 화면 대표 프로젝트 슬라이드 (★ 대표작이 순서대로) */
-    const sc = $("#showcase");
-    if (scIndex >= featured.length) scIndex = 0;
-    sc.innerHTML = featured.length ? `
-      <div class="sc-stage">${featured.map(([w, j], i) => `
-        <div class="sc-slide ${i === scIndex ? "on" : ""}" role="link" tabindex="${i === scIndex ? 0 : -1}" aria-label="${esc(plain(w.title))} 자세히 보기" data-work="${j}" data-slot="works.${j}.media"></div>`).join("")}
-        <span class="sc-go mono">자세히 보기 ↗</span>
-      </div>
-      <div class="sc-cap">
-        ${featured.map(([w, j], i) => `
-          <div class="sc-text ${i === scIndex ? "on" : ""}" data-work="${j}">
-            <p class="sc-meta mono"><span ${E(`works.${j}.period`)}>${fmt(w.period)}</span> · <span ${E(`works.${j}.role`)}>${fmt(w.role)}</span></p>
-            <h2 class="sc-title" ${E(`works.${j}.title`)}>${fmt(w.title)}</h2>
-            <p class="sc-one" ${E(`works.${j}.oneLine`)}>${fmt(w.oneLine)}</p>
-          </div>`).join("")}
-        <div class="sc-dots" role="tablist">${featured.map(([w], i) => `<button type="button" role="tab" aria-selected="${i === scIndex}" aria-label="${i + 1}번째: ${esc(plain(w.title))}" data-sc="${i}"><i></i></button>`).join("")}</div>
-      </div>` : `<div class="sc-empty">프로젝트 카드의 ★을 켜면 여기에 슬라이드로 나옵니다.</div>`;
-    $$(".sc-slide", sc).forEach((s) => s.appendChild(makeMedia(get(s.dataset.slot), plain(D.works[+s.dataset.work].title), s.dataset.slot)));
-    restartSlides();
+      const genres = ["전체", ...new Set(D.gameLogs.map((g) => plain(g.genre)))];
+      $("#logFilter").innerHTML = genres.map((g, i) => `<button type="button" aria-pressed="${i === 0}">${esc(g)}</button>`).join("");
 
-    /* 포트폴리오 파일 */
-    $("#filesStack").innerHTML = fileKinds.map(([k, name, en]) => {
-      const f = D.files[k], p = `files.${k}`;
-      const sheet = f.cover
-        ? `<span class="file-sheet" data-cover="${p}.cover"><img src="${src(f.cover)}" alt=""></span>`
-        : `<span class="file-sheet" data-cover="${p}.cover"><i class="l big"></i><i class="l w80"></i><i class="l w60"></i><i class="blk"></i><i class="l w40"></i></span>`;
-      return `
-        <div class="file is-${k} reveal">
-          <span class="file-tab mono">${en} · <span ${E(p + ".pages")}>${fmt(f.pages)}</span>p</span>
-          <a class="file-pdf mono" ${href(p + ".pdf")} target="_blank" rel="noopener">PDF ↓</a>
-          <a class="file-body" ${href(p + ".url")} target="_blank" rel="noopener">
-            <span class="file-hook" ${E(p + ".hook")}>${fmt(f.hook)}</span>
-            <span class="file-sheets"><span class="file-sheet"></span><span class="file-sheet"></span>${sheet}</span>
-            <span class="file-info">
-              <h3>${name} <span class="mono"><span ${E(p + ".readTime")}>${fmt(f.readTime)}</span> ↗</span></h3>
-              <p ${E(p + ".teaser")}>${fmt(f.teaser)}</p>
-            </span>
-          </a>
-        </div>`;
-    }).join("");
+    } catch (e) { console.error("[게임 로그] 그리기 실패", e); }
+    try {
+      /* 자유 섹션 */
+      D.sections = D.sections || [];
+      $("#customSections").dataset.list = "sections";
+      $("#customSections").innerHTML = D.sections.map((s, i) => `
+        <section class="sec shell" id="sec-${i}" data-item="sections.${i}">
+          <div class="sec-head reveal">
+            <span class="sec-idx mono" ${E(`sections.${i}.idx`)}>${fmt(s.idx)}</span>
+            <h2 ${E(`sections.${i}.title`)}>${fmt(s.title)}</h2>
+            ${s.sub || PF.editing ? `<p class="sec-sub" ${E(`sections.${i}.sub`)}>${fmt(s.sub)}</p>` : ""}
+          </div>
+          ${blocks(`sections.${i}.blocks`)}
+        </section>`).join("");
+      fillSlots($("#customSections"));
 
-    $("#dockTray").innerHTML = fileKinds.map(([k, name]) => {
-      const f = D.files[k];
-      return `<a class="tray-item is-${k}" href="${esc(f.url)}" target="_blank" rel="noopener">
-        <span class="tray-ico">${fmt(f.pages)}p</span>
-        <span><b>${name}</b><small>${fmt(f.teaser)}</small><small class="mono">읽는 시간 ${fmt(f.readTime)}</small></span>
-        <span class="go">↗</span></a>`;
-    }).join("") + `<div class="tray-foot mono"><span>PDF</span><span><a href="${esc(D.files.summary.pdf)}">요약본</a> · <a href="${esc(D.files.detail.pdf)}">상세본</a></span></div>`;
+    } catch (e) { console.error("[자유 섹션] 그리기 실패", e); }
+    try {
+      /* 이력 */
+      $("#resumeList").dataset.list = "resume";
+      $("#resumeList").innerHTML = D.resume.map((g, gi) => `
+        <div class="resume-group reveal" data-item="resume.${gi}">
+          <h3 ${E(`resume.${gi}.group`)}>${fmt(g.group)}</h3>
+          <ol data-list="resume.${gi}.items">${g.items.map((it, i) => { const p = `resume.${gi}.items.${i}`; return `
+            <li class="resume-item" data-item="${p}">
+              <span class="mono" ${E(p + ".period")}>${fmt(it.period)}</span>
+              <div><b ${E(p + ".title")}>${fmt(it.title)}</b>${it.badge || PF.editing ? `<span class="badge" ${E(p + ".badge")}>${fmt(it.badge)}</span>` : ""}<p ${E(p + ".desc")}>${fmt(it.desc)}</p></div>
+            </li>`; }).join("")}</ol>
+        </div>`).join("");
 
-    /* 프로젝트 카드 */
-    $("#projectCards").dataset.list = "works";
-    $("#projectCards").innerHTML = D.works.map((w, j) => `
-      <div class="card reveal" role="button" tabindex="0" data-work="${j}" data-item="works.${j}">
-        <div class="card-media" data-slot="works.${j}.media"><span class="card-status" ${E(`works.${j}.status`)}>${fmt(w.status)}</span><span class="card-play mono">PLAYING</span></div>
-        <div class="card-body">
-          <div class="card-top mono"><span ${E(`works.${j}.period`)}>${fmt(w.period)}</span><span ${E(`works.${j}.team`)}>${fmt(w.team)}</span></div>
-          <h3 ${E(`works.${j}.title`)}>${fmt(w.title)}</h3>
-          <p class="one" ${E(`works.${j}.oneLine`)}>${fmt(w.oneLine)}</p>
-          <div class="tags">${tags(`works.${j}.tags`)}</div>
-          <span class="card-more">자세히 보기 →</span>
-        </div>
-      </div>`).join("");
-    $$("#projectCards .card").forEach((c) => {
-      const j = +c.dataset.work;
-      $(".card-media", c).prepend(makeMedia(D.works[j].media, plain(D.works[j].title), `works.${j}.media`));
-    });
-
-    /* 게임 로그 */
-    $("#logCards").dataset.list = "gameLogs";
-    $("#logCards").innerHTML = D.gameLogs.map((g, i) => `
-      <article class="card reveal" data-genre="${esc(plain(g.genre))}" data-item="gameLogs.${i}">
-        <div class="card-media" data-slot="gameLogs.${i}.media"><span class="card-status" ${E(`gameLogs.${i}.platform`)}>${fmt(g.platform)}</span><span class="card-play mono">PLAYING</span></div>
-        <div class="card-body">
-          <div class="card-top mono"><span ${E(`gameLogs.${i}.genre`)}>${fmt(g.genre)}</span><span ${E(`gameLogs.${i}.period`)}>${fmt(g.period)}</span></div>
-          <h3 ${E(`gameLogs.${i}.title`)}>${fmt(g.title)}</h3>
-          <dl class="log-stats">${(g.stats || []).slice(0, 2).map((s, k) => `<div><dt ${E(`gameLogs.${i}.stats.${k}.label`)}>${fmt(s.label)}</dt><dd ${E(`gameLogs.${i}.stats.${k}.value`)}>${fmt(s.value)}</dd></div>`).join("")}</dl>
-          <p class="log-insight" ${E(`gameLogs.${i}.insight`)}>${fmt(g.insight)}</p>
-          <div class="tags">${tags(`gameLogs.${i}.tags`)}</div>
-        </div>
-      </article>`).join("");
-    $$("#logCards .card").forEach((c, i) => $(".card-media", c).prepend(makeMedia(D.gameLogs[i].media, plain(D.gameLogs[i].title), `gameLogs.${i}.media`)));
-
-    const genres = ["전체", ...new Set(D.gameLogs.map((g) => plain(g.genre)))];
-    $("#logFilter").innerHTML = genres.map((g, i) => `<button type="button" aria-pressed="${i === 0}">${esc(g)}</button>`).join("");
-
-    /* 자유 섹션 */
-    D.sections = D.sections || [];
-    $("#customSections").dataset.list = "sections";
-    $("#customSections").innerHTML = D.sections.map((s, i) => `
-      <section class="sec shell" id="sec-${i}" data-item="sections.${i}">
-        <div class="sec-head reveal">
-          <span class="sec-idx mono" ${E(`sections.${i}.idx`)}>${fmt(s.idx)}</span>
-          <h2 ${E(`sections.${i}.title`)}>${fmt(s.title)}</h2>
-          ${s.sub || PF.editing ? `<p class="sec-sub" ${E(`sections.${i}.sub`)}>${fmt(s.sub)}</p>` : ""}
-        </div>
-        ${blocks(`sections.${i}.blocks`)}
-      </section>`).join("");
-    fillSlots($("#customSections"));
-
-    /* 이력 */
-    $("#resumeList").dataset.list = "resume";
-    $("#resumeList").innerHTML = D.resume.map((g, gi) => `
-      <div class="resume-group reveal" data-item="resume.${gi}">
-        <h3 ${E(`resume.${gi}.group`)}>${fmt(g.group)}</h3>
-        <ol data-list="resume.${gi}.items">${g.items.map((it, i) => { const p = `resume.${gi}.items.${i}`; return `
-          <li class="resume-item" data-item="${p}">
-            <span class="mono" ${E(p + ".period")}>${fmt(it.period)}</span>
-            <div><b ${E(p + ".title")}>${fmt(it.title)}</b>${it.badge || PF.editing ? `<span class="badge" ${E(p + ".badge")}>${fmt(it.badge)}</span>` : ""}<p ${E(p + ".desc")}>${fmt(it.desc)}</p></div>
-          </li>`; }).join("")}</ol>
-      </div>`).join("");
-
+    } catch (e) { console.error("[이력] 그리기 실패", e); }
     observeReveals();
     if (modal.open && current != null) openWork(current, true);
     else if (PF.onRender) PF.onRender();

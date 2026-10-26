@@ -439,3 +439,6 @@ mark.todo { background: var(--todo); color: inherit; border-radius: 4px; padding
   .about-photo { max-width: 320px; }
   .about-facts > div { grid-template-columns: 90px 1fr; }
 }
+
+/* 파일을 못 불러왔을 때 안내 */
+.load-error { position: fixed; left: 50%; top: 80px; transform: translateX(-50%); z-index: 100; padding: 12px 18px; border-radius: 12px; background: #d9534f; color: #fff; font-size: 14px; font-weight: 600; box-shadow: var(--shadow); max-width: calc(100vw - 32px); }
