@@ -133,3 +133,16 @@
   .ed-art-tools button:hover { border-color: var(--blue); color: var(--blue); }
   .ed-art-tools small { width: 100%; color: var(--ink-3); }
 }
+
+/* 블록 추가 메뉴 · 블록 조절 */
+.ed-add-wrap .ed-kinds { display: none; }
+.ed-add-wrap.open .ed-kinds { display: contents; }
+.ed-add-wrap.open .ed-add-menu { border-color: var(--accent); color: var(--accent); }
+.blocks > .ed-add-wrap .ed-kinds .ed-add { padding: 6px 12px; font-size: 12.5px; border-radius: 99px; }
+.ed-ctl button[data-ed^="row"], .ed-ctl button[data-ed^="col"], .ed-ctl button[data-ed="head"], .ed-ctl button[data-ed="code"] { width: auto; padding: 0 8px; border-radius: 99px; font-size: 11px; }
+.ed-yt-btn { position: absolute; left: 8px; bottom: 8px; padding: 4px 10px; border-radius: 99px; background: #e33; color: #fff; font-size: 11px; font-weight: 700; }
+.ed-yt-btn:hover { filter: brightness(1.1); }
+.editing .b-yt { position: relative; }
+.editing .b-yt > .ed-link { position: absolute; right: 10px; top: 10px; z-index: 5; }
+.editing .modal-facts > .ed-add-wrap .ed-add, .editing .modal-steps > .ed-add-wrap .ed-add { padding: 8px 12px; font-size: 13px; }
+.editing .b-fold-body:empty, .editing .b-fold-body { min-height: 2em; }

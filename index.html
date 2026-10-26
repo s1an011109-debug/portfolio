@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap">
-  <link rel="stylesheet" href="styles.css?v=20261026-3">
+  <link rel="stylesheet" href="styles.css?v=20261026-4">
   <script>
     try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
   </script>
@@ -118,7 +118,10 @@
 
   <!-- 상세 모달 -->
   <dialog class="modal" id="modal" aria-labelledby="modalTitle">
-    <button class="modal-close" type="button" aria-label="닫기" autofocus>✕</button>
+    <div class="modal-bar">
+      <button class="modal-copy mono" type="button">링크 복사</button>
+      <button class="modal-close" type="button" aria-label="닫기" autofocus>✕</button>
+    </div>
     <div class="modal-inner" id="modalBody"></div>
   </dialog>
 
@@ -129,7 +132,7 @@
        - content.js: 사이트에서 저장할 때마다 바뀌므로 매번 새로 받음
        - 나머지: BUILD 값이 바뀔 때만 새로 받음 (예전 파일이 섞여 화면이 비는 것 방지) */
     (function () {
-      var BUILD = "20261026-3";
+      var BUILD = "20261026-4";
       var editing = /[?&]edit\b/.test(location.search) || /^(localhost|127\.0\.0\.1)$/.test(location.hostname) || location.protocol === "file:";
       function fail(src) {
         if (document.querySelector(".load-error")) return;

@@ -14,7 +14,15 @@
 
   /* ⟪…⟫ 는 아직 채우지 않은 자리 → 형광펜으로 표시 */
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const fmt = (s) => esc(s).replace(/⟪(.*?)⟫/g, (_, t) => `<mark class="todo">${t || "채울 내용"}</mark>`);
+  /* 글 안 꾸미기: **굵게**, `코드`, [글자](주소) */
+  const inline = (h) => h
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/`([^`]+?)`/g, "<code>$1</code>")
+    .replace(/\[([^\]]+?)\]\(((?:https?:\/\/|assets\/|#)[^)\s]*)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  const fmt = (s) => inline(esc(s).replace(/⟪(.*?)⟫/g, (_, t) => `<mark class="todo">${t || "채울 내용"}</mark>`));
+  /* 유튜브 주소 → 영상 ID */
+  const ytId = (u) => { const m = String(u || "").match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([\w-]{11})/); return m ? m[1] : (/^[\w-]{11}$/.test(u || "") ? u : ""); };
+  const ytThumb = (id) => `<img src="https://i.ytimg.com/vi/${id}/maxresdefault.jpg" alt="" loading="lazy" onerror="if(!this.dataset.f){this.dataset.f=1;this.src='https://i.ytimg.com/vi/${id}/hqdefault.jpg'}"><button type="button" class="yt-play" data-yt="${id}" aria-label="영상 재생"><span>▶</span></button>`;
   const plain = (s) => String(s ?? "").replace(/[⟪⟫]/g, "");
   const get = (path) => path.split(".").reduce((o, k) => (o == null ? o : o[k]), D);
   const show = (path) => fmt(get(path));
@@ -29,7 +37,7 @@
   }, { threshold: [0, 0.35, 0.7] });
   const src = (s) => esc(PF.blobs[s] || s);
 
-  function makeMedia(m, label, path) {
+  function makeMedia(m, label, path, gallery) {
     const box = document.createElement("div");
     box.className = "media";
     if (path) box.dataset.mediaPath = path;
@@ -43,6 +51,13 @@
       if (m.poster) v.poster = PF.blobs[m.poster] || m.poster;
       v.dataset.src = PF.blobs[m.src] || m.src;
       box.appendChild(v);
+    } else if (m.type === "youtube") {
+      const id = ytId(m.src);
+      box.classList.add("yt");
+      box.innerHTML = id ? ytThumb(id) : `<span>유튜브 주소를 확인해 주세요</span>`;
+    } else if (m.type === "images" && gallery) {
+      box.classList.add("gallery", "n" + Math.min(m.src.length, 4));
+      box.innerHTML = m.src.map((s) => `<img src="${src(s)}" alt="" loading="lazy">`).join("");
     } else if (m.type === "images") {
       box.classList.add("slides");
       box.innerHTML = m.src.map((s, i) => `<img src="${src(s)}" alt="" loading="lazy" class="${i ? "" : "on"}">`).join("");
@@ -84,18 +99,51 @@
     }
   }
 
-  /* 글 · 그림 블록 (프로젝트 상세, 자유 섹션) */
+  /* 글 · 그림 블록 (프로젝트 상세, 자유 섹션, About Me)
+     h2 큰 제목 · h 소제목 · p 글 · lp 라벨 글 · ul 목록 · img 그림/영상(여러 장=갤러리)
+     yt 유튜브 · table 표 · fold 접기 · quote 강조 상자 · hr 구분선 · btn 링크 버튼 */
   function blocks(path) {
     const list = get(path) || [];
+    const ed = PF.editing;
     return `<div class="blocks" data-list="${path}">${list.map((b, i) => {
-      const p = `${path}.${i}`;
-      if (b.type === "h") return `<div class="b-txt" data-item="${p}"><h3 class="b-h" ${E(p + ".text")}>${fmt(b.text)}</h3></div>`;
-      if (b.type === "p") return `<div class="b-txt" data-item="${p}"><p class="b-p" ${E(p + ".text")}>${fmt(b.text)}</p></div>`;
-      return `<figure class="b-fig ${b.wide ? "wide" : ""}" data-item="${p}"><div class="b-media" data-slot="${p}.media"></div>
-        ${b.caption || PF.editing ? `<figcaption ${E(p + ".caption")}>${fmt(b.caption)}</figcaption>` : ""}</figure>`;
+      const p = `${path}.${i}`, t = (k) => `${E(`${p}.${k}`)}>${fmt(b[k])}`;
+      switch (b.type) {
+        case "h2": return `<div class="b-txt" data-item="${p}"><h3 class="b-h2" ${t("text")}</h3></div>`;
+        case "h": return `<div class="b-txt" data-item="${p}"><h4 class="b-h" ${t("text")}</h4></div>`;
+        case "p": return `<div class="b-txt" data-item="${p}"><p class="b-p" ${t("text")}</p></div>`;
+        case "lp": return `<div class="b-txt" data-item="${p}"><p class="b-p b-lp"><strong class="b-lab" ${t("label")}</strong><span ${t("text")}</span></p></div>`;
+        case "ul": return `<div class="b-txt" data-item="${p}"><ul class="b-ul" data-list="${p}.lines">${(b.lines || []).map((x, k) => `<li ${E(`${p}.lines.${k}`)}>${fmt(x)}</li>`).join("")}</ul></div>`;
+        case "quote": return `<div class="b-txt" data-item="${p}"><p class="b-quote" ${t("text")}</p></div>`;
+        case "hr": return `<div class="b-hr" data-item="${p}"><hr></div>`;
+        case "btn": return `<div class="b-txt" data-item="${p}"><a class="b-btn" ${href(p + ".url")} target="_blank" rel="noopener"><span ${t("label")}</span> ↗</a></div>`;
+        case "fold": return `<div class="b-txt" data-item="${p}"><details class="b-fold" ${ed ? "open" : ""}><summary><span ${t("summary")}</span></summary>
+            <div class="b-fold-body ${b.code ? "code" : ""}" ${t("text")}</div></details></div>`;
+        case "table": {
+          const rows = b.rows || [];
+          return `<div class="b-txt" data-item="${p}"><div class="b-table-wrap"><table class="b-table">${rows.map((r, ri) => `<tr>${r.map((c, ci) => {
+            const tag = b.head && ri === 0 ? "th" : "td";
+            return `<${tag} ${E(`${p}.rows.${ri}.${ci}`)}>${fmt(c)}</${tag}>`;
+          }).join("")}</tr>`).join("")}</table></div></div>`;
+        }
+        case "yt": {
+          const id = ytId(b.url);
+          return `<figure class="b-fig wide" data-item="${p}"><div class="b-media b-yt" data-href="${p}.url">${id ? `<div class="media yt">${ytThumb(id)}</div>` : `<div class="media ph"><span>유튜브 주소를 넣어 주세요 (🔗)</span></div>`}</div>
+            ${b.caption || ed ? `<figcaption ${t("caption")}</figcaption>` : ""}</figure>`;
+        }
+        default: return `<figure class="b-fig ${b.wide ? "wide" : ""}" data-item="${p}"><div class="b-media ${b.media && b.media.type === "images" ? "is-gallery" : ""}" data-slot="${p}.media" data-gallery></div>
+            ${b.caption || ed ? `<figcaption ${t("caption")}</figcaption>` : ""}</figure>`;
+      }
     }).join("")}</div>`;
   }
-  const fillSlots = (root) => $$("[data-slot]", root).forEach((s) => s.appendChild(makeMedia(get(s.dataset.slot), "그림 · 영상 자리", s.dataset.slot)));
+  const fillSlots = (root) => $$("[data-slot]", root).forEach((s) => s.appendChild(makeMedia(get(s.dataset.slot), "그림 · 영상 자리", s.dataset.slot, s.hasAttribute("data-gallery"))));
+
+  /* 유튜브 썸네일을 누르면 그 자리에서 재생 (카드·슬라이드 안에서는 상세 열기) */
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest(".yt-play");
+    if (!b || PF.editing || b.closest("[data-work]")) return;
+    e.preventDefault(); e.stopPropagation();
+    b.parentElement.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${b.dataset.yt}?autoplay=1&rel=0" title="YouTube 영상" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+  });
 
   /* ---------- 화면 그리기 (편집 후 다시 호출됨) ---------- */
   function render() {
@@ -346,24 +394,40 @@
     const w = D.works[j], p = `works.${j}`;
     if (!w) return modal.close();
     current = j;
+    const ed = PF.editing;
     w.blocks = w.blocks || [];
+    w.facts = w.facts || [];
+    w.tasks = w.tasks || [];
+    // 예전 PROBLEM/APPROACH/RESULT 칸 → 이름을 바꾸고 늘릴 수 있는 목록으로
+    if (!w.steps) {
+      w.steps = [["PROBLEM", w.problem], ["APPROACH", w.approach], ["RESULT", w.result]].map(([label, text]) => ({ label, text: text || "" }));
+      delete w.problem; delete w.approach; delete w.result;
+    }
     const st = modal.scrollTop;
-    const facts = [["역할", "role"], ["기간", "period"], ["구성", "team"], ["상태", "status"]];
+    const fixed = [["역할", "role"], ["기간", "period"], ["구성", "team"], ["상태", "status"]].filter(([, f]) => ed || plain(w[f]).trim());
+    const show2 = (cond, html) => (cond || ed ? html : "");
     $("#modalBody").innerHTML = `
       <div class="modal-media" data-slot="${p}.media"></div>
       <div class="modal-text">
-        <div><p class="mono" style="color:var(--ink-3)" ${E(p + ".genre")}>${fmt(w.genre)}</p><h2 id="modalTitle" ${E(p + ".title")}>${fmt(w.title)}</h2></div>
-        <dl class="modal-facts">${facts.map(([k, f]) => `<div><dt>${k}</dt><dd ${E(`${p}.${f}`)}>${fmt(w[f])}</dd></div>`).join("")}</dl>
-        <dl class="modal-steps">
-          <div><dt>PROBLEM</dt><dd ${E(p + ".problem")}>${fmt(w.problem)}</dd></div>
-          <div><dt>APPROACH</dt><dd ${E(p + ".approach")}>${fmt(w.approach)}</dd></div>
-          <div><dt>RESULT</dt><dd ${E(p + ".result")}>${fmt(w.result)}</dd></div>
+        <header class="modal-head">
+          ${show2(w.kind, `<span class="kind-pill" ${E(p + ".kind")}>${fmt(w.kind)}</span>`)}
+          <p class="mono modal-genre" ${E(p + ".genre")}>${fmt(w.genre)}</p>
+          <h2 id="modalTitle" ${E(p + ".title")}>${fmt(w.title)}</h2>
+          ${show2(w.lead, `<p class="modal-lead" ${E(p + ".lead")}>${fmt(w.lead)}</p>`)}
+        </header>
+        <dl class="modal-facts" data-list="${p}.facts">
+          ${fixed.map(([k, f]) => `<div><dt>${k}</dt><dd ${E(`${p}.${f}`)}>${fmt(w[f])}</dd></div>`).join("")}
+          ${w.facts.map((f, i) => `<div data-item="${p}.facts.${i}"><dt ${E(`${p}.facts.${i}.label`)}>${fmt(f.label)}</dt><dd ${E(`${p}.facts.${i}.value`)}>${fmt(f.value)}</dd></div>`).join("")}
         </dl>
-        <div><h4>주요 업무</h4><ul class="tasks" data-list="${p}.tasks">${(w.tasks || []).map((t, i) => `<li ${E(`${p}.tasks.${i}`)}>${fmt(t)}</li>`).join("")}</ul></div>
-        ${w.blocks.length || PF.editing ? `<div class="modal-blocks"><h4>자세한 이야기</h4>${blocks(p + ".blocks")}</div>` : ""}
-        ${(w.links && w.links.length) || PF.editing ? `<div class="modal-links" data-list="${p}.links">${(w.links || []).map((l, i) => `<a data-item="${p}.links.${i}" ${href(`${p}.links.${i}.url`)} target="_blank" rel="noopener"><span ${E(`${p}.links.${i}.label`)}>${fmt(l.label)}</span> ↗</a>`).join("")}</div>` : ""}
+        ${show2(w.steps.length, `<dl class="modal-steps" data-list="${p}.steps">${w.steps.map((s, i) => `
+          <div data-item="${p}.steps.${i}"><dt ${E(`${p}.steps.${i}.label`)}>${fmt(s.label)}</dt><dd ${E(`${p}.steps.${i}.text`)}>${fmt(s.text)}</dd></div>`).join("")}</dl>`)}
+        ${show2(w.tasks.length, `<div><h4 ${E(p + ".tasksTitle")}>${fmt(w.tasksTitle || "주요 업무")}</h4><ul class="tasks" data-list="${p}.tasks">${w.tasks.map((t, i) => `<li ${E(`${p}.tasks.${i}`)}>${fmt(t)}</li>`).join("")}</ul></div>`)}
+        ${show2(w.blocks.length, `<div class="modal-blocks"><h4 ${E(p + ".blocksTitle")}>${fmt(w.blocksTitle || "자세한 이야기")}</h4>${blocks(p + ".blocks")}</div>`)}
+        ${show2(w.links && w.links.length, `<div class="modal-links" data-list="${p}.links">${(w.links || []).map((l, i) => `<a data-item="${p}.links.${i}" ${href(`${p}.links.${i}.url`)} target="_blank" rel="noopener"><span ${E(`${p}.links.${i}.label`)}>${fmt(l.label)}</span> ↗</a>`).join("")}</div>`)}
       </div>`;
     fillSlots(modal);
+    // 프로젝트마다 고유 주소 (#work-아이디) — 링크로 바로 열 수 있게
+    if (w.id && location.hash !== "#work-" + w.id) history.replaceState(null, "", "#work-" + w.id);
     if (!modal.open) modal.showModal();
     modal.scrollTop = keepScroll ? st : 0;
     if (!keepScroll) $(".modal-close").focus({ preventScroll: true });
@@ -372,7 +436,25 @@
   PF.openWork = openWork;
   $(".modal-close").addEventListener("click", () => modal.close());
   modal.addEventListener("click", (e) => { if (e.target === modal) modal.close(); });
-  modal.addEventListener("close", () => { current = null; $$("video", modal).forEach((v) => v.pause()); });
+  modal.addEventListener("close", () => {
+    current = null;
+    $$("video", modal).forEach((v) => v.pause());
+    $$("iframe", modal).forEach((f) => f.remove());
+    if (/^#work-/.test(location.hash)) history.replaceState(null, "", location.pathname + location.search);
+  });
+  // 상세 창 위 '링크 복사'
+  $(".modal-copy").addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(location.href); PF.toast("이 프로젝트 링크를 복사했어요"); }
+    catch (e) { PF.toast(location.href); }
+  });
+  // 주소에 #work-아이디 가 있으면 그 프로젝트를 바로 열기
+  const openFromHash = () => {
+    const m = location.hash.match(/^#work-(.+)$/);
+    if (!m) return;
+    const j = D.works.findIndex((w) => w.id === decodeURIComponent(m[1]));
+    if (j >= 0 && current !== j) openWork(j);
+  };
+  addEventListener("hashchange", openFromHash);
 
   /* ---------- 떠다니는 파일 버튼 ---------- */
   const dock = $("#dock"), dockBtn = $(".dock-btn");
@@ -455,5 +537,6 @@
   document.addEventListener("keydown", (e) => { if (!PF.editing && e.key === "Enter" && e.target.closest && e.target.closest(".copy-mail")) copyMail(); });
 
   render();
+  openFromHash();
   onScroll();
 })();

@@ -80,7 +80,10 @@
         <li><b>추가 · 삭제 · 순서</b>: 항목 위에 마우스를 올리면 ↑ ↓ ✕, 목록 끝의 + 버튼</li>
         <li><b>★</b>: 프로젝트 카드의 별을 켜면 첫 화면 슬라이드에 나옴</li>
         <li><b>첫 화면 배치</b> (PC 화면): 파란 ✥를 끌어 옮기기, ◢를 끌어 크기 조절, 일러스트는 그림을 끌어 옮기고 오른쪽 위 '크기'로 확대. ✥를 두 번 누르면 처음 자리로</li>
-        <li><b>상세 내용</b>: 프로젝트 카드의 '자세히 보기' → 소제목 · 글 · 그림 블록 추가</li>
+        <li><b>상세 내용</b>: 프로젝트 카드의 '자세히 보기' → '+ 블록 추가'로 큰 제목 · 소제목 · 글 · 라벨 글 · 목록 · 그림(여러 장=갤러리) · YouTube · 표 · 접기 · 강조 상자 · 링크 버튼 · 구분선</li>
+        <li><b>글 꾸미기</b>: <code>**굵게**</code>, <code>&#96;코드&#96;</code>, <code>[글자](주소)</code></li>
+        <li><b>상세 표 · PROBLEM 같은 라벨</b>: 라벨 글자도 눌러서 바꾸고, + 추가로 늘리기</li>
+        <li><b>유튜브</b>: 그림 자리의 ▶ YouTube 버튼에 주소 붙여 넣기</li>
         <li><b>링크</b>: 🔗 버튼으로 주소 입력, PDF는 링크 위로 끌어다 놓기</li>
         <li><b>저장</b>: 공개 링크(…github.io/portfolio/?edit)에서는 GitHub에 바로 올라가고 1~2분 뒤 반영 (처음 한 번 토큰 연결). 내 컴퓨터(편집하기.cmd)에서는 portfolio 폴더에 저장</li>
       </ul>
@@ -117,6 +120,8 @@
   /* ---------- 렌더 후 편집 장치 붙이기 ---------- */
   const LABEL = { title: "제목", genre: "장르", role: "역할", period: "기간", team: "구성", status: "상태", oneLine: "한 줄 소개", problem: "문제", approach: "접근", result: "결과", insight: "인사이트 한 줄", platform: "플랫폼", label: "이름", value: "값", unit: "단위", sub: "설명", badge: "배지", desc: "설명", group: "그룹 이름", text: "글을 입력하세요", caption: "그림 설명 (비우면 숨김)", idx: "섹션 라벨", hook: "한마디", teaser: "설명", readTime: "읽는 시간", pages: "쪽수" };
   const ph = (path) => LABEL[lastKey(path)] || "입력";
+  Object.assign(LABEL, { lead: "리드 문장 (제목 아래 한두 줄)", kind: "종류 (예: 프로젝트)", summary: "접기 제목", tasksTitle: "목록 제목", blocksTitle: "블록 제목" });
+  const BLOCK_KINDS = [["h2", "큰 제목"], ["h", "소제목"], ["p", "글"], ["lp", "라벨 글 (문제: …)"], ["ul", "목록"], ["img", "그림 · 영상 (여러 장=갤러리)"], ["yt", "YouTube"], ["table", "표"], ["fold", "접기 (코드 보기 등)"], ["quote", "강조 상자"], ["btn", "링크 버튼"], ["hr", "구분선"]];
 
   function decorate() {
     if (!PF.editing) return;
@@ -132,8 +137,11 @@
       const p = el.dataset.item, c = document.createElement("span");
       c.className = "ed-ctl";
       c.contentEditable = "false";
-      const isWork = /^works\.\d+$/.test(p), isFig = el.classList.contains("b-fig");
-      c.innerHTML =
+      const isWork = /^works\.\d+$/.test(p), it = PF.get(p) || {}, isFig = el.classList.contains("b-fig") && it.type !== "yt";
+      const extra =
+        (it.type === "table" ? `<button type="button" data-ed="row+" data-p="${p}" title="줄 추가">+줄</button><button type="button" data-ed="col+" data-p="${p}" title="칸 추가">+칸</button><button type="button" data-ed="row-" data-p="${p}" title="마지막 줄 삭제">−줄</button><button type="button" data-ed="col-" data-p="${p}" title="마지막 칸 삭제">−칸</button><button type="button" data-ed="head" data-p="${p}" title="첫 줄을 제목 줄로">${it.head ? "제목줄✓" : "제목줄"}</button>` : "") +
+        (it.type === "fold" ? `<button type="button" data-ed="code" data-p="${p}" title="코드 모양으로">${it.code ? "&lt;/&gt;✓" : "&lt;/&gt;"}</button>` : "");
+      c.innerHTML = extra +
         (isWork ? `<button type="button" data-ed="star" data-p="${p}" class="${PF.get(p).featured ? "on" : ""}" title="첫 화면 슬라이드에 넣기">★</button>` : "") +
         (isFig ? `<button type="button" data-ed="wide" data-p="${p}" title="넓게 / 반쪽">${PF.get(p).wide ? "▭" : "◫"}</button>` : "") +
         `<button type="button" data-ed="up" data-p="${p}" title="앞으로">↑</button><button type="button" data-ed="down" data-p="${p}" title="뒤로">↓</button><button type="button" data-ed="del" data-p="${p}" title="삭제">✕</button>`;
@@ -145,7 +153,7 @@
       if (p === "meta.headline") return; // 메인 문구는 Enter로 줄 추가
       const add = (kind, text) => `<button type="button" class="ed-add" contenteditable="false" data-ed="add" data-p="${p}" data-kind="${kind}">${text}</button>`;
       let html;
-      if (/\.blocks$/.test(p)) html = add("h", "+ 소제목") + add("p", "+ 글") + add("img", "+ 그림 · 영상");
+      if (/\.blocks$/.test(p)) html = `<button type="button" class="ed-add ed-add-menu" data-ed="menu">+ 블록 추가</button><span class="ed-kinds">${BLOCK_KINDS.map(([k, n]) => add(k, n)).join("")}</span>`;
       else if (p === "sections") html = add("", "+ 새 섹션 추가 (글 · 그림 자유롭게)");
       else if (isStrList(p)) html = add("", "+");
       else html = add("", "+ 추가");
@@ -162,7 +170,7 @@
       const o = document.createElement("span");
       o.className = "ed-drop";
       o.dataset.drop = p;
-      o.innerHTML = `<span>${has ? "끌어다 놓아 바꾸기" : "사진 · 영상을 끌어다 놓기<br><small>또는 클릭해서 고르기</small>"}</span>${has ? `<button type="button" data-ed="clear" data-p="${p}" title="그림 빼기">✕</button>` : ""}`;
+      o.innerHTML = `<span>${has ? "끌어다 놓아 바꾸기" : "사진 · 영상을 끌어다 놓기<br><small>또는 클릭해서 고르기</small>"}</span>${has ? `<button type="button" data-ed="clear" data-p="${p}" title="그림 빼기">✕</button>` : ""}${/cover|heroImage/.test(p) ? "" : `<button type="button" class="ed-yt-btn" data-ed="ytmedia" data-p="${p}" title="유튜브 영상으로">▶ YouTube</button>`}`;
       slot.appendChild(o);
     });
     $$("[data-href]").forEach((el) => {
@@ -279,7 +287,7 @@
     }
   }, true);
 
-  const isStrList = (p) => { const v = PF.get(p); return Array.isArray(v) && /(tags|keywords|headline|tasks)$/.test(p); };
+  const isStrList = (p) => { const v = PF.get(p); return Array.isArray(v) && /(tags|keywords|headline|tasks|lines)$/.test(p); };
 
   /* ---------- 글자 편집 ---------- */
   const display = (el, v) => {
@@ -363,10 +371,25 @@
   }
 
   /* ---------- 버튼 동작 ---------- */
+  const BLOCK_TPL = {
+    h2: () => ({ type: "h2", text: "" }),
+    h: () => ({ type: "h", text: "" }),
+    p: () => ({ type: "p", text: "" }),
+    lp: () => ({ type: "lp", label: "문제", text: "" }),
+    ul: () => ({ type: "ul", lines: [""] }),
+    img: () => ({ type: "img", media: null, caption: "", wide: false }),
+    yt: () => ({ type: "yt", url: "", caption: "" }),
+    table: () => ({ type: "table", head: true, rows: [["항목", "내용"], ["", ""]] }),
+    fold: () => ({ type: "fold", summary: "자세히 보기", text: "", code: false }),
+    quote: () => ({ type: "quote", text: "" }),
+    btn: () => ({ type: "btn", label: "링크", url: "#" }),
+    hr: () => ({ type: "hr" })
+  };
   const TPL = (p, kind) => {
-    if (/\.blocks$/.test(p)) return kind === "img" ? { type: "img", media: null, caption: "", wide: false } : { type: kind, text: "" };
+    if (/\.blocks$/.test(p)) return (BLOCK_TPL[kind] || BLOCK_TPL.p)();
+    if (/steps$/.test(p)) return { label: "POINT", text: "" };
     if (p === "glance") return { value: "0", unit: "", label: "새 성과", sub: "" };
-    if (p === "works") return { id: "w" + Date.now().toString(36), featured: false, title: "새 프로젝트", genre: "", role: "", period: "", team: "", status: "", tags: [], oneLine: "", media: null, problem: "", approach: "", result: "", tasks: [], links: [], blocks: [] };
+    if (p === "works") return { id: "w" + Date.now().toString(36), featured: false, kind: "프로젝트", title: "새 프로젝트", genre: "", lead: "", role: "", period: "", team: "", status: "", tags: [], oneLine: "", media: null, facts: [], steps: [{ label: "PROBLEM", text: "" }, { label: "APPROACH", text: "" }, { label: "RESULT", text: "" }], tasks: [], links: [], blocks: [] };
     if (p === "gameLogs") return { title: "새 게임", genre: "", platform: "", period: "", stats: [{ label: "기록", value: "" }, { label: "기록", value: "" }], insight: "", tags: [], media: null };
     if (p === "resume") return { group: "새 그룹", items: [] };
     if (/^resume\.\d+\.items$/.test(p)) return { period: "", title: "새 항목", desc: "", badge: "" };
@@ -397,6 +420,11 @@
       PF.render();
       const np = `${p}.${list.length - 1}`;
       if (ctl.dataset.kind === "img") { pickTarget = np + ".media"; fileInput.click(); return; }
+      if (ctl.dataset.kind === "yt") {
+        const v = prompt("유튜브 주소를 붙여 넣어 주세요", "");
+        if (v) { set(np + ".url", v.trim()); changed(); PF.render(); }
+        return;
+      }
       requestAnimationFrame(() => {
         const t = isStrList(p) ? $(`[data-path="${np}"]`) : $(`[data-item="${np}"] [data-path]`) || $(`[data-path^="${np}."]`);
         if (t) { t.scrollIntoView({ block: "center" }); t.focus(); }
@@ -411,6 +439,26 @@
       return;
     }
     if (kind === "clear") { snapshot(); set(p, null); changed(); PF.render(); return; }
+    if (kind === "menu") { ctl.parentElement.classList.toggle("open"); return; }
+    if (kind === "ytmedia") {
+      const cur = (PF.get(p) || {}).type === "youtube" ? PF.get(p).src : "";
+      const v = prompt("유튜브 주소를 붙여 넣어 주세요 (youtu.be/… 또는 youtube.com/watch?v=…)", cur);
+      if (!v) return;
+      snapshot(); set(p, { type: "youtube", src: v.trim() }); changed(); PF.render();
+      return;
+    }
+    if (/^(row|col)[+-]$|^head$|^code$/.test(kind)) {
+      const b = PF.get(p);
+      snapshot();
+      if (kind === "row+") b.rows.push(b.rows[0] ? b.rows[0].map(() => "") : [""]);
+      if (kind === "row-" && b.rows.length > 1) b.rows.pop();
+      if (kind === "col+") b.rows.forEach((r) => r.push(""));
+      if (kind === "col-" && b.rows[0] && b.rows[0].length > 1) b.rows.forEach((r) => r.pop());
+      if (kind === "head") b.head = !b.head;
+      if (kind === "code") b.code = !b.code;
+      changed(); PF.render();
+      return;
+    }
     const list = PF.get(parentPath(p)), i = +lastKey(p), item = list[i];
     if (kind === "star") { snapshot(); item.featured = !item.featured; changed(); PF.render(); return; }
     if (kind === "wide") { snapshot(); item.wide = !item.wide; changed(); PF.render(); return; }
