@@ -101,6 +101,7 @@
     art.dataset.cover = "meta.heroImage";
     art.innerHTML = D.meta.heroImage ? `<img src="${src(D.meta.heroImage)}" alt="" fetchpriority="high" decoding="async">` : "";
     document.body.classList.toggle("has-art", !!D.meta.heroImage);
+    applyLayout();
     $("#headline").dataset.list = "meta.headline";
     $("#headline").innerHTML = D.meta.headline.map((l, i) =>
       `<span class="line"><span style="animation-delay:${0.1 + i * 0.12}s" ${E("meta.headline." + i)} data-em>${fmt(l).replace(/\*(.+?)\*/g, "<em>$1</em>")}</span></span>`).join("");
@@ -250,6 +251,22 @@
   PF.render = render;
 
   const fileKinds = [["summary", "요약 포트폴리오", "SUMMARY"], ["detail", "상세 포트폴리오", "DETAIL"]];
+
+  /* 첫 화면 배치 (편집 모드에서 끌어서 정한 위치 · 크기). PC 화면(1025px 이상)에만 적용 */
+  const MOVABLE = { name: ".hero-name", showcase: "#showcase", note: ".hero-note", art: "#heroArt" };
+  function applyLayout() {
+    const L = D.layout || {};
+    for (const [key, sel] of Object.entries(MOVABLE)) {
+      const el = $(sel), v = L[key] || {};
+      if (!el) continue;
+      el.dataset.move = key;
+      const css = key === "art"
+        ? { "--ax": v.x ? v.x + "%" : "", "--ay": v.y ? v.y + "%" : "", "--az": v.z || "" }
+        : { "--dx": v.x ? v.x + "vw" : "", "--dy": v.y ? v.y + "vw" : "", "--w": v.w ? v.w + "%" : "", "--s": v.s || "" };
+      for (const [k, val] of Object.entries(css)) val === "" ? el.style.removeProperty(k) : el.style.setProperty(k, val);
+    }
+  }
+  PF.applyLayout = applyLayout;
 
   /* 슬라이드 넘기기: meta.slideSeconds 초마다, 마우스를 올리면 멈춤 */
   let scIndex = 0, scTimer = 0, scHold = false;

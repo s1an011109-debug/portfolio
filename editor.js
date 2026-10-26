@@ -78,7 +78,8 @@
         <li><b>그림·영상</b>: 사진·mp4를 자리 위로 끌어다 놓기 (또는 자리를 클릭해 고르기, 복사한 그림은 자리에 마우스를 올리고 Ctrl+V)</li>
         <li><b>여러 장</b>을 한 번에 놓으면 자동 슬라이드</li>
         <li><b>추가 · 삭제 · 순서</b>: 항목 위에 마우스를 올리면 ↑ ↓ ✕, 목록 끝의 + 버튼</li>
-        <li><b>★</b>: 프로젝트 카드의 별을 켜면 위쪽 '대표작'에 나옴</li>
+        <li><b>★</b>: 프로젝트 카드의 별을 켜면 첫 화면 슬라이드와 '대표작'에 나옴</li>
+        <li><b>첫 화면 배치</b> (PC 화면): 파란 ✥를 끌어 옮기기, ◢를 끌어 크기 조절, 일러스트는 그림을 끌어 옮기고 오른쪽 위 '크기'로 확대. ✥를 두 번 누르면 처음 자리로</li>
         <li><b>상세 내용</b>: 프로젝트 카드의 '자세히 보기' → 소제목 · 글 · 그림 블록 추가</li>
         <li><b>링크</b>: 🔗 버튼으로 주소 입력, PDF는 링크 위로 끌어다 놓기</li>
         <li><b>저장</b>: 공개 링크(…github.io/portfolio/?edit)에서는 GitHub에 바로 올라가고 1~2분 뒤 반영 (처음 한 번 토큰 연결). 내 컴퓨터(편집하기.cmd)에서는 portfolio 폴더에 저장</li>
@@ -119,6 +120,7 @@
 
   function decorate() {
     if (!PF.editing) return;
+    decorateLayout();
     $$("[data-path]").forEach((el) => {
       if (el.isContentEditable) return;
       try { el.contentEditable = "plaintext-only"; } catch (e) { el.contentEditable = "true"; }
@@ -172,6 +174,111 @@
       el.appendChild(b);
     });
   }
+  /* ---------- 첫 화면 배치: 끌어서 옮기기 · 크기 조절 ---------- */
+  function decorateLayout() {
+    $$(".hero-in [data-move]").forEach((el) => {
+      if (el.querySelector(":scope > .ed-grip")) return;
+      el.insertAdjacentHTML("beforeend",
+        `<button type="button" class="ed-grip" data-grip="move" contenteditable="false" title="끌어서 옮기기 · 방향키로 미세 조정 · 두 번 누르면 처음 자리로">✥</button>` +
+        `<span class="ed-resize" data-grip="size" contenteditable="false" title="끌어서 크기 조절"></span>`);
+    });
+    const art = $("#heroArt");
+    if (art && !art.querySelector(".ed-art-tools")) {
+      const z = Math.round(((D.layout || {}).art || {}).z * 100 || 100);
+      art.insertAdjacentHTML("beforeend", `
+        <span class="ed-art-tools" contenteditable="false">
+          <span class="mono">일러스트</span>
+          <label title="일러스트 크기">크기 <input type="range" min="40" max="300" step="5" value="${z}" data-art-zoom><b class="mono">${z}%</b></label>
+          <button type="button" data-art-reset title="일러스트 위치 · 크기 처음으로">↺</button>
+          <button type="button" data-layout-reset title="첫 화면 배치 전부 처음으로">배치 초기화</button>
+          <small>그림을 끌어서 옮기기</small>
+        </span>`);
+    }
+  }
+  const round = (n) => Math.round(n * 100) / 100;
+  const layoutOf = (key) => { D.layout = D.layout || {}; return (D.layout[key] = D.layout[key] || {}); };
+  let drag = null;
+  document.addEventListener("pointerdown", (e) => {
+    if (!PF.editing || e.button !== 0 || innerWidth <= 1024) return;
+    const g = e.target.closest("[data-grip]");
+    const onArt = !g && e.target.closest("#heroArt") && !e.target.closest(".ed-drop, .ed-art-tools");
+    if (!g && !onArt) return;
+    const el = g ? g.closest("[data-move]") : $("#heroArt");
+    const key = el.dataset.move;
+    e.preventDefault();
+    drag = { el, key, kind: g ? g.dataset.grip : "pan", x0: e.clientX, y0: e.clientY, v0: { ...layoutOf(key) }, rect: el.getBoundingClientRect(), moved: false, handle: g || el };
+    try { drag.handle.setPointerCapture(e.pointerId); } catch (er) {}
+    document.body.classList.add("ed-dragging");
+  });
+  document.addEventListener("pointermove", (e) => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x0, dy = e.clientY - drag.y0, { v0, rect, kind } = drag;
+    if (!drag.moved) { if (Math.abs(dx) + Math.abs(dy) < 3) return; drag.moved = true; snapshot(); }
+    const v = layoutOf(drag.key);
+    if (kind === "move") {
+      v.x = round((v0.x || 0) + dx / innerWidth * 100);
+      v.y = round((v0.y || 0) + dy / innerWidth * 100);
+    } else if (kind === "size" && drag.key === "name") {
+      v.s = round(Math.min(3, Math.max(0.5, (v0.s || 1) * (rect.width + dx) / rect.width)));
+    } else if (kind === "size") {
+      const full = rect.width / ((v0.w || 100) / 100);           // 원래 칸 너비
+      v.w = round(Math.min(220, Math.max(30, (rect.width + dx) / full * 100)));
+    } else if (kind === "pan") {
+      v.x = round((v0.x || 0) + dx / rect.width * 100);
+      v.y = round((v0.y || 0) + dy / rect.height * 100);
+    }
+    PF.applyLayout();
+  });
+  const endDrag = () => {
+    if (!drag) return;
+    if (drag.moved) changed();
+    drag = null;
+    document.body.classList.remove("ed-dragging");
+  };
+  document.addEventListener("pointerup", endDrag);
+  document.addEventListener("pointercancel", endDrag);
+  document.addEventListener("dblclick", (e) => {
+    const g = PF.editing && e.target.closest('[data-grip="move"]');
+    if (!g) return;
+    const key = g.closest("[data-move]").dataset.move;
+    snapshot(); delete (D.layout || {})[key]; PF.applyLayout(); changed();
+    PF.toast("처음 자리로 돌렸어요");
+  });
+  document.addEventListener("keydown", (e) => {
+    const g = PF.editing && e.target.closest && e.target.closest('[data-grip="move"]');
+    if (!g || !/^Arrow/.test(e.key)) return;
+    e.preventDefault();
+    const step = e.shiftKey ? 2 : 0.25, v = layoutOf(g.closest("[data-move]").dataset.move);
+    snapshot();
+    if (e.key === "ArrowLeft") v.x = round((v.x || 0) - step);
+    if (e.key === "ArrowRight") v.x = round((v.x || 0) + step);
+    if (e.key === "ArrowUp") v.y = round((v.y || 0) - step);
+    if (e.key === "ArrowDown") v.y = round((v.y || 0) + step);
+    PF.applyLayout(); changed();
+  });
+  let zoomSnap = false;
+  document.addEventListener("input", (e) => {
+    const r = e.target.closest && e.target.closest("[data-art-zoom]");
+    if (!r) return;
+    if (!zoomSnap) { snapshot(); zoomSnap = true; }
+    layoutOf("art").z = +r.value / 100;
+    r.nextElementSibling.textContent = r.value + "%";
+    PF.applyLayout();
+  });
+  document.addEventListener("change", (e) => {
+    if (e.target.closest && e.target.closest("[data-art-zoom]")) { zoomSnap = false; changed(); }
+  });
+  addEventListener("click", (e) => {
+    if (!PF.editing) return;
+    if (e.target.closest("[data-art-reset]")) {
+      e.stopPropagation(); snapshot(); delete (D.layout || {}).art; changed(); PF.render();
+    } else if (e.target.closest("[data-layout-reset]")) {
+      e.stopPropagation();
+      if (!confirm("첫 화면의 이름 · 카드 · 일러스트 배치를 모두 처음으로 돌릴까요?")) return;
+      snapshot(); D.layout = {}; changed(); PF.render();
+    }
+  }, true);
+
   const isStrList = (p) => { const v = PF.get(p); return Array.isArray(v) && /(tags|keywords|headline|tasks)$/.test(p); };
 
   /* ---------- 글자 편집 ---------- */

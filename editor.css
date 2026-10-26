@@ -113,3 +113,23 @@
 .editing .hero-art > .ed-drop button { position: static; width: 22px; height: 22px; margin-left: 8px; }
 .editing .hero-art > .ed-drop > span::before { content: "일러스트 · "; }
 .editing .showcase .sc-slide:not(.on) { pointer-events: none; }
+
+/* 첫 화면 배치 손잡이 */
+.ed-grip, .ed-resize, .ed-art-tools { display: none; }
+@media (min-width: 1025px) {
+  .editing .hero-in [data-move] { position: relative; outline: 1.5px dashed color-mix(in srgb, var(--blue) 55%, transparent); outline-offset: 6px; }
+  .editing .ed-grip { display: grid; place-items: center; position: absolute; left: -14px; top: -14px; z-index: 8; width: 30px; height: 30px; border-radius: 50%; background: var(--blue); color: #fff; font-size: 15px; cursor: grab; box-shadow: 0 4px 12px rgba(0, 0, 0, .25); touch-action: none; }
+  .editing .ed-grip:active { cursor: grabbing; }
+  .editing .ed-resize { display: block; position: absolute; right: -11px; bottom: -11px; z-index: 8; width: 22px; height: 22px; border-radius: 4px; background: var(--blue); cursor: nwse-resize; box-shadow: 0 4px 12px rgba(0, 0, 0, .25); touch-action: none; }
+  .editing .ed-resize::after { content: ""; position: absolute; inset: 6px; border-right: 2px solid #fff; border-bottom: 2px solid #fff; }
+  .editing .hero-art { pointer-events: auto; cursor: grab; }
+  .ed-dragging, .ed-dragging * { cursor: grabbing !important; user-select: none !important; }
+  .ed-dragging .hero-art img, .ed-dragging .hero-in [data-move] { transition: none !important; }
+  .editing .ed-art-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; position: absolute; right: 16px; top: 62px; z-index: 3; max-width: 330px; padding: 10px 12px; border-radius: 12px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--shadow); font-size: 12px; cursor: default; }
+  .ed-art-tools label { display: inline-flex; align-items: center; gap: 6px; }
+  .ed-art-tools input[type="range"] { width: 110px; accent-color: var(--blue); }
+  .ed-art-tools b { min-width: 3.2em; color: var(--ink-2); font-weight: 500; }
+  .ed-art-tools button { padding: 4px 10px; border-radius: 99px; border: 1px solid var(--line); font-size: 12px; }
+  .ed-art-tools button:hover { border-color: var(--blue); color: var(--blue); }
+  .ed-art-tools small { width: 100%; color: var(--ink-3); }
+}
