@@ -166,7 +166,7 @@ window.PORTFOLIO = {
         "수집",
         "NPC"
       ],
-      "oneLine": "필드에서 꽃을 찾아 NPC에게 전달하면 강화를 받는, 탐색 · 수집 · 강화가 이어지는 컨텐츠.",
+      "oneLine": "2024년 청강문화산업대학교 졸업작품 \n필드에서 꽃을 찾아 NPC에게 전달하면 강화를 받는, 탐색 · 수집 · 강화가 이어지는 컨텐츠.",
       "media": {
         "type": "image",
         "src": "assets/mvoye7gakrh-1732259293255.png"
