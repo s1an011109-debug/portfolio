@@ -11,7 +11,7 @@ window.PORTFOLIO = {
     "nameEn": "jung sian",
     "role": "Game Designer",
     "roleKo": "게임 컨텐츠 기획 · 서브컬처 RPG",
-    "heroImage": "assets/hero.webp",
+    "heroImage": "assets/mvox83ok8p3-998aa800-3729-4b97-ab06-840171.png",
     "slideSeconds": 5,
     "email": "s1an011109@gmail.com",
     "keywords": [
@@ -413,5 +413,12 @@ window.PORTFOLIO = {
       ]
     }
   ],
-  "sections": []
+  "sections": [],
+  "layout": {
+    "art": {
+      "x": 4.1,
+      "y": 6.45,
+      "z": 0.6
+    }
+  }
 };
