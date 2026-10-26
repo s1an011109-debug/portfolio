@@ -24,20 +24,7 @@ window.PORTFOLIO = {
       "만든 것을 사람들이 즐기는\n순간이 좋아 게임을 만듭니다."
     ],
     "intro": "보드게임의 콘셉트와 규칙을 기획하고, \n제작부터 배송까지 맡아 516명의 후원자에게 전달했습니다.\n「카오스 제로 나이트메어」에서는 전투의 등장 시점과 적 구성을 정하고, \n캐릭터의 감정을 보여주는 연출을 제안해 반영했습니다.",
-    "links": [
-      {
-        "label": "Tumblbug",
-        "url": "https://tumblbug.com/constellation_want_die"
-      },
-      {
-        "label": "⟪Notion⟫",
-        "url": "#"
-      },
-      {
-        "label": "⟪GitHub⟫",
-        "url": "#"
-      }
-    ]
+    "links": []
   },
   "glance": [
     {
@@ -188,7 +175,7 @@ window.PORTFOLIO = {
       "genre": "미소녀 연애 시뮬레이션",
       "role": "⟪역할⟫",
       "period": "2021",
-      "team": "⟪0인 팀⟫",
+      "team": "4인 프로젝트",
       "status": "알발 페스타 1등",
       "tags": [
         "서브컬처",
