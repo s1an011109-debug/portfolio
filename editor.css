@@ -88,3 +88,19 @@
 .ed-error div { display: flex; flex-wrap: wrap; gap: 6px; }
 .ed-error button { padding: 6px 12px; border-radius: 99px; border: 1px solid var(--line); font-size: 13px; }
 .ed-error button[data-e="retry"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+/* GitHub 연결 */
+.ed-gh-btn.linked { color: #6fd18b; }
+.ed-gh { position: fixed; left: 16px; bottom: 72px; z-index: 83; width: min(460px, calc(100vw - 32px)); max-height: calc(100vh - 100px); overflow: auto; padding: 18px 20px; border-radius: 14px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--shadow); font-size: 13px; line-height: 1.6; display: grid; gap: 10px; }
+.ed-gh > b { font-size: 15px; }
+.ed-gh p { color: var(--ink-2); }
+.ed-gh ol { display: grid; gap: 4px; padding-left: 18px; list-style: decimal; }
+.ed-gh a { color: var(--accent); font-weight: 700; text-decoration: underline; }
+.ed-gh input { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-family: var(--mono); font-size: 13px; }
+.ed-gh input:focus { outline: 2px solid var(--accent); }
+.ed-gh small { color: var(--ink-3); }
+.ed-gh div { display: flex; flex-wrap: wrap; gap: 6px; }
+.ed-gh button { padding: 7px 14px; border-radius: 99px; border: 1px solid var(--line); font-size: 13px; }
+.ed-gh button[data-g="ok"] { background: var(--ink); color: var(--bg); border-color: var(--ink); font-weight: 700; }
+.ed-gh button:disabled { opacity: .5; }
+.ed-gh-msg { color: #d9534f !important; font-weight: 600; }

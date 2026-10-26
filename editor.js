@@ -14,6 +14,16 @@
   const set = (path, v) => { PF.get(parentPath(path))[lastKey(path)] = v; };
   const isIndex = (k) => /^\d+$/.test(k);
 
+  /* 공개 사이트(사용자.github.io/저장소)에서 열었으면 그 저장소에 바로 저장 */
+  const IS_LOCAL = location.protocol === "file:" || /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+  const GH = (() => {
+    const m = location.hostname.match(/^([a-z0-9-]+)\.github\.io$/i);
+    if (!m) return null;
+    const repo = location.pathname.split("/").filter(Boolean)[0];
+    return { owner: m[1], repo: repo && !/\.html?$/.test(repo) ? repo : `${m[1]}.github.io`, branch: "main" };
+  })();
+  const ghToken = () => { try { return localStorage.getItem("pf-gh-token") || ""; } catch (e) { return ""; } };
+
   /* ---------- 작은 IndexedDB 저장소 (폴더 권한 · 저장 전 그림) ---------- */
   const idb = (store, mode, fn) => new Promise((ok, no) => {
     const req = indexedDB.open("pf-editor", 1);
@@ -56,6 +66,7 @@
     <span class="ed-tools">
       <button type="button" data-act="undo" title="되돌리기 (Ctrl+Z)">↶</button>
       <button type="button" data-act="save" class="ed-save">저장</button>
+      <button type="button" data-act="gh" class="ed-gh-btn" title="GitHub 연결" hidden>GitHub</button>
       <button type="button" data-act="help" title="사용법">?</button>
     </span>
     <span class="ed-status mono"></span>
@@ -70,7 +81,7 @@
         <li><b>★</b>: 프로젝트 카드의 별을 켜면 위쪽 '대표작'에 나옴</li>
         <li><b>상세 내용</b>: 프로젝트 카드의 '자세히 보기' → 소제목 · 글 · 그림 블록 추가</li>
         <li><b>링크</b>: 🔗 버튼으로 주소 입력, PDF는 링크 위로 끌어다 놓기</li>
-        <li><b>저장</b>: 처음 한 번 portfolio 폴더를 골라 주면 content.js와 assets/에 바로 저장</li>
+        <li><b>저장</b>: 공개 링크(…github.io/portfolio/?edit)에서는 GitHub에 바로 올라가고 1~2분 뒤 반영 (처음 한 번 토큰 연결). 내 컴퓨터(편집하기.cmd)에서는 portfolio 폴더에 저장</li>
       </ul>
     </div>`;
   document.body.appendChild(bar);
@@ -80,6 +91,10 @@
     $(".ed-toggle b", bar).textContent = PF.editing ? "편집 중" : "편집";
     $(".ed-save", bar).classList.toggle("dirty", dirty);
     status.textContent = dirty ? `저장 안 됨${pending.size ? ` · 그림 ${pending.size}개` : ""}` : (PF.editing ? "저장됨" : "");
+    const ghb = $(".ed-gh-btn", bar);
+    ghb.hidden = !GH;
+    ghb.classList.toggle("linked", !!ghToken());
+    ghb.textContent = ghToken() ? "GitHub ✓" : "GitHub 연결";
   }
 
   const fileInput = document.createElement("input");
@@ -319,6 +334,7 @@
     if (a === "undo") return undo();
     if (a === "save") return save();
     if (a === "help") { const h = $(".ed-help", bar); h.hidden = !h.hidden; }
+    if (a === "gh") showTokenPanel(false);
   }
 
   /* ---------- 그림 · 영상 넣기 ---------- */
@@ -457,9 +473,92 @@
     for (const [p, f] of pending) download(p.slice("assets/".length), f);
   }
 
-  async function finishSave(where) {
+  /* 공개 사이트에서: GitHub API로 content.js + 새 그림을 커밋 하나로 올리기 */
+  async function ghApi(path, opts = {}) {
+    const res = await fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}${path}`, {
+      method: opts.method || "GET",
+      headers: { Authorization: `Bearer ${opts.token || ghToken()}`, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", ...(opts.body ? { "Content-Type": "application/json" } : {}) },
+      body: opts.body ? JSON.stringify(opts.body) : undefined
+    }).catch(() => { throw new Error("GitHub에 연결하지 못했어요 (인터넷 연결 확인)"); });
+    const out = await res.json().catch(() => ({}));
+    if (res.ok) return out;
+    if (res.status === 401) throw Object.assign(new Error("토큰이 틀렸거나 만료됐어요. [GitHub 연결]에서 토큰을 다시 넣어 주세요"), { badToken: true });
+    if (res.status === 403 || res.status === 404) throw Object.assign(new Error(`이 토큰으로는 ${GH.owner}/${GH.repo} 저장소에 쓸 수 없어요. 토큰의 저장소 선택과 'Contents: Read and write' 권한을 확인해 주세요`), { badToken: true });
+    if (res.status === 409 || res.status === 422) throw new Error("그사이 GitHub 쪽 내용이 바뀌었어요. 다시 저장해 주세요");
+    throw new Error(out.message || `GitHub 오류 ${res.status}`);
+  }
+  async function saveViaGitHub() {
+    const ref = await ghApi(`/git/ref/heads/${GH.branch}`);
+    const head = await ghApi(`/git/commits/${ref.object.sha}`);
+    const tree = [];
+    for (const [p, f] of pending) {
+      const blob = await ghApi("/git/blobs", { method: "POST", body: { content: await toB64(f), encoding: "base64" } });
+      tree.push({ path: p, mode: "100644", type: "blob", sha: blob.sha });
+    }
+    tree.push({ path: "content.js", mode: "100644", type: "blob", content: serialize() });
+    const newTree = await ghApi("/git/trees", { method: "POST", body: { base_tree: head.tree.sha, tree } });
+    const when = new Date().toLocaleString("ko-KR");
+    const commit = await ghApi("/git/commits", { method: "POST", body: { message: `사이트에서 편집 (${when})${pending.size ? ` · 그림 ${pending.size}개` : ""}`, tree: newTree.sha, parents: [ref.object.sha] } });
+    await ghApi(`/git/refs/heads/${GH.branch}`, { method: "PATCH", body: { sha: commit.sha } });
+    try { localStorage.setItem("pf-published", JSON.stringify({ at: Date.now(), sha: commit.sha, data: D })); } catch (e) {}
+    return commit.sha.slice(0, 7);
+  }
+
+  function showTokenPanel(thenSave) {
+    $$(".ed-gh").forEach((b) => b.remove());
+    const box = document.createElement("div");
+    box.className = "ed-gh";
+    const has = !!ghToken();
+    const newUrl = `https://github.com/settings/personal-access-tokens/new?name=${encodeURIComponent("portfolio 편집")}&description=${encodeURIComponent("포트폴리오 사이트 편집 모드에서 저장")}&target_name=${GH.owner}&expires_in=365&contents=write`;
+    box.innerHTML = `
+      <b>GitHub에 바로 저장하기</b>
+      <p>저장을 누르면 <span class="mono">${GH.owner}/${GH.repo}</span>에 올라가고, 1~2분 뒤 사이트에 반영돼요. 처음 한 번만 토큰을 넣어 주세요.</p>
+      <ol>
+        <li><a href="${newUrl}" target="_blank" rel="noopener">토큰 만들기 페이지 열기 ↗</a></li>
+        <li><b>Repository access</b> → <b>Only select repositories</b> → <span class="mono">${GH.repo}</span></li>
+        <li><b>Permissions</b> → <b>Contents</b>: <b>Read and write</b></li>
+        <li><b>Generate token</b> → 나온 <span class="mono">github_pat_…</span>를 복사해 아래에 붙여 넣기</li>
+      </ol>
+      <input type="password" placeholder="${has ? "연결됨 · 바꾸려면 새 토큰 붙여 넣기" : "github_pat_…"}" autocomplete="off" spellcheck="false">
+      <small>토큰은 이 브라우저에만 저장돼요. 공용 컴퓨터라면 다 쓴 뒤 [연결 끊기]를 눌러 주세요.</small>
+      <div>
+        <button type="button" data-g="ok">${thenSave ? "연결하고 저장" : "연결"}</button>
+        ${has ? `<button type="button" data-g="forget">연결 끊기</button>` : ""}
+        <button type="button" data-g="close">닫기</button>
+      </div>
+      <p class="ed-gh-msg" hidden></p>`;
+    document.body.appendChild(box);
+    const input = $("input", box), msg = $(".ed-gh-msg", box);
+    const say = (t) => { msg.hidden = false; msg.textContent = t; };
+    input.focus();
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") $('[data-g="ok"]', box).click(); e.stopPropagation(); });
+    box.addEventListener("click", async (e) => {
+      const b = e.target.closest("[data-g]"); if (!b) return;
+      const k = b.dataset.g;
+      if (k === "close") return box.remove();
+      if (k === "forget") {
+        try { localStorage.removeItem("pf-gh-token"); } catch (er) {}
+        updateBar(); box.remove(); return PF.toast("GitHub 연결을 끊었어요");
+      }
+      const t = input.value.trim();
+      if (!t && has) { box.remove(); return thenSave && save(); }
+      if (!/^(github_pat_|ghp_)[A-Za-z0-9_]{20,}$/.test(t)) return say("github_pat_ 로 시작하는 토큰을 붙여 넣어 주세요");
+      b.disabled = true; say("확인하는 중…");
+      try {
+        await ghApi("", { token: t });
+        await ghApi(`/git/ref/heads/${GH.branch}`, { token: t });
+        try { localStorage.setItem("pf-gh-token", t); } catch (er) {}
+        updateBar();
+        box.remove();
+        PF.toast("GitHub에 연결했어요");
+        if (thenSave) save();
+      } catch (er) { say(er.message); b.disabled = false; }
+    });
+  }
+
+  async function finishSave(where, keepFiles) {
     pending.clear();
-    await idbClear("files");
+    if (!keepFiles) await idbClear("files");
     try { localStorage.removeItem("pf-draft"); } catch (e) {}
     dirty = false;
     updateBar();
@@ -505,12 +604,23 @@
     saving = true;
     $(".ed-save", bar).textContent = "저장 중…";
     try {
+      if (GH && !IS_LOCAL) {
+        if (!ghToken()) return showTokenPanel(true);
+        const sha = await saveViaGitHub();
+        return await finishSave(`GitHub ${sha} · 1~2분 뒤 사이트에 반영돼요`, true);
+      }
       const folder = await saveViaServer();
       if (folder) return await finishSave(folder.split(/[\\/]/).pop() + " 폴더");
       if (window.showDirectoryPicker) return await finishSave(await saveViaPicker());
       showSaveError("저장 서버가 꺼져 있고, 이 브라우저는 폴더에 바로 쓸 수 없어요.");
     } catch (e) {
       if (e.name === "AbortError") PF.toast("저장을 취소했어요");
+      else if (GH && !IS_LOCAL) {
+        console.error(e);
+        if (!e.badToken) return PF.toast("저장하지 못했어요: " + e.message);
+        showTokenPanel(true);
+        const m = $(".ed-gh .ed-gh-msg"); m.hidden = false; m.textContent = e.message;
+      }
       else { console.error(e); showSaveError(e.message || String(e)); }
     } finally {
       saving = false;
@@ -519,7 +629,26 @@
   }
 
   /* ---------- 저장 안 한 수정 이어서 하기 ---------- */
+  /* GitHub에 막 저장했는데 사이트가 아직 옛 내용이면, 저장한 내용으로 보여 주기 */
+  async function applyPublished() {
+    let pub = null;
+    try { pub = JSON.parse(localStorage.getItem("pf-published") || "null"); } catch (e) {}
+    if (!pub) return false;
+    const same = JSON.stringify(pub.data) === JSON.stringify(D);
+    if (same || Date.now() - pub.at > 20 * 60 * 1000) {
+      try { localStorage.removeItem("pf-published"); } catch (e) {}
+      if (same) idbClear("files");
+      return false;
+    }
+    replaceData(pub.data);
+    for (const [p, f] of await idbAll("files")) PF.blobs[p] = URL.createObjectURL(f);
+    PF.render();
+    PF.toast("방금 저장한 내용이 사이트에 반영되는 중이에요 (보통 1~2분)");
+    return true;
+  }
+
   async function offerDraft() {
+    if (GH && !IS_LOCAL && await applyPublished()) return;
     let draft = null;
     try { draft = JSON.parse(localStorage.getItem("pf-draft") || "null"); } catch (e) {}
     if (!draft || JSON.stringify(draft.data) === JSON.stringify(D)) return;
