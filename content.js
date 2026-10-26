@@ -13,10 +13,11 @@ window.PORTFOLIO = {
   meta: {
     year: "2026",
     name: "정시안",
-    nameEn: "⟪Jeong Sian⟫",
-    role: "Game Content Designer",
+    nameEn: "jung sian",
+    role: "Game Designer",
     roleKo: "게임 컨텐츠 기획 · 서브컬처 RPG",
-    heroImage: "assets/hero.webp",       // 첫 화면 월페이퍼 (배경이 투명한 png/webp 추천)
+    heroImage: "assets/hero.webp",       // 첫 화면 오른쪽 일러스트 (배경이 투명한 png/webp 추천)
+    slideSeconds: 5,                     // 첫 화면 프로젝트 사진이 넘어가는 간격(초)
     email: "s1an011109@gmail.com",
     keywords: ["서브컬처 RPG", "캐릭터 연출", "필드 · 수집 컨텐츠", "컨텐츠 검수"],
     // 메인 대형 문구 (줄 단위). 강조할 단어는 *별표*로 감싸세요.

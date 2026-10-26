@@ -105,11 +105,11 @@
 .ed-gh button:disabled { opacity: .5; }
 .ed-gh-msg { color: #d9534f !important; font-weight: 600; }
 
-/* 월페이퍼 바꾸기 버튼 */
-.editing .hero-art { pointer-events: auto; z-index: 2; }
-.editing .hero-art > .ed-drop { inset: auto 16px 16px auto; width: auto; height: auto; padding: 8px 14px; border-radius: 99px; opacity: 1; background: var(--ink); color: var(--bg); border: 0; font-size: 12px; }
+/* 일러스트 바꾸기 버튼 (오른쪽 위) */
+.editing .hero-in { pointer-events: none; }
+.editing .hero-in > * { pointer-events: auto; }
+.editing .hero-art > .ed-drop { inset: 16px 16px auto auto; width: auto; height: auto; padding: 8px 14px; border-radius: 99px; opacity: 1; background: var(--ink); color: var(--bg); border: 0; font-size: 12px; pointer-events: auto; z-index: 3; }
 .editing .hero-art > .ed-drop br, .editing .hero-art > .ed-drop small { display: none; }
 .editing .hero-art > .ed-drop button { position: static; width: 22px; height: 22px; margin-left: 8px; }
-.editing .hero-art > .ed-drop > span::before { content: "월페이퍼 · "; }
-.editing .hero-art { pointer-events: none; }
-.editing .hero-art > .ed-drop { pointer-events: auto; }
+.editing .hero-art > .ed-drop > span::before { content: "일러스트 · "; }
+.editing .showcase .sc-slide:not(.on) { pointer-events: none; }

@@ -36,20 +36,22 @@
 
   <main id="top">
     <!-- HERO -->
-    <div class="hero-art" id="heroArt" aria-hidden="true"></div>
-    <section class="hero shell">
-      <p class="eyebrow mono"><span data-bind="role"></span> · <span data-bind="roleKo"></span></p>
-      <h1 class="hero-title" id="headline"></h1>
-      <div class="hero-bottom">
-        <div class="hero-rule" aria-hidden="true"></div>
-        <p class="hero-intro" data-bind="intro"></p>
-        <ul class="hero-keywords" id="keywords"></ul>
-        <ol class="hero-index mono">
-          <li><a href="#works"><span>01</span>대표작</a></li>
-          <li><a href="#projects"><span>02</span>프로젝트</a></li>
-          <li><a href="#gamelog"><span>03</span>게임 로그</a></li>
-          <li><a href="#resume"><span>04</span>이력</a></li>
-        </ol>
+    <section class="hero">
+      <div class="hero-art" id="heroArt" aria-hidden="true"></div>
+      <div class="hero-in shell">
+        <div class="hero-name">
+          <h1><span data-bind="name"></span> <small data-bind="nameEn"></small></h1>
+          <p class="hero-role" data-bind="role"></p>
+        </div>
+        <!-- 대표 프로젝트 슬라이드: 몇 초마다 넘어가고, 누르면 그 프로젝트 상세가 열림 -->
+        <div class="showcase" id="showcase" aria-roledescription="carousel" aria-label="대표 프로젝트"></div>
+        <!-- 한마디 · 소개 -->
+        <div class="hero-note">
+          <p class="eyebrow mono" data-bind="roleKo"></p>
+          <p class="hero-title" id="headline"></p>
+          <p class="hero-intro" data-bind="intro"></p>
+          <ul class="hero-keywords" id="keywords"></ul>
+        </div>
       </div>
     </section>
 

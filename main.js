@@ -132,6 +132,26 @@
       </li>`).join("") || (PF.editing ? `<li class="ed-empty">프로젝트 카드의 ★ 버튼을 누르면 여기에 대표작으로 나옵니다.</li>` : "");
     $$("#worksList [data-media]").forEach((slot, i) => slot.appendChild(makeMedia(featured[i][0].media, plain(featured[i][0].title))));
 
+    /* 첫 화면 대표 프로젝트 슬라이드 (★ 대표작이 순서대로) */
+    const sc = $("#showcase");
+    if (scIndex >= featured.length) scIndex = 0;
+    sc.innerHTML = featured.length ? `
+      <div class="sc-stage">${featured.map(([w, j], i) => `
+        <div class="sc-slide ${i === scIndex ? "on" : ""}" role="link" tabindex="${i === scIndex ? 0 : -1}" aria-label="${esc(plain(w.title))} 자세히 보기" data-work="${j}" data-slot="works.${j}.media"></div>`).join("")}
+        <span class="sc-go mono">자세히 보기 ↗</span>
+      </div>
+      <div class="sc-cap">
+        ${featured.map(([w, j], i) => `
+          <div class="sc-text ${i === scIndex ? "on" : ""}" data-work="${j}">
+            <p class="sc-meta mono"><span ${E(`works.${j}.period`)}>${fmt(w.period)}</span> · <span ${E(`works.${j}.role`)}>${fmt(w.role)}</span></p>
+            <h2 class="sc-title" ${E(`works.${j}.title`)}>${fmt(w.title)}</h2>
+            <p class="sc-one" ${E(`works.${j}.oneLine`)}>${fmt(w.oneLine)}</p>
+          </div>`).join("")}
+        <div class="sc-dots" role="tablist">${featured.map(([w], i) => `<button type="button" role="tab" aria-selected="${i === scIndex}" aria-label="${i + 1}번째: ${esc(plain(w.title))}" data-sc="${i}"><i></i></button>`).join("")}</div>
+      </div>` : `<div class="sc-empty">프로젝트 카드의 ★을 켜면 여기에 슬라이드로 나옵니다.</div>`;
+    $$(".sc-slide", sc).forEach((s) => s.appendChild(makeMedia(get(s.dataset.slot), plain(D.works[+s.dataset.work].title), s.dataset.slot)));
+    restartSlides();
+
     /* 포트폴리오 파일 */
     $("#filesStack").innerHTML = fileKinds.map(([k, name, en]) => {
       const f = D.files[k], p = `files.${k}`;
@@ -231,6 +251,40 @@
 
   const fileKinds = [["summary", "요약 포트폴리오", "SUMMARY"], ["detail", "상세 포트폴리오", "DETAIL"]];
 
+  /* 슬라이드 넘기기: meta.slideSeconds 초마다, 마우스를 올리면 멈춤 */
+  let scIndex = 0, scTimer = 0, scHold = false;
+  function goSlide(i) {
+    const sc = $("#showcase"), slides = $$(".sc-slide", sc), texts = $$(".sc-text", sc), dots = $$(".sc-dots button", sc);
+    if (!slides.length) return;
+    scIndex = (i + slides.length) % slides.length;
+    slides.forEach((s, k) => { s.classList.toggle("on", k === scIndex); s.tabIndex = k === scIndex ? 0 : -1; });
+    texts.forEach((t, k) => t.classList.toggle("on", k === scIndex));
+    dots.forEach((d, k) => d.setAttribute("aria-selected", k === scIndex));
+  }
+  function restartSlides() {
+    clearInterval(scTimer);
+    const sec = Math.max(2, +D.meta.slideSeconds || 5);
+    $("#showcase").style.setProperty("--sc-sec", sec + "s");
+    if (reduceMotion || $$(".sc-slide").length < 2) return;
+    scTimer = setInterval(() => { if (!scHold && !PF.editing && !document.hidden) goSlide(scIndex + 1); }, sec * 1000);
+  }
+  const scEl = $("#showcase");
+  scEl.addEventListener("mouseenter", () => { scHold = true; scEl.classList.add("hold"); });
+  scEl.addEventListener("mouseleave", () => { scHold = false; scEl.classList.remove("hold"); });
+  scEl.addEventListener("focusin", () => { scHold = true; scEl.classList.add("hold"); });
+  scEl.addEventListener("focusout", () => { scHold = false; scEl.classList.remove("hold"); });
+  scEl.addEventListener("click", (e) => {
+    const d = e.target.closest("[data-sc]");
+    if (d) { e.stopPropagation(); goSlide(+d.dataset.sc); restartSlides(); }
+  });
+  let tx0 = null;
+  scEl.addEventListener("touchstart", (e) => { tx0 = e.touches[0].clientX; }, { passive: true });
+  scEl.addEventListener("touchend", (e) => {
+    if (tx0 == null) return;
+    const dx = e.changedTouches[0].clientX - tx0; tx0 = null;
+    if (Math.abs(dx) > 40) { goSlide(scIndex + (dx < 0 ? 1 : -1)); restartSlides(); }
+  });
+
   /* 대표작 · 카드 클릭 → 상세 */
   document.addEventListener("click", (e) => {
     const t = e.target.closest("[data-work]");
@@ -322,13 +376,9 @@
     dock.classList.toggle("on", past && !filesVisible && !PF.editing);
     if (!dock.classList.contains("on")) setDock(false);
     $(".top").classList.toggle("scrolled", window.scrollY > 10);
-    // 월페이퍼: 스크롤하면 천천히 밀려나며 흐려짐
+    // 월페이퍼: 스크롤하면 살짝 느리게 따라옴
     const art = $("#heroArt");
-    if (!reduceMotion && art && window.scrollY < window.innerHeight * 1.2) {
-      const y = window.scrollY;
-      art.style.transform = `translateY(${y * 0.18}px)`;
-      art.style.opacity = String(Math.max(0, 1 - y / (window.innerHeight * 0.9)));
-    }
+    if (!reduceMotion && art && window.scrollY < window.innerHeight * 1.2) art.style.setProperty("--py", `${window.scrollY * 0.12}px`);
   }
   addEventListener("scroll", onScroll, { passive: true });
 
