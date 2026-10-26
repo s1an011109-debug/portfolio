@@ -110,28 +110,8 @@
     $("#footLinks").dataset.list = "meta.links";
     $("#footLinks").innerHTML = D.meta.links.map((l, i) => `<li data-item="meta.links.${i}"><a ${href(`meta.links.${i}.url`)} target="_blank" rel="noopener"><span ${E(`meta.links.${i}.label`)}>${fmt(l.label)}</span> ↗</a></li>`).join("");
 
-    /* 한눈에 */
-    $("#glanceGrid").dataset.list = "glance";
-    $("#glanceGrid").innerHTML = D.glance.map((g, i) => `
-      <div class="glance-item reveal" data-item="glance.${i}">
-        <div class="glance-num"><span data-count ${E(`glance.${i}.value`)}>${fmt(g.value)}</span><small ${E(`glance.${i}.unit`)}>${fmt(g.unit)}</small></div>
-        <p class="glance-label" ${E(`glance.${i}.label`)}>${fmt(g.label)}</p>
-        <p class="glance-sub" ${E(`glance.${i}.sub`)}>${fmt(g.sub)}</p>
-      </div>`).join("");
-
-    /* Selected Works */
+    /* ★ 켠 프로젝트 = 첫 화면 슬라이드 */
     const featured = D.works.map((w, j) => [w, j]).filter(([w]) => w.featured);
-    $("#worksList").innerHTML = featured.map(([w, j], i) => `
-      <li class="work-row reveal">
-        <div class="w-btn" role="button" tabindex="0" data-work="${j}">
-          <span class="w-no mono">${String(i + 1).padStart(2, "0")}</span>
-          <span class="w-thumb" data-media></span>
-          <span class="w-title"><span ${E(`works.${j}.title`)}>${fmt(w.title)}</span><span class="w-genre" ${E(`works.${j}.genre`)}>${fmt(w.genre)}</span></span>
-          <span class="w-role"><span ${E(`works.${j}.role`)}>${fmt(w.role)}</span><span class="w-tags">${tags(`works.${j}.tags`)}</span></span>
-          <span class="w-meta mono"><span ${E(`works.${j}.period`)}>${fmt(w.period)}</span><span class="w-arrow">↗</span></span>
-        </div>
-      </li>`).join("") || (PF.editing ? `<li class="ed-empty">프로젝트 카드의 ★ 버튼을 누르면 여기에 대표작으로 나옵니다.</li>` : "");
-    $$("#worksList [data-media]").forEach((slot, i) => slot.appendChild(makeMedia(featured[i][0].media, plain(featured[i][0].title))));
 
     /* 첫 화면 대표 프로젝트 슬라이드 (★ 대표작이 순서대로) */
     const sc = $("#showcase");
@@ -310,32 +290,6 @@
   document.addEventListener("keydown", (e) => {
     const t = e.target.closest && e.target.closest("[data-work]");
     if (t && e.target === t && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openWork(+t.dataset.work); }
-  });
-
-  // 커서를 따라다니는 미리보기
-  const pv = $("#worksPreview");
-  let px = 0, py = 0, tx = 0, ty = 0, raf = 0;
-  const loop = () => {
-    px += (tx - px) * 0.18; py += (ty - py) * 0.18;
-    pv.style.left = px + "px"; pv.style.top = py + "px";
-    raf = Math.abs(tx - px) + Math.abs(ty - py) > 0.5 ? requestAnimationFrame(loop) : 0;
-  };
-  const worksList = $("#worksList");
-  worksList.addEventListener("mouseover", (e) => {
-    const row = e.target.closest(".w-btn");
-    if (!row || PF.editing || row.contains(e.relatedTarget)) return;
-    const w = D.works[+row.dataset.work];
-    pv.replaceChildren(makeMedia(w.media, plain(w.title)));
-    px = tx = e.clientX + 200; py = ty = e.clientY;
-    pv.classList.add("show");
-  });
-  worksList.addEventListener("mousemove", (e) => {
-    tx = e.clientX + 200; ty = e.clientY;
-    if (!raf) raf = requestAnimationFrame(loop);
-  });
-  worksList.addEventListener("mouseout", (e) => {
-    const row = e.target.closest(".w-btn");
-    if (row && !row.contains(e.relatedTarget)) pv.classList.remove("show");
   });
 
   $("#logFilter").addEventListener("click", (e) => {

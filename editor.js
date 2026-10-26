@@ -78,7 +78,7 @@
         <li><b>그림·영상</b>: 사진·mp4를 자리 위로 끌어다 놓기 (또는 자리를 클릭해 고르기, 복사한 그림은 자리에 마우스를 올리고 Ctrl+V)</li>
         <li><b>여러 장</b>을 한 번에 놓으면 자동 슬라이드</li>
         <li><b>추가 · 삭제 · 순서</b>: 항목 위에 마우스를 올리면 ↑ ↓ ✕, 목록 끝의 + 버튼</li>
-        <li><b>★</b>: 프로젝트 카드의 별을 켜면 첫 화면 슬라이드와 '대표작'에 나옴</li>
+        <li><b>★</b>: 프로젝트 카드의 별을 켜면 첫 화면 슬라이드에 나옴</li>
         <li><b>첫 화면 배치</b> (PC 화면): 파란 ✥를 끌어 옮기기, ◢를 끌어 크기 조절, 일러스트는 그림을 끌어 옮기고 오른쪽 위 '크기'로 확대. ✥를 두 번 누르면 처음 자리로</li>
         <li><b>상세 내용</b>: 프로젝트 카드의 '자세히 보기' → 소제목 · 글 · 그림 블록 추가</li>
         <li><b>링크</b>: 🔗 버튼으로 주소 입력, PDF는 링크 위로 끌어다 놓기</li>
@@ -134,7 +134,7 @@
       c.contentEditable = "false";
       const isWork = /^works\.\d+$/.test(p), isFig = el.classList.contains("b-fig");
       c.innerHTML =
-        (isWork ? `<button type="button" data-ed="star" data-p="${p}" class="${PF.get(p).featured ? "on" : ""}" title="대표작에 표시">★</button>` : "") +
+        (isWork ? `<button type="button" data-ed="star" data-p="${p}" class="${PF.get(p).featured ? "on" : ""}" title="첫 화면 슬라이드에 넣기">★</button>` : "") +
         (isFig ? `<button type="button" data-ed="wide" data-p="${p}" title="넓게 / 반쪽">${PF.get(p).wide ? "▭" : "◫"}</button>` : "") +
         `<button type="button" data-ed="up" data-p="${p}" title="앞으로">↑</button><button type="button" data-ed="down" data-p="${p}" title="뒤로">↓</button><button type="button" data-ed="del" data-p="${p}" title="삭제">✕</button>`;
       el.appendChild(c);
