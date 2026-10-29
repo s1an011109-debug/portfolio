@@ -338,27 +338,6 @@ window.PORTFOLIO = {
       "insight": "",
       "tags": [],
       "media": null
-    },
-    {
-      "title": "피규어 · 굿즈 컬렉션",
-      "genre": "컬렉션",
-      "platform": "오프라인",
-      "period": "⟪⟫",
-      "stats": [
-        {
-          "label": "소장품",
-          "value": "10개 이상"
-        },
-        {
-          "label": "IP",
-          "value": "니케 · 에반게리온 · 버튜버"
-        }
-      ],
-      "insight": "⟪유저로서 지갑을 여는 순간에 대해 느낀 것 한 줄⟫",
-      "tags": [
-        "서브컬처 취향"
-      ],
-      "media": null
     }
   ],
   "resume": [
