@@ -646,6 +646,19 @@
   async function saveViaGitHub() {
     const ref = await ghApi(`/git/ref/heads/${GH.branch}`);
     const head = await ghApi(`/git/commits/${ref.object.sha}`);
+    // 안전장치: 이 화면이 예전 내용을 불러온 상태여도, GitHub에만 있는 섹션은 지우지 않고 살려 둠
+    try {
+      const file = await ghApi(`/contents/content.js?ref=${ref.object.sha}`);
+      const bytes = Uint8Array.from(atob(String(file.content || "").replace(/\s/g, "")), (c) => c.charCodeAt(0));
+      const w = {};
+      new Function("window", new TextDecoder().decode(bytes))(w);
+      const missing = Object.keys(w.PORTFOLIO || {}).filter((k) => !(k in D));
+      if (missing.length) {
+        missing.forEach((k) => { D[k] = w.PORTFOLIO[k]; });
+        PF.render();
+        PF.toast(`GitHub에만 있던 '${missing.join(", ")}' 내용을 지우지 않고 함께 저장했어요`);
+      }
+    } catch (e) { console.warn("기존 내용 확인 실패", e); }
     const tree = [];
     for (const [p, f] of pending) {
       const blob = await ghApi("/git/blobs", { method: "POST", body: { content: await toB64(f), encoding: "base64" } });

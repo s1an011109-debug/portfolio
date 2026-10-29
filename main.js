@@ -244,42 +244,61 @@
 
     } catch (e) { console.error("[파일] 그리기 실패", e); }
     try {
-      /* 프로젝트 카드 */
+      /* 프로젝트 카드 — 첫 카드는 크게, 그림 없는 카드는 글 중심으로 */
+      const hasMedia = (m) => !!(m && m.src && (!Array.isArray(m.src) || m.src.length));
+      const ed = PF.editing;
       $("#projectCards").dataset.list = "works";
-      $("#projectCards").innerHTML = D.works.map((w, j) => `
-        <div class="card reveal" role="button" tabindex="0" data-work="${j}" data-item="works.${j}">
-          <div class="card-media" data-slot="works.${j}.media"><span class="card-status" ${E(`works.${j}.status`)}>${fmt(w.status)}</span><span class="card-play mono">PLAYING</span></div>
+      $("#projectCards").innerHTML = D.works.map((w, j) => {
+        const media = hasMedia(w.media) || ed;
+        return `
+        <div class="card reveal ${media ? "" : "no-media"}" role="button" tabindex="0" data-work="${j}" data-item="works.${j}">
+          ${media ? `<div class="card-media" data-slot="works.${j}.media"><span class="card-status" ${E(`works.${j}.status`)}>${fmt(w.status)}</span><span class="card-play mono">PLAYING</span></div>` : ""}
           <div class="card-body">
+            ${media ? "" : `<span class="card-status" ${E(`works.${j}.status`)}>${fmt(w.status)}</span>`}
             <div class="card-top mono"><span ${E(`works.${j}.period`)}>${fmt(w.period)}</span><span ${E(`works.${j}.team`)}>${fmt(w.team)}</span></div>
             <h3 ${E(`works.${j}.title`)}>${fmt(w.title)}</h3>
             <p class="one" ${E(`works.${j}.oneLine`)}>${fmt(w.oneLine)}</p>
             <div class="tags">${tags(`works.${j}.tags`)}</div>
             <span class="card-more">자세히 보기 →</span>
           </div>
-        </div>`).join("");
-      $$("#projectCards .card").forEach((c) => {
-        const j = +c.dataset.work;
-        $(".card-media", c).prepend(makeMedia(D.works[j].media, plain(D.works[j].title), `works.${j}.media`));
+        </div>`;
+      }).join("");
+      $$("#projectCards .card-media").forEach((cm) => {
+        const j = +cm.closest("[data-work]").dataset.work;
+        cm.prepend(makeMedia(D.works[j].media, plain(D.works[j].title), `works.${j}.media`));
       });
 
     } catch (e) { console.error("[프로젝트 카드] 그리기 실패", e); }
     try {
-      /* 게임 로그 */
+      /* 게임 로그 — 기록표처럼 한 줄씩 (그림이 있으면 왼쪽에) */
+      const ed = PF.editing;
+      const filled = (v) => plain(v).trim() !== "";
       $("#logCards").dataset.list = "gameLogs";
-      $("#logCards").innerHTML = D.gameLogs.map((g, i) => `
-        <article class="card reveal" data-genre="${esc(plain(g.genre))}" data-item="gameLogs.${i}">
-          <div class="card-media" data-slot="gameLogs.${i}.media"><span class="card-status" ${E(`gameLogs.${i}.platform`)}>${fmt(g.platform)}</span><span class="card-play mono">PLAYING</span></div>
-          <div class="card-body">
-            <div class="card-top mono"><span ${E(`gameLogs.${i}.genre`)}>${fmt(g.genre)}</span><span ${E(`gameLogs.${i}.period`)}>${fmt(g.period)}</span></div>
-            <h3 ${E(`gameLogs.${i}.title`)}>${fmt(g.title)}</h3>
-            <dl class="log-stats">${(g.stats || []).slice(0, 2).map((s, k) => `<div><dt ${E(`gameLogs.${i}.stats.${k}.label`)}>${fmt(s.label)}</dt><dd ${E(`gameLogs.${i}.stats.${k}.value`)}>${fmt(s.value)}</dd></div>`).join("")}</dl>
-            <p class="log-insight" ${E(`gameLogs.${i}.insight`)}>${fmt(g.insight)}</p>
-            <div class="tags">${tags(`gameLogs.${i}.tags`)}</div>
+      $("#logCards").innerHTML = D.gameLogs.map((g, i) => {
+        const p = `gameLogs.${i}`;
+        const media = (g.media && g.media.src) || ed;
+        const stats = (g.stats || []).slice(0, 3).map((s, k) => [s, k]).filter(([s]) => ed || filled(s.value));
+        const meta = [["platform", g.platform], ["genre", g.genre], ["period", g.period]].filter(([, v]) => ed || filled(v));
+        return `
+        <article class="log-row reveal ${media ? "" : "no-media"}" data-genre="${esc(plain(g.genre))}" data-item="${p}">
+          ${media ? `<div class="log-media card-media" data-slot="${p}.media"></div>` : ""}
+          <div class="log-head">
+            <h3 ${E(p + ".title")}>${fmt(g.title)}</h3>
+            <p class="log-meta">${meta.map(([k, v]) => `<span ${E(`${p}.${k}`)}>${fmt(v)}</span>`).join("")}</p>
           </div>
-        </article>`).join("");
-      $$("#logCards .card").forEach((c, i) => $(".card-media", c).prepend(makeMedia(D.gameLogs[i].media, plain(D.gameLogs[i].title), `gameLogs.${i}.media`)));
+          ${stats.length ? `<dl class="log-stats">${stats.map(([s, k]) => `<div><dt ${E(`${p}.stats.${k}.label`)}>${fmt(s.label)}</dt><dd ${E(`${p}.stats.${k}.value`)}>${fmt(s.value)}</dd></div>`).join("")}</dl>` : `<div class="log-stats empty"></div>`}
+          <div class="log-note">
+            ${ed || filled(g.insight) ? `<p class="log-insight" ${E(p + ".insight")}>${fmt(g.insight)}</p>` : ""}
+            <div class="tags">${tags(`${p}.tags`)}</div>
+          </div>
+        </article>`;
+      }).join("");
+      $$("#logCards .log-media").forEach((cm) => {
+        const i = +cm.closest("[data-item]").dataset.item.split(".")[1];
+        cm.prepend(makeMedia(D.gameLogs[i].media, plain(D.gameLogs[i].title), `gameLogs.${i}.media`));
+      });
 
-      const genres = ["전체", ...new Set(D.gameLogs.map((g) => plain(g.genre)))];
+      const genres = ["전체", ...new Set(D.gameLogs.map((g) => plain(g.genre).trim()).filter(Boolean))];
       $("#logFilter").innerHTML = genres.map((g, i) => `<button type="button" aria-pressed="${i === 0}">${esc(g)}</button>`).join("");
 
     } catch (e) { console.error("[게임 로그] 그리기 실패", e); }
@@ -384,7 +403,7 @@
   $("#logFilter").addEventListener("click", (e) => {
     const b = e.target.closest("button"); if (!b) return;
     $$("#logFilter button").forEach((x) => x.setAttribute("aria-pressed", x === b));
-    $$("#logCards .card").forEach((c) => c.classList.toggle("hide", b.textContent !== "전체" && c.dataset.genre !== b.textContent));
+    $$("#logCards [data-genre]").forEach((c) => c.classList.toggle("hide", b.textContent !== "전체" && c.dataset.genre !== b.textContent));
   });
 
   /* ---------- 상세 모달 ---------- */
@@ -485,6 +504,7 @@
     if (n) countUp(n);
   }), { threshold: 0.15 });
   function observeReveals() {
+    document.documentElement.classList.add("js-reveal");
     $$(".reveal:not(.in)").forEach((el, i) => {
       if (PF.editing) return el.classList.add("in");
       el.style.transitionDelay = (i % 4) * 70 + "ms";
