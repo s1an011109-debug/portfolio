@@ -24,7 +24,8 @@ window.PORTFOLIO = {
       "만든 것을 사람들이 즐기는\n순간이 좋아 게임을 만듭니다."
     ],
     "intro": "보드게임의 콘셉트와 규칙을 기획하고\n제작부터 배송까지 맡아 516명의 후원자에게 전달했습니다.\n\n「카오스 제로 나이트메어」에서는 전투의 등장 시점과 적 구성을 정하고\n캐릭터의 감정을 보여주는 연출을 제안해 반영했습니다.",
-    "links": []
+    "links": [],
+    "topLabel": "Portfolio of"
   },
   "glance": [
     {
@@ -431,7 +432,7 @@ window.PORTFOLIO = {
       "items": [
         {
           "period": "2022",
-          "title": "2022 1회 알발 페스타",
+          "title": "2022년 1회 알발 페스타",
           "desc": "청강문화산업대학교, VR 프로젝트",
           "badge": "2등"
         },
@@ -505,5 +506,49 @@ window.PORTFOLIO = {
       }
     ],
     "facts": []
+  },
+  "ui": {
+    "sec": {
+      "projects": {
+        "idx": "01 / Projects",
+        "title": "프로젝트",
+        "sub": "",
+        "nav": "프로젝트"
+      },
+      "files": {
+        "idx": "FILES",
+        "title": "기획 내용을\n문서로 정리했습니다.",
+        "sub": "핵심 내용을 담은 요약본과 세부 내용을 담은 상세본입니다. \n두 문서 모두 PDF로 확인하실 수 있습니다.",
+        "nav": ""
+      },
+      "gamelog": {
+        "idx": "02 / Game Log",
+        "title": "게임 로그",
+        "sub": "오래 플레이한 게임과 그 안에서 기획자로서 본 것들.",
+        "nav": "게임 로그"
+      },
+      "custom": {},
+      "resume": {
+        "idx": "03 / Resume",
+        "title": "이력",
+        "sub": "",
+        "nav": "이력"
+      },
+      "about": {
+        "idx": "04 / About Me",
+        "title": "",
+        "sub": "",
+        "nav": "About"
+      }
+    },
+    "order": [
+      "projects",
+      "files",
+      "gamelog",
+      "custom",
+      "resume",
+      "about"
+    ],
+    "font": {}
   }
 };
