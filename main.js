@@ -28,7 +28,9 @@
     const pre = raw.replace(/⟪(.*?)⟫/g, (_, t) => `<mark class="todo">${esc(t || "채울 내용")}</mark>`);
     let html = window.marked.parse(pre, { gfm: true, breaks: true });
     html = window.DOMPurify.sanitize(html, { ADD_ATTR: ["target"] });
+    // 태그 사이 줄바꿈 제거 — 편집 칸(contenteditable)에서는 이 줄바꿈이 빈 줄로 보여 간격이 커짐
     return html
+      .replace(/>\n+(?=<)/g, ">")
       .replace(/<a /g, '<a target="_blank" rel="noopener" ')
       .replace(/<img ([^>]*?)src="([^"]+)"/g, (m, pre2, u) => `<img loading="lazy" ${pre2}src="${PF.blobs[u] || u}"`);
   };
