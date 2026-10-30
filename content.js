@@ -281,7 +281,7 @@ window.PORTFOLIO = {
       "stats": [
         {
           "label": "지휘관 레벨",
-          "value": "285"
+          "value": "300"
         },
         {
           "label": "스쿼드 전투력",
@@ -327,7 +327,7 @@ window.PORTFOLIO = {
       "title": "블루 아카이브",
       "genre": "서브컬처 RPG",
       "platform": "모바일/PC",
-      "period": "2026",
+      "period": "2026 ~",
       "stats": [
         {
           "label": "선생 레벨",
@@ -352,7 +352,7 @@ window.PORTFOLIO = {
       "title": "사이퍼즈",
       "genre": "AOS, MOBA",
       "platform": "PC",
-      "period": "",
+      "period": "2019 ~",
       "stats": [
         {
           "label": "기록",
