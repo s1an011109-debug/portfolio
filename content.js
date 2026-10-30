@@ -18,7 +18,7 @@ window.PORTFOLIO = {
       "서브컬처 RPG",
       "캐릭터 연출",
       "필드/수집 콘텐츠",
-      "콘텐츠 검수"
+      "데이터 검수"
     ],
     "headline": [
       "만든 것을 사람들이 즐기는\n순간이 좋아 게임을 만듭니다."
@@ -552,7 +552,7 @@ window.PORTFOLIO = {
         "idx": "04 / ABOUT ME",
         "title": "",
         "sub": "",
-        "nav": "About"
+        "nav": "About Me"
       }
     },
     "order": [
