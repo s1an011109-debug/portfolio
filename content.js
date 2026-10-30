@@ -247,14 +247,17 @@ window.PORTFOLIO = {
       "role": "⟪역할⟫",
       "period": "2022",
       "team": "KT, 넥슨 등",
-      "status": "산학 협력",
+      "status": "산학 협력 및 기타 프로젝트",
       "tags": [
         "산학",
         "MOD",
         "VR"
       ],
       "oneLine": "KT 산학 프로젝트, 넥슨 MOD 게임 개발, 그리고 알발 페스타 2등을 받은 VR 프로젝트입니다.",
-      "media": null,
+      "media": {
+        "type": "image",
+        "src": "assets/mvuerwcvizz-2026-10-30-122411.png"
+      },
       "tasks": [
         "2022 KT 산학 프로젝트 참여",
         "2022 넥슨 MOD 게임 개발 프로젝트 참여",
