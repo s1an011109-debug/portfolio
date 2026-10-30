@@ -357,8 +357,8 @@ window.PORTFOLIO = {
       "period": "2019 ~",
       "stats": [
         {
-          "label": "기록",
-          "value": ""
+          "label": "시즌 말 최고 랭킹",
+          "value": "81위"
         },
         {
           "label": "기록",
@@ -499,7 +499,7 @@ window.PORTFOLIO = {
     "blocks": [
       {
         "type": "p",
-        "text": "캐릭터가 좋아서 게임 밖에서도 피규어와 굿즈로 곁에 두는 취향입니다.\n에반게리온부터 서브컬처 게임, 버튜버까지 좋아하는 대상을 오래 즐겨왔습니다.\n## 플레이가 끝난 뒤에도 계속 좋아하고 싶은 캐릭터와 콘텐츠를 기획하고 싶습니다."
+        "text": "## 플레이가 끝난 뒤에도 계속 좋아하고 싶은 캐릭터와 콘텐츠를 기획하고 싶습니다.\n캐릭터가 좋아서 게임 밖에서도 피규어와 굿즈로 곁에 두는 취향입니다.\n에반게리온부터 서브컬처 게임, 버튜버까지 좋아하는 대상을 오래 즐겨왔습니다."
       },
       {
         "type": "img",
@@ -525,7 +525,7 @@ window.PORTFOLIO = {
           "type": "image",
           "src": "assets/mvukj618opc-c61e8efd-1d97-4404-ad59-457bec.webp"
         },
-        "caption": "피규어 및 굿즈 사진",
+        "caption": "피규어 및 굿즈",
         "wide": false
       }
     ],
@@ -546,7 +546,7 @@ window.PORTFOLIO = {
         "nav": ""
       },
       "gamelog": {
-        "idx": "02 / Game Log",
+        "idx": "02 / GAME LOG",
         "title": "게임 로그",
         "sub": "오래 플레이한 게임과 그 안에서 기획자로서 본 것들.",
         "nav": "게임 로그"
