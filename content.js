@@ -293,7 +293,10 @@ window.PORTFOLIO = {
         "캐릭터 매력",
         "수집/육성"
       ],
-      "media": null
+      "media": {
+        "type": "image",
+        "src": "assets/mvufi0l6inm-a567349f3a2cfa883baf767566d418.png"
+      }
     },
     {
       "title": "명조: 워더링 웨이브",
@@ -315,7 +318,10 @@ window.PORTFOLIO = {
         "필드 탐색",
         "수집"
       ],
-      "media": null
+      "media": {
+        "type": "image",
+        "src": "assets/mvufhjns9qi-dhwonan4gl4yekjr0z-17084204136.jpg"
+      }
     },
     {
       "title": "블루 아카이브",
