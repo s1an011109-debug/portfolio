@@ -189,13 +189,6 @@
         $("#aboutBody").innerHTML = `
           <div class="about-main">
             ${blocks("about.blocks")}
-            <dl class="about-facts" data-list="about.facts">${ab.facts.map((f, i) => `
-              <div data-item="about.facts.${i}"><dt ${E(`about.facts.${i}.label`)}>${fmt(f.label)}</dt><dd ${E(`about.facts.${i}.value`)}>${fmt(f.value)}</dd></div>`).join("")}</dl>
-            <div class="about-contact">
-              <p class="mono about-contact-label">CONTACT</p>
-              <span class="copy-mail" role="button" tabindex="0"><span ${E("meta.email")}>${fmt(D.meta.email)}</span><span class="mono copy-hint">복사</span></span>
-              <ul class="about-links" data-list="meta.links">${D.meta.links.map((l, i) => `<li data-item="meta.links.${i}"><a ${href(`meta.links.${i}.url`)} target="_blank" rel="noopener"><span ${E(`meta.links.${i}.label`)}>${fmt(l.label)}</span> ↗</a></li>`).join("")}</ul>
-            </div>
           </div>`;
         fillSlots($("#aboutBody"));
       }
