@@ -13,7 +13,7 @@ window.PORTFOLIO = {
     "roleKo": "게임 콘텐츠 기획, 시스템 기획",
     "heroImage": "assets/mvoxhl71ae7-1161e04c-8088-4c28-9047-e99977.png",
     "slideSeconds": 5,
-    "email": "s1an011109@gmail.com",
+    "email": "",
     "keywords": [
       "서브컬처 RPG",
       "캐릭터 연출",
@@ -503,6 +503,24 @@ window.PORTFOLIO = {
       {
         "type": "p",
         "text": "니케, 에반게리온, 버튜버 피규어와 굿즈를 10개 넘게 모았을 만큼 서브컬처를 좋아합니다. 유저로서 지갑을 연 순간을 기억해 두었다가 기획에 씁니다."
+      },
+      {
+        "type": "img",
+        "media": {
+          "type": "image",
+          "src": "assets/mvuj8hgttex-maxresdefault.jpg"
+        },
+        "caption": "NEON GENESIS EVANGELION 애니메이션을 가장 좋아합니다",
+        "wide": false
+      },
+      {
+        "type": "img",
+        "media": {
+          "type": "image",
+          "src": "assets/mvuj90bgurr-5l-txs-sgazeyq6bjn-tt39e4qat2j.webp"
+        },
+        "caption": "서브컬쳐 버튜버 활동 3개월 \n#100일내 팔로워 1,000명 달성 #평균 동시 시청자 50명",
+        "wide": false
       }
     ],
     "facts": []
@@ -510,7 +528,7 @@ window.PORTFOLIO = {
   "ui": {
     "sec": {
       "projects": {
-        "idx": "01 / Projects",
+        "idx": "01 / PROJECTS",
         "title": "프로젝트",
         "sub": "",
         "nav": "프로젝트"
@@ -535,7 +553,7 @@ window.PORTFOLIO = {
         "nav": "이력"
       },
       "about": {
-        "idx": "04 / About Me",
+        "idx": "04 / ABOUT ME",
         "title": "",
         "sub": "",
         "nav": "About"
