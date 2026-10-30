@@ -213,6 +213,7 @@
         <div class="sc-stage">${featured.map(([w, j], i) => `
           <div class="sc-slide ${i === scIndex ? "on" : ""}" role="link" tabindex="${i === scIndex ? 0 : -1}" aria-label="${esc(plain(w.title))} 자세히 보기" data-work="${j}" data-slot="works.${j}.media"></div>`).join("")}
           <span class="sc-go mono">자세히 보기 ↗</span>
+          ${featured.length > 1 ? `<button type="button" class="sc-arrow prev" data-sc-step="-1" aria-label="이전 프로젝트">‹</button><button type="button" class="sc-arrow next" data-sc-step="1" aria-label="다음 프로젝트">›</button>` : ""}
         </div>
         <div class="sc-cap">
           ${featured.map(([w, j], i) => `
@@ -487,12 +488,50 @@
     const d = e.target.closest("[data-sc]");
     if (d) { e.stopPropagation(); goSlide(+d.dataset.sc); restartSlides(); }
   });
-  let tx0 = null;
-  scEl.addEventListener("touchstart", (e) => { tx0 = e.touches[0].clientX; }, { passive: true });
-  scEl.addEventListener("touchend", (e) => {
-    if (tx0 == null) return;
-    const dx = e.changedTouches[0].clientX - tx0; tx0 = null;
-    if (Math.abs(dx) > 40) { goSlide(scIndex + (dx < 0 ? 1 : -1)); restartSlides(); }
+  /* 좌우로 넘기기: 화살표 버튼, 끌기(마우스·터치), 트랙패드 가로 스크롤, 키보드 ← → */
+  scEl.addEventListener("click", (e) => {
+    const a = e.target.closest("[data-sc-step]");
+    if (a) { e.stopPropagation(); goSlide(scIndex + +a.dataset.scStep); restartSlides(); }
+  });
+  let drag = null, dragged = false;
+  scEl.addEventListener("dragstart", (e) => { if (e.target.closest(".sc-stage")) e.preventDefault(); });
+  scEl.addEventListener("pointerdown", (e) => {
+    const stage = e.target.closest(".sc-stage");
+    if (!stage || e.button !== 0 || e.target.closest("button, iframe, [data-sc-step]")) return;
+    drag = { x: e.clientX, y: e.clientY, id: e.pointerId, stage }; dragged = false;
+  });
+  scEl.addEventListener("pointermove", (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const dx = e.clientX - drag.x;
+    if (!dragged && Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(e.clientY - drag.y)) {
+      dragged = true; scEl.classList.add("dragging");
+      try { drag.stage.setPointerCapture(e.pointerId); } catch (_) {}
+    }
+    if (dragged) drag.stage.style.setProperty("--drag", Math.max(-80, Math.min(80, dx * 0.35)) + "px");
+  });
+  const endDrag = (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const dx = e.clientX - drag.x, stage = drag.stage; drag = null;
+    stage.style.removeProperty("--drag"); scEl.classList.remove("dragging");
+    if (dragged && Math.abs(dx) > 50) { goSlide(scIndex + (dx < 0 ? 1 : -1)); restartSlides(); }
+  };
+  scEl.addEventListener("pointerup", endDrag);
+  scEl.addEventListener("pointercancel", endDrag);
+  // 끌어서 넘겼을 때는 프로젝트 상세가 열리지 않게
+  scEl.addEventListener("click", (e) => { if (dragged) { e.stopPropagation(); e.preventDefault(); dragged = false; } }, true);
+  let wheelLock = 0;
+  scEl.addEventListener("wheel", (e) => {
+    if (Math.abs(e.deltaX) < 30 || Math.abs(e.deltaX) < Math.abs(e.deltaY)) return;
+    e.preventDefault();
+    if (Date.now() < wheelLock) return;
+    wheelLock = Date.now() + 600;
+    goSlide(scIndex + (e.deltaX > 0 ? 1 : -1)); restartSlides();
+  }, { passive: false });
+  scEl.addEventListener("keydown", (e) => {
+    if (e.target.isContentEditable || !/^Arrow(Left|Right)$/.test(e.key)) return;
+    e.preventDefault();
+    goSlide(scIndex + (e.key === "ArrowRight" ? 1 : -1)); restartSlides();
+    $(".sc-slide.on", scEl)?.focus();
   });
 
   /* 대표작 · 카드 클릭 → 상세 */
