@@ -182,6 +182,7 @@ mark.todo { background: var(--todo); color: inherit; border-radius: 4px; padding
 /* ---------- section ---------- */
 .sec { padding: clamp(72px, 12vh, 128px) 0; border-top: 1px solid var(--line); }
 .sec-head { display: grid; gap: 10px; margin-bottom: 44px; }
+#about .sec-head { margin-bottom: 14px; }
 .sec-idx { color: var(--accent); text-transform: uppercase; letter-spacing: .08em; }
 .sec-head h2, .files-copy h2 { font-size: clamp(30px, 4.4vw, 52px); font-weight: 800; letter-spacing: -0.04em; line-height: 1.18; }
 .sec-sub { color: var(--ink-2); font-size: 15px; }
