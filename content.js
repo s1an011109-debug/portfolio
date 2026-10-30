@@ -517,6 +517,15 @@ window.PORTFOLIO = {
         },
         "caption": "서브컬쳐 버튜버 활동 3개월 \n#100일내 팔로워 1,000명 달성 #평균 동시 시청자 50명",
         "wide": false
+      },
+      {
+        "type": "img",
+        "media": {
+          "type": "image",
+          "src": "assets/mvukj618opc-c61e8efd-1d97-4404-ad59-457bec.webp"
+        },
+        "caption": "피규어 및 굿즈 사진",
+        "wide": false
       }
     ],
     "facts": []
