@@ -380,12 +380,12 @@ window.PORTFOLIO = {
       "period": "2019 ~",
       "stats": [
         {
-          "label": "시즌 말 최고 랭킹",
-          "value": "81위"
+          "label": "시즌 최고 랭킹",
+          "value": "51위"
         },
         {
-          "label": "기록",
-          "value": ""
+          "label": "최고 기록 티어",
+          "value": "HERO"
         }
       ],
       "insight": "",
