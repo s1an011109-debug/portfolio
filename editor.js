@@ -37,6 +37,7 @@
   const idbGet = (s, k) => idb(s, "readonly", (o) => o.get(k)).catch(() => null);
   const idbPut = (s, k, v) => idb(s, "readwrite", (o) => o.put(v, k)).catch(() => {});
   const idbClear = (s) => idb(s, "readwrite", (o) => o.clear()).catch(() => {});
+  const idbDel = (s, k) => idb(s, "readwrite", (o) => o.delete(k)).catch(() => {});
   const idbAll = (s) => new Promise((ok) => {
     const out = [];
     idb(s, "readonly", (o) => { const c = o.openCursor(); c.onsuccess = () => { const x = c.result; if (x) { out.push([x.key, x.value]); x.continue(); } }; return null; })
@@ -633,6 +634,13 @@
     pending.set(p, f);
     PF.blobs[p] = URL.createObjectURL(f);
     idbPut("files", p, f);
+    // 원본 파일을 바로 메모리로 복사 — 놓은 뒤 원본을 옮기거나 지워도 저장할 수 있게
+    f.arrayBuffer().then((buf) => {
+      if (pending.get(p) !== f) return;
+      const copy = new File([buf], f.name, { type: f.type });
+      pending.set(p, copy);
+      idbPut("files", p, copy);
+    }).catch(() => {});
     if (f.size > 8 * 1024 * 1024) PF.toast(`${f.name}: ${(f.size / 1048576).toFixed(1)}MB예요. 4MB 이하가 사이트가 빨라요`);
     return p;
   }
@@ -894,6 +902,31 @@
   }
 
   let saving = false;
+  /* 저장 전에 새 그림을 모두 읽어 봄: 원본이 사라진 그림은 빼고, 그 자리를 비운 뒤 알려 줌 */
+  async function checkPending() {
+    const lost = [];
+    for (const [p, f] of pending) {
+      try { await f.slice(0, 1).arrayBuffer(); await f.arrayBuffer(); }
+      catch (e) { lost.push(p); }
+    }
+    if (!lost.length) return;
+    snapshot();
+    const strip = (v) => {
+      if (Array.isArray(v)) return v.filter((x) => !lost.includes(x)).map(strip);
+      if (v && typeof v === "object") {
+        if (lost.includes(v.src)) return null;
+        if (Array.isArray(v.src)) { v.src = v.src.filter((x) => !lost.includes(x)); if (!v.src.length) return null; }
+        Object.keys(v).forEach((k) => { v[k] = strip(v[k]); });
+      }
+      return v;
+    };
+    Object.keys(D).forEach((k) => { D[k] = strip(D[k]); });
+    lost.forEach((p) => { pending.delete(p); idbDel("files", p); delete PF.blobs[p]; });
+    changed();
+    PF.render();
+    throw new Error(`그림 ${lost.length}개의 원본 파일을 찾을 수 없어요 (놓은 뒤 원본 파일이 옮겨지거나 지워짐). 그 그림 자리를 비워 뒀으니, 다시 끌어다 놓고 저장해 주세요`);
+  }
+
   async function save() {
     if (saving) return;
     const a = document.activeElement;
@@ -901,6 +934,7 @@
     saving = true;
     $(".ed-save", bar).textContent = "저장 중…";
     try {
+      await checkPending();
       if (GH && !IS_LOCAL) {
         if (!ghToken()) return showTokenPanel(true);
         const sha = await saveViaGitHub();
