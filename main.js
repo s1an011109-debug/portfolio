@@ -210,9 +210,10 @@
       const sc = $("#showcase");
       if (scIndex >= featured.length) scIndex = 0;
       sc.innerHTML = featured.length ? `
-        <div class="sc-stage">${featured.map(([w, j], i) => `
+        <div class="sc-frame"><div class="sc-stage">${featured.map(([w, j], i) => `
           <div class="sc-slide ${i === scIndex ? "on" : ""}" role="link" tabindex="${i === scIndex ? 0 : -1}" aria-label="${esc(plain(w.title))} 자세히 보기" data-work="${j}" data-slot="works.${j}.media"></div>`).join("")}
           <span class="sc-go mono">자세히 보기 ↗</span>
+        </div>
           ${featured.length > 1 ? `<button type="button" class="sc-arrow prev" data-sc-step="-1" aria-label="이전 프로젝트">‹</button><button type="button" class="sc-arrow next" data-sc-step="1" aria-label="다음 프로젝트">›</button>` : ""}
         </div>
         <div class="sc-cap">
