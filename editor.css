@@ -187,3 +187,23 @@
 .ed-parts button.add { border-style: dashed; }
 .ed-parts button.add:hover { color: var(--ink); border-color: var(--ink-3); }
 [data-align="center"] .ed-parts { justify-self: center; }
+
+/* 블록 넣기 · 블록 색 · 글자색 팔레트 */
+.ed-tone-btn i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid currentColor; vertical-align: -2px; }
+.ed-pop { position: fixed; z-index: 2147483000; width: min(360px, calc(100vw - 16px)); padding: 10px; border-radius: 12px; background: var(--surface, #fff); color: var(--ink); border: 1px solid var(--line); box-shadow: 0 18px 50px -12px rgba(0, 0, 0, .35); font-family: var(--font); }
+.ed-pop-seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 3px; border-radius: 99px; background: var(--surface-2); margin-bottom: 8px; }
+.ed-pop-seg button { padding: 6px; border-radius: 99px; font-size: 12.5px; color: var(--ink-3); }
+.ed-pop-seg button.on { background: var(--ink); color: var(--bg); }
+.ed-pop-kinds { display: flex; flex-wrap: wrap; gap: 5px; }
+.ed-pop-kinds button { padding: 6px 11px; border-radius: 99px; border: 1px solid var(--line); font-size: 12.5px; }
+.ed-pop-kinds button:hover { border-color: var(--ink); }
+.ed-pop-t { font-size: 13px; font-weight: 700; margin-bottom: 8px; } .ed-pop-t small { font-weight: 400; color: var(--ink-3); margin-left: 6px; }
+.ed-pop-tones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+.ed-pop-tones button { display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); font-size: 12.5px; }
+.ed-pop-tones button.on { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.ed-pop-tones i { width: 12px; height: 12px; border-radius: 50%; border: 1px solid var(--line); flex: none; }
+.ed-pal { position: fixed; z-index: 2147483000; display: flex; gap: 2px; padding: 4px; border-radius: 10px; background: #17171a; box-shadow: 0 10px 30px -8px rgba(0, 0, 0, .5); }
+.ed-pal[hidden] { display: none; }
+.ed-pal button { width: 28px; height: 28px; border-radius: 6px; font: 800 14px/28px var(--font); color: #fff; text-align: center; }
+.ed-pal button:hover { background: rgba(255, 255, 255, .14); }
+.ed-pal mark.hl { color: #fff; }

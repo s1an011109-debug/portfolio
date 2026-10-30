@@ -15,7 +15,13 @@
   /* ⟪…⟫ 는 아직 채우지 않은 자리 → 형광펜으로 표시 */
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   /* 글 안 꾸미기: **굵게**, `코드`, [글자](주소) */
-  const inline = (h) => h
+  /* 글자색: {빨강:글자} · 형광펜: ==글자== */
+  const COLORS = { 빨강: "red", 주황: "orange", 노랑: "yellow", 초록: "green", 파랑: "blue", 보라: "purple", 회색: "gray" };
+  PF.COLORS = COLORS;
+  const colorize = (h) => h
+    .replace(/\{(빨강|주황|노랑|초록|파랑|보라|회색):([^{}\n]+?)\}/g, (_, c, t) => `<span class="c-${COLORS[c]}">${t}</span>`)
+    .replace(/==([^=\n]+?)==/g, '<mark class="hl">$1</mark>');
+  const inline = (h) => colorize(h)
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/`([^`]+?)`/g, "<code>$1</code>")
     .replace(/\[([^\]]+?)\]\(((?:https?:\/\/|assets\/|#)[^)\s]*)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
@@ -25,7 +31,7 @@
     const raw = String(s ?? "");
     if (!raw.trim()) return "";
     if (!window.marked || !window.DOMPurify) return fmt(raw).replace(/\n/g, "<br>");
-    const pre = raw.replace(/⟪(.*?)⟫/g, (_, t) => `<mark class="todo">${esc(t || "채울 내용")}</mark>`);
+    const pre = colorize(raw.replace(/⟪(.*?)⟫/g, (_, t) => `<mark class="todo">${esc(t || "채울 내용")}</mark>`));
     let html = window.marked.parse(pre, { gfm: true, breaks: true });
     html = window.DOMPurify.sanitize(html, { ADD_ATTR: ["target"] });
     // 태그 사이 줄바꿈 제거 — 편집 칸(contenteditable)에서는 이 줄바꿈이 빈 줄로 보여 간격이 커짐
@@ -120,7 +126,15 @@
     const list = get(path) || [];
     const ed = PF.editing;
     return `<div class="blocks" data-list="${path}">${list.map((b, i) => {
-      const p = `${path}.${i}`, t = (k) => `${E(`${p}.${k}`)}>${fmt(b[k])}`;
+      const p = `${path}.${i}`;
+      return tone(one(b, p), p, b.tone);
+    }).join("")}</div>`;
+  }
+  /* 블록 색: 블록 바깥 요소에 data-tone */
+  const tone = (html, p, c) => (c ? html.replace(`data-item="${p}"`, `data-item="${p}" data-tone="${esc(c)}"`) : html);
+  function one(b, p) {
+    const ed = PF.editing, t = (k) => `${E(`${p}.${k}`)}>${fmt(b[k])}`;
+    {
       switch (b.type) {
         case "h2": return `<div class="b-txt" data-item="${p}"><h3 class="b-h2" ${t("text")}</h3></div>`;
         case "h": return `<div class="b-txt" data-item="${p}"><h4 class="b-h" ${t("text")}</h4></div>`;
@@ -147,7 +161,7 @@
         default: return `<figure class="b-fig ${b.wide ? "wide" : ""}" data-item="${p}"><div class="b-media ${b.media && b.media.type === "images" ? "is-gallery" : ""}" data-slot="${p}.media" data-gallery></div>
             ${b.caption || ed ? `<figcaption ${t("caption")}</figcaption>` : ""}</figure>`;
       }
-    }).join("")}</div>`;
+    }
   }
   const fillSlots = (root) => $$("[data-slot]", root).forEach((s) => s.appendChild(makeMedia(get(s.dataset.slot), "그림, 영상 자리", s.dataset.slot, s.hasAttribute("data-gallery"))));
 

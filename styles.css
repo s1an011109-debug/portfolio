@@ -583,3 +583,19 @@ h1, h2, h3, h4, .hero-title, .sc-title, .b-h2, .b-h, .log-head h3, .card h3, .mo
 .b-md hr { border: 0; border-top: 1px solid var(--line); margin: 1.2em 0; }
 .b-md a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
 .b-md input[type="checkbox"] { margin-right: 6px; }
+
+/* ---------- 색: 글자색 {빨강:…} · 형광펜 ==…== · 블록 색 ---------- */
+:root { --t-red: #d4442e; --t-orange: #d9751c; --t-yellow: #b38a00; --t-green: #2f8a4c; --t-blue: #2f6fd6; --t-purple: #7b4fd0; --t-gray: #85827b; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --t-red: #ff6b55; --t-orange: #ff9a45; --t-yellow: #e8c14a; --t-green: #5cc27d; --t-blue: #6aa8ff; --t-purple: #b08cff; --t-gray: #a9a59d; } }
+:root[data-theme="dark"] { --t-red: #ff6b55; --t-orange: #ff9a45; --t-yellow: #e8c14a; --t-green: #5cc27d; --t-blue: #6aa8ff; --t-purple: #b08cff; --t-gray: #a9a59d; }
+.c-red { color: var(--t-red); } .c-orange { color: var(--t-orange); } .c-yellow { color: var(--t-yellow); } .c-green { color: var(--t-green); } .c-blue { color: var(--t-blue); } .c-purple { color: var(--t-purple); } .c-gray { color: var(--t-gray); }
+span[class^="c-"] strong, span[class^="c-"] b { color: inherit; }
+mark.hl { background: linear-gradient(transparent 55%, color-mix(in srgb, #f5c04a 55%, transparent) 55%); color: inherit; padding: 0 1px; }
+[data-tone="red"] { --tone: var(--t-red); } [data-tone="orange"] { --tone: var(--t-orange); } [data-tone="yellow"] { --tone: var(--t-yellow); } [data-tone="green"] { --tone: var(--t-green); } [data-tone="blue"] { --tone: var(--t-blue); } [data-tone="purple"] { --tone: var(--t-purple); } [data-tone="gray"] { --tone: var(--t-gray); }
+.b-txt[data-tone] { padding: 14px 18px; border-left: 3px solid var(--tone); border-radius: 0 10px 10px 0; background: color-mix(in srgb, var(--tone) 9%, transparent); }
+.b-txt[data-tone] .b-h2, .b-txt[data-tone] .b-h { color: var(--tone); margin: 0; padding: 0; border: 0; }
+.b-txt[data-tone] .b-quote { background: transparent; border: 0; padding: 0; }
+.b-txt[data-tone] .b-btn { border-color: var(--tone); color: var(--tone); }
+.b-hr[data-tone] hr { border-color: var(--tone); border-top-width: 2px; }
+.b-fig[data-tone] .b-media { outline: 2px solid var(--tone); outline-offset: 3px; }
+.b-fig[data-tone] figcaption { color: var(--tone); }

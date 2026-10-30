@@ -145,13 +145,14 @@
       const p = el.dataset.item, c = document.createElement("span");
       c.className = "ed-ctl";
       c.contentEditable = "false";
-      const isWork = /^works\.\d+$/.test(p), it = PF.get(p) || {}, isFig = el.classList.contains("b-fig") && it.type !== "yt";
+      const isWork = /^works\.\d+$/.test(p), it = PF.get(p) || {}, isBlock = /\.blocks\.\d+$/.test(p), isFig = el.classList.contains("b-fig") && it.type !== "yt";
       const extra =
         (it.type === "table" ? `<button type="button" data-ed="row+" data-p="${p}" title="줄 추가">+줄</button><button type="button" data-ed="col+" data-p="${p}" title="칸 추가">+칸</button><button type="button" data-ed="row-" data-p="${p}" title="마지막 줄 삭제">−줄</button><button type="button" data-ed="col-" data-p="${p}" title="마지막 칸 삭제">−칸</button><button type="button" data-ed="head" data-p="${p}" title="첫 줄을 제목 줄로">${it.head ? "제목줄✓" : "제목줄"}</button>` : "") +
         (it.type === "fold" ? `<button type="button" data-ed="code" data-p="${p}" title="코드 모양으로">${it.code ? "&lt;/&gt;✓" : "&lt;/&gt;"}</button>` : "");
       c.innerHTML = extra +
         (isWork ? `<button type="button" data-ed="star" data-p="${p}" class="${PF.get(p).featured ? "on" : ""}" title="첫 화면 슬라이드에 넣기">★</button>` : "") +
         (isFig ? `<button type="button" data-ed="wide" data-p="${p}" title="넓게 / 반쪽">${PF.get(p).wide ? "▭" : "◫"}</button>` : "") +
+        (isBlock ? `<button type="button" data-ed="ins" data-p="${p}" title="이 위·아래에 블록 넣기">＋</button><button type="button" data-ed="tone" data-p="${p}" title="블록 색" class="ed-tone-btn"><i style="background:${it.tone ? `var(--t-${it.tone})` : "transparent"}"></i></button>` : "") +
         `<button type="button" data-ed="up" data-p="${p}" title="앞으로">↑</button><button type="button" data-ed="down" data-p="${p}" title="뒤로">↓</button><button type="button" data-ed="del" data-p="${p}" title="삭제">✕</button>`;
       el.appendChild(c);
     });
@@ -436,6 +437,80 @@
     if (e.target.closest("a[href]") && !e.target.closest(".ed-bar")) e.preventDefault();
   }, true);
 
+  /* ---------- 블록: 원하는 자리에 넣기 · 블록 색 ---------- */
+  const TONES = [["", "없음"], ["red", "빨강"], ["orange", "주황"], ["yellow", "노랑"], ["green", "초록"], ["blue", "파랑"], ["purple", "보라"], ["gray", "회색"]];
+  let pop = null;
+  function closePop() { if (pop) { pop.remove(); pop = null; } }
+  function openPop(btn, kind, p) {
+    const again = pop && pop._for === btn;
+    closePop();
+    if (again) return;
+    const list = parentPath(p), i = +lastKey(p);
+    pop = document.createElement("div");
+    pop.className = "ed-pop"; pop.contentEditable = "false"; pop._for = btn;
+    if (kind === "ins") {
+      pop.innerHTML = `<div class="ed-pop-seg"><button type="button" data-where="${i}">이 블록 위에</button><button type="button" data-where="${i + 1}" class="on">이 블록 아래에</button></div>
+        <div class="ed-pop-kinds">${BLOCK_KINDS.map(([k, n]) => `<button type="button" data-ed="add" data-p="${list}" data-kind="${k}" data-at="${i + 1}">${n}</button>`).join("")}</div>`;
+    } else {
+      const cur = (PF.get(p) || {}).tone || "";
+      pop.innerHTML = `<p class="ed-pop-t">블록 색 <small>제목은 글자색, 글·목록은 색 상자</small></p><div class="ed-pop-tones">${TONES.map(([c, n]) => `<button type="button" data-tn="${c}" data-p="${p}" class="${c === cur ? "on" : ""}" title="${n}"><i style="background:${c ? `var(--t-${c})` : "transparent"}"></i>${n}</button>`).join("")}</div>`;
+    }
+    (btn.closest("dialog") || document.body).appendChild(pop);
+    const r = btn.getBoundingClientRect(), w = pop.offsetWidth;
+    pop.style.left = Math.max(8, Math.min(innerWidth - w - 8, r.right - w)) + "px";
+    pop.style.top = (r.bottom + 6) + "px";
+    pop.addEventListener("click", (e) => {
+      const wb = e.target.closest("[data-where]");
+      if (wb) {
+        $$("[data-where]", pop).forEach((x) => x.classList.toggle("on", x === wb));
+        $$("[data-at]", pop).forEach((x) => { x.dataset.at = wb.dataset.where; });
+        return;
+      }
+      const tb = e.target.closest("[data-tn]");
+      if (tb) {
+        snapshot();
+        const b = PF.get(tb.dataset.p);
+        if (tb.dataset.tn) b.tone = tb.dataset.tn; else delete b.tone;
+        closePop(); changed(); PF.render();
+      }
+    });
+  }
+  document.addEventListener("pointerdown", (e) => { if (pop && !e.target.closest(".ed-pop, [data-ed=ins], [data-ed=tone]")) closePop(); });
+  addEventListener("scroll", closePop, true);
+
+  /* ---------- 글자를 고르면 색 팔레트: {빨강:글자} · ==형광펜== 으로 감싸기 ---------- */
+  const pal = document.createElement("div");
+  pal.className = "ed-pal"; pal.hidden = true;
+  pal.innerHTML = Object.keys(PF.COLORS).map((n) => `<button type="button" data-c="${n}" title="${n} 글자" style="color:var(--t-${PF.COLORS[n]})">가</button>`).join("") +
+    `<button type="button" data-c="hl" title="형광펜"><mark class="hl">가</mark></button><button type="button" data-c="x" title="색 빼기">✕</button>`;
+  document.body.appendChild(pal);
+  const selField = () => {
+    const sel = getSelection();
+    if (!sel.rangeCount || sel.isCollapsed) return null;
+    const n = sel.anchorNode && (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentElement);
+    const f = n && n.closest("[data-path]");
+    return f && f.isContentEditable && f.contains(sel.focusNode) ? f : null;
+  };
+  document.addEventListener("selectionchange", () => {
+    const f = PF.editing && selField();
+    if (!f) { pal.hidden = true; return; }
+    const r = getSelection().getRangeAt(0).getBoundingClientRect();
+    const host = f.closest("dialog") || document.body;
+    if (pal.parentNode !== host) host.appendChild(pal);
+    pal.hidden = false;
+    pal.style.left = Math.max(8, Math.min(innerWidth - pal.offsetWidth - 8, r.left + r.width / 2 - pal.offsetWidth / 2)) + "px";
+    pal.style.top = Math.max(8, r.top - pal.offsetHeight - 8) + "px";
+  });
+  pal.addEventListener("pointerdown", (e) => e.preventDefault()); // 선택이 풀리지 않게
+  pal.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-c]");
+    if (!b || !selField()) return;
+    const t = getSelection().toString(), c = b.dataset.c;
+    const bare = t.replace(/^\{(?:빨강|주황|노랑|초록|파랑|보라|회색):([\s\S]*)\}$/, "$1").replace(/^==([\s\S]*)==$/, "$1");
+    const out = c === "x" ? bare : c === "hl" ? `==${bare}==` : `{${c}:${bare}}`;
+    document.execCommand("insertText", false, out);
+  });
+
   function act(ctl) {
     const p = ctl.dataset.p, kind = ctl.dataset.ed;
     if (kind === "part") {
@@ -451,10 +526,12 @@
     if (kind === "add") {
       const list = PF.get(p);
       snapshot();
-      list.push(TPL(p, ctl.dataset.kind));
+      const at = ctl.dataset.at != null ? Math.max(0, Math.min(list.length, +ctl.dataset.at)) : list.length;
+      list.splice(at, 0, TPL(p, ctl.dataset.kind));
+      closePop();
       changed();
       PF.render();
-      const np = `${p}.${list.length - 1}`;
+      const np = `${p}.${at}`;
       if (ctl.dataset.kind === "img") { pickTarget = np + ".media"; fileInput.click(); return; }
       if (ctl.dataset.kind === "yt") {
         const v = prompt("유튜브 주소를 붙여 넣어 주세요", "");
@@ -476,6 +553,7 @@
     }
     if (kind === "clear") { snapshot(); set(p, null); changed(); PF.render(); return; }
     if (kind === "menu") { ctl.parentElement.classList.toggle("open"); return; }
+    if (kind === "ins" || kind === "tone") return openPop(ctl, kind, p);
     if (kind === "ytmedia") {
       const cur = (PF.get(p) || {}).type === "youtube" ? PF.get(p).src : "";
       const v = prompt("유튜브 주소를 붙여 넣어 주세요 (youtu.be/… 또는 youtube.com/watch?v=…)", cur);
