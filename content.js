@@ -295,7 +295,7 @@ window.PORTFOLIO = {
       ],
       "media": {
         "type": "image",
-        "src": "assets/mvufi0l6inm-a567349f3a2cfa883baf767566d418.png"
+        "src": "assets/mvufk8ke7ot-hq720.jpg"
       }
     },
     {
@@ -365,7 +365,10 @@ window.PORTFOLIO = {
       ],
       "insight": "",
       "tags": [],
-      "media": null
+      "media": {
+        "type": "image",
+        "src": "assets/mvufjwbqzoh-restmb-allidxmake.jpg"
+      }
     },
     {
       "title": "Final Fantasy XIV",
@@ -384,7 +387,10 @@ window.PORTFOLIO = {
       ],
       "insight": "",
       "tags": [],
-      "media": null
+      "media": {
+        "type": "image",
+        "src": "assets/mvufkkoptps-capsule-616x353.jpg"
+      }
     }
   ],
   "resume": [
