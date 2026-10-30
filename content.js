@@ -253,7 +253,7 @@ window.PORTFOLIO = {
         "MOD",
         "VR"
       ],
-      "oneLine": "KT 산학 프로젝트, 넥슨 MOD 게임 개발, 그리고 알발 페스타 2등을 받은 VR 프로젝트입니다.",
+      "oneLine": "KT 산학 프로젝트, 넥슨 MOD 게임 개발\n그리고 알발 페스타 2등을 받은 VR 프로젝트입니다.",
       "media": {
         "type": "image",
         "src": "assets/mvuerwcvizz-2026-10-30-122411.png"
