@@ -523,7 +523,7 @@ mark.todo { background: var(--todo); color: inherit; border-radius: 4px; padding
 .log-media .media { position: absolute; inset: 0; }
 .log-head h3 { font-size: clamp(20px, 2vw, 26px); font-weight: 800; letter-spacing: -0.035em; line-height: 1.25; }
 .log-meta { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 8px; color: var(--ink-2); font-size: 14px; }
-.log-meta span + span::before { content: "·"; margin-right: 12px; color: var(--ink-3); }
+.log-meta span + span::before { content: "/"; margin-right: 12px; color: var(--ink-3); }
 .log-row .log-stats { display: flex; flex-wrap: wrap; gap: 14px 32px; background: none; border-radius: 0; margin: 0; }
 .log-row .log-stats div { background: none; padding: 0; }
 .log-row .log-stats dt { font-size: 13px; color: var(--ink-2); }

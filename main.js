@@ -43,7 +43,7 @@
     if (path) box.dataset.mediaPath = path;
     if (!m || !m.src || (Array.isArray(m.src) && !m.src.length)) {
       box.classList.add("ph", "paused");
-      box.innerHTML = `<span>${esc(label || "영상 · 이미지 자리")}</span>`;
+      box.innerHTML = `<span>${esc(label || "영상, 이미지 자리")}</span>`;
     } else if (m.type === "video") {
       const v = document.createElement("video");
       v.muted = true; v.loop = true; v.playsInline = true; v.preload = "none";
@@ -135,7 +135,7 @@
       }
     }).join("")}</div>`;
   }
-  const fillSlots = (root) => $$("[data-slot]", root).forEach((s) => s.appendChild(makeMedia(get(s.dataset.slot), "그림 · 영상 자리", s.dataset.slot, s.hasAttribute("data-gallery"))));
+  const fillSlots = (root) => $$("[data-slot]", root).forEach((s) => s.appendChild(makeMedia(get(s.dataset.slot), "그림, 영상 자리", s.dataset.slot, s.hasAttribute("data-gallery"))));
 
   /* 유튜브 썸네일을 누르면 그 자리에서 재생 (카드·슬라이드 안에서는 상세 열기) */
   document.addEventListener("click", (e) => {
@@ -202,7 +202,7 @@
         <div class="sc-cap">
           ${featured.map(([w, j], i) => `
             <div class="sc-text ${i === scIndex ? "on" : ""}" data-work="${j}">
-              <p class="sc-meta mono"><span ${E(`works.${j}.period`)}>${fmt(w.period)}</span> · <span ${E(`works.${j}.role`)}>${fmt(w.role)}</span></p>
+              <p class="sc-meta mono"><span ${E(`works.${j}.period`)}>${fmt(w.period)}</span> / <span ${E(`works.${j}.role`)}>${fmt(w.role)}</span></p>
               <h2 class="sc-title" ${E(`works.${j}.title`)}>${fmt(w.title)}</h2>
               <p class="sc-one" ${E(`works.${j}.oneLine`)}>${fmt(w.oneLine)}</p>
             </div>`).join("")}
@@ -221,7 +221,7 @@
           : `<span class="file-sheet" data-cover="${p}.cover"><i class="l big"></i><i class="l w80"></i><i class="l w60"></i><i class="blk"></i><i class="l w40"></i></span>`;
         return `
           <div class="file is-${k} reveal">
-            <span class="file-tab mono">${en} · <span ${E(p + ".pages")}>${fmt(f.pages)}</span>p</span>
+            <span class="file-tab mono">${en} <span ${E(p + ".pages")}>${fmt(f.pages)}</span>p</span>
             <a class="file-pdf mono" ${href(p + ".pdf")} target="_blank" rel="noopener">PDF ↓</a>
             <a class="file-body" ${href(p + ".url")} target="_blank" rel="noopener">
               <span class="file-hook" ${E(p + ".hook")}>${fmt(f.hook)}</span>
@@ -240,7 +240,7 @@
           <span class="tray-ico">${fmt(f.pages)}p</span>
           <span><b>${name}</b><small>${fmt(f.teaser)}</small><small class="mono">읽는 시간 ${fmt(f.readTime)}</small></span>
           <span class="go">↗</span></a>`;
-      }).join("") + `<div class="tray-foot mono"><span>PDF</span><span><a href="${esc(D.files.summary.pdf)}">요약본</a> · <a href="${esc(D.files.detail.pdf)}">상세본</a></span></div>`;
+      }).join("") + `<div class="tray-foot mono"><span>PDF</span><span><a href="${esc(D.files.summary.pdf)}">요약본</a> / <a href="${esc(D.files.detail.pdf)}">상세본</a></span></div>`;
 
     } catch (e) { console.error("[파일] 그리기 실패", e); }
     try {
