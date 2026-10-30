@@ -435,7 +435,11 @@ mark.todo { background: var(--todo); color: inherit; border-radius: 4px; padding
 
 /* ---------- About Me ---------- */
 .about { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
-.about.no-photo { grid-template-columns: minmax(0, 1fr); max-width: 860px; }
+.about.no-photo { grid-template-columns: minmax(0, 1fr); }
+/* About Me 그림: 한 줄에 3개 */
+.about-main .blocks { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 860px) { .about-main .blocks { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .about-main .blocks { grid-template-columns: minmax(0, 1fr); } }
 .about-photo { position: relative; aspect-ratio: 4 / 5; border-radius: var(--radius); overflow: hidden; background: var(--surface-2); }
 .about-photo .media { position: absolute; inset: 0; }
 .about-main { display: grid; gap: 32px; }

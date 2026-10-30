@@ -185,9 +185,8 @@
         t.innerHTML = fmt(ab.title);
         ab.blocks = ab.blocks || [];
         ab.facts = ab.facts || [];
-        $("#aboutBody").classList.toggle("no-photo", !ab.photo && !PF.editing);
+        $("#aboutBody").classList.add("no-photo");
         $("#aboutBody").innerHTML = `
-          ${ab.photo || PF.editing ? `<div class="about-photo" data-slot="about.photo"></div>` : ""}
           <div class="about-main">
             ${blocks("about.blocks")}
             <dl class="about-facts" data-list="about.facts">${ab.facts.map((f, i) => `
