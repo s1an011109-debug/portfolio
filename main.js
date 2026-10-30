@@ -181,8 +181,7 @@
       const ab = D.about;
       if (ab && $("#aboutBody")) {
         const t = $("#aboutTitle");
-        t.dataset.path = "about.title";
-        t.innerHTML = fmt(ab.title);
+        if (t) { t.dataset.path = "about.title"; t.innerHTML = fmt(ab.title); }
         ab.blocks = ab.blocks || [];
         ab.facts = ab.facts || [];
         $("#aboutBody").classList.add("no-photo");
@@ -435,10 +434,12 @@
       ["idx", "title", "sub"].forEach((k) => { if (o[k] === undefined) o[k] = dft[k] || ""; });
       if (o.nav === undefined) o.nav = NAV_DEFAULT[id] || "";
       const P = `ui.sec.${id}`;
+      // 라벨 · 제목 · 설명은 편집 모드에서 ✕로 빼고 + 로 다시 넣을 수 있음 (o.off)
+      const off = o.off || {}, part = (k, html) => (off[k] ? "" : html);
       h.innerHTML =
-        (o.idx || ed ? `<span class="sec-idx mono" ${E(P + ".idx")}>${fmt(o.idx)}</span>` : "") +
-        (id === "about" ? `<h2 id="aboutTitle"></h2>` : `<h2 ${E(P + ".title")}>${fmt(o.title)}</h2>`) +
-        (o.sub || ed ? `<p class="sec-sub" ${E(P + ".sub")}>${fmt(o.sub)}</p>` : "");
+        part("idx", o.idx || ed ? `<span class="sec-idx mono" data-part="idx" ${E(P + ".idx")}>${fmt(o.idx)}</span>` : "") +
+        part("title", id === "about" ? `<h2 id="aboutTitle" data-part="title"></h2>` : `<h2 data-part="title" ${E(P + ".title")}>${fmt(o.title)}</h2>`) +
+        part("sub", o.sub || ed ? `<p class="sec-sub" data-part="sub" ${E(P + ".sub")}>${fmt(o.sub)}</p>` : "");
     });
     // 위 메뉴: 순서대로, 숨긴 섹션·이름 빈 메뉴는 빼고
     $("#topNav").innerHTML = U.order.filter((id) => U.sec[id] && (ed || (!U.sec[id].hidden && plain(U.sec[id].nav).trim())) && id !== "custom" && $(`#${id}`))

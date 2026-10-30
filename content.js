@@ -562,7 +562,10 @@ window.PORTFOLIO = {
         "idx": "04 / ABOUT ME",
         "title": "",
         "sub": "",
-        "nav": "About Me"
+        "nav": "About Me",
+        "off": {
+          "sub": true
+        }
       }
     },
     "order": [

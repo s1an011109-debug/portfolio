@@ -132,6 +132,7 @@
   function decorate() {
     if (!PF.editing) return;
     decorateLayout();
+    decorateHeads();
     $$("[data-path]").forEach((el) => {
       if (el.isContentEditable) return;
       try { el.contentEditable = "plaintext-only"; } catch (e) { el.contentEditable = "true"; }
@@ -186,6 +187,18 @@
       b.dataset.ed = "link"; b.dataset.p = el.dataset.href; b.title = "링크 주소 바꾸기";
       b.textContent = "🔗";
       el.appendChild(b);
+    });
+  }
+  /* 섹션 머리(라벨 · 제목 · 설명): ✕로 빼기, + 로 다시 넣기 */
+  const PART_NAME = { idx: "라벨", title: "제목", sub: "설명" };
+  function decorateHeads() {
+    $$("[data-head]").forEach((h) => {
+      if (h.querySelector(":scope > .ed-parts")) return;
+      const id = h.dataset.head, off = ((D.ui.sec || {})[id] || {}).off || {};
+      const w = document.createElement("div");
+      w.className = "ed-parts"; w.contentEditable = "false";
+      w.innerHTML = Object.keys(PART_NAME).map((k) => `<button type="button" data-ed="part" data-sec="${id}" data-k="${k}" class="${off[k] ? "add" : ""}" title="${off[k] ? "다시 넣기" : "빼기"}">${off[k] ? "+ " + PART_NAME[k] : PART_NAME[k] + " ✕"}</button>`).join("");
+      h.appendChild(w);
     });
   }
   /* ---------- 첫 화면 배치: 끌어서 옮기기 · 크기 조절 ---------- */
@@ -424,6 +437,16 @@
 
   function act(ctl) {
     const p = ctl.dataset.p, kind = ctl.dataset.ed;
+    if (kind === "part") {
+      snapshot();
+      const o = (D.ui.sec[ctl.dataset.sec] = D.ui.sec[ctl.dataset.sec] || {}), off = (o.off = o.off || {}), k = ctl.dataset.k;
+      if (off[k]) delete off[k]; else off[k] = true;
+      if (!Object.keys(off).length) delete o.off;
+      changed();
+      PF.render();
+      if (!off[k]) requestAnimationFrame(() => { const t = $(`[data-head="${ctl.dataset.sec}"] [data-part="${k}"]`); if (t) t.focus(); });
+      return;
+    }
     if (kind === "add") {
       const list = PF.get(p);
       snapshot();

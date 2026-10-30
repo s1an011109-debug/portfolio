@@ -177,3 +177,13 @@
 .ed-font-prev .h { font-family: var(--font-head, var(--font)); font-size: 22px; font-weight: 800; letter-spacing: -0.03em; }
 .ed-font-prev .b { font-size: calc(15px * var(--ts, 1)); color: var(--ink-2); }
 .ed-font-prev .l { font-family: var(--mono); font-size: 12px; color: var(--accent); }
+
+/* 섹션 머리 부품(라벨 · 제목 · 설명) 빼기 · 넣기 */
+.editing [data-head] { position: relative; }
+.ed-parts { display: flex; flex-wrap: wrap; gap: 6px; justify-self: start; opacity: .35; transition: opacity .15s; }
+.editing [data-head]:hover > .ed-parts, .ed-parts:focus-within { opacity: 1; }
+.ed-parts button { padding: 3px 10px; border: 1px solid var(--line); border-radius: 99px; font-size: 12px; color: var(--ink-3); background: var(--bg); }
+.ed-parts button:hover { color: #c4472b; border-color: #c4472b; }
+.ed-parts button.add { border-style: dashed; }
+.ed-parts button.add:hover { color: var(--ink); border-color: var(--ink-3); }
+[data-align="center"] .ed-parts { justify-self: center; }
