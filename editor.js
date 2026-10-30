@@ -67,6 +67,8 @@
       <button type="button" data-act="undo" title="되돌리기 (Ctrl+Z)">↶</button>
       <button type="button" data-act="save" class="ed-save">저장</button>
       <button type="button" data-act="gh" class="ed-gh-btn" title="GitHub 연결" hidden>GitHub</button>
+      <button type="button" data-act="layout" title="섹션 순서 · 숨김 · 폭">레이아웃</button>
+      <button type="button" data-act="fonts" title="글꼴 · 본문 크기">글꼴</button>
       <button type="button" data-act="help" title="사용법">?</button>
     </span>
     <span class="ed-status mono"></span>
@@ -85,6 +87,9 @@
         <li><b>상세 표 · PROBLEM 같은 라벨</b>: 라벨 글자도 눌러서 바꾸고, + 추가로 늘리기</li>
         <li><b>유튜브</b>: 그림 자리의 ▶ YouTube 버튼에 주소 붙여 넣기</li>
         <li><b>링크</b>: 🔗 버튼으로 주소 입력, PDF는 링크 위로 끌어다 놓기</li>
+        <li><b>마크다운</b>: '글' 블록·강조 상자·접기·PROBLEM 같은 설명 칸은 마크다운으로 써요 (# 제목, - 목록, 1. 번호, > 인용, | 표 |, &#96;&#96;&#96; 코드, ![설명](assets/그림.png)). 이 칸에서는 Enter가 줄바꿈, 다 쓰면 바깥을 누르거나 Ctrl+Enter</li>
+        <li><b>레이아웃</b>: 섹션 순서 ↑↓, 숨기기, 폭(좁게·보통·넓게), 제목 정렬. 섹션 라벨·제목·설명·메뉴 이름은 화면에서 눌러 바로 수정</li>
+        <li><b>글꼴</b>: 본문 · 제목 · 라벨 글꼴과 본문 크기</li>
         <li><b>저장</b>: 공개 링크(…github.io/portfolio/?edit)에서는 GitHub에 바로 올라가고 1~2분 뒤 반영 (처음 한 번 토큰 연결). 내 컴퓨터(편집하기.cmd)에서는 portfolio 폴더에 저장</li>
       </ul>
     </div>`;
@@ -120,8 +125,9 @@
   /* ---------- 렌더 후 편집 장치 붙이기 ---------- */
   const LABEL = { title: "제목", genre: "장르", role: "역할", period: "기간", team: "구성", status: "상태", oneLine: "한 줄 소개", problem: "문제", approach: "접근", result: "결과", insight: "인사이트 한 줄", platform: "플랫폼", label: "이름", value: "값", unit: "단위", sub: "설명", badge: "배지", desc: "설명", group: "그룹 이름", text: "글을 입력하세요", caption: "그림 설명 (비우면 숨김)", idx: "섹션 라벨", hook: "한마디", teaser: "설명", readTime: "읽는 시간", pages: "쪽수" };
   const ph = (path) => LABEL[lastKey(path)] || "입력";
+  Object.assign(LABEL, { idx: "섹션 라벨 (비우면 숨김)", sub: "설명 (비우면 숨김)", nav: "메뉴 이름 (비우면 메뉴에서 빠짐)", topLabel: "위쪽 작은 글씨" });
   Object.assign(LABEL, { lead: "리드 문장 (제목 아래 한두 줄)", kind: "종류 (예: 프로젝트)", summary: "접기 제목", tasksTitle: "목록 제목", blocksTitle: "블록 제목" });
-  const BLOCK_KINDS = [["h2", "큰 제목"], ["h", "소제목"], ["p", "글"], ["lp", "라벨 글 (문제: …)"], ["ul", "목록"], ["img", "그림 · 영상 (여러 장=갤러리)"], ["yt", "YouTube"], ["table", "표"], ["fold", "접기 (코드 보기 등)"], ["quote", "강조 상자"], ["btn", "링크 버튼"], ["hr", "구분선"]];
+  const BLOCK_KINDS = [["h2", "큰 제목"], ["h", "소제목"], ["p", "글 (마크다운)"], ["lp", "라벨 글 (문제: …)"], ["ul", "목록"], ["img", "그림 · 영상 (여러 장=갤러리)"], ["yt", "YouTube"], ["table", "표"], ["fold", "접기 (코드 보기 등)"], ["quote", "강조 상자"], ["btn", "링크 버튼"], ["hr", "구분선"]];
 
   function decorate() {
     if (!PF.editing) return;
@@ -291,6 +297,7 @@
 
   /* ---------- 글자 편집 ---------- */
   const display = (el, v) => {
+    if (el.hasAttribute("data-md")) return PF.md(v);
     const h = PF.fmt(v);
     return el.hasAttribute("data-em") ? h.replace(/\*(.+?)\*/g, "<em>$1</em>") : h;
   };
@@ -335,6 +342,11 @@
     const el = e.target.closest && e.target.closest("[data-path]");
     if (PF.editing && el && el._open) {
       if (e.key === "Escape") { el.textContent = el._shown; el.blur(); return; }
+      if (el.hasAttribute("data-md") && e.key === "Enter") {
+        if (e.ctrlKey || e.metaKey) { e.preventDefault(); el.blur(); }
+        e.stopPropagation();
+        return;
+      }
       if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
         e.preventDefault();
         const path = el.dataset.path, list = parentPath(path);
@@ -490,8 +502,101 @@
     if (a === "undo") return undo();
     if (a === "save") return save();
     if (a === "help") { const h = $(".ed-help", bar); h.hidden = !h.hidden; }
+    if (a === "layout" || a === "fonts") togglePanel(a);
     if (a === "gh") showTokenPanel(false);
   }
+
+  /* ---------- 레이아웃 · 글꼴 패널 ---------- */
+  const panel = document.createElement("div");
+  panel.className = "ed-panel";
+  panel.hidden = true;
+  bar.appendChild(panel);
+  let panelKind = null;
+  function togglePanel(kind) {
+    $(".ed-help", bar).hidden = true;
+    if (panelKind === kind && !panel.hidden) { panel.hidden = true; panelKind = null; return; }
+    panelKind = kind;
+    panel.hidden = false;
+    drawPanel();
+  }
+  const seg = (label, key, cur, opts, id) => `<span class="ed-seg"><span>${label}</span>${opts.map(([v, n]) =>
+    `<button type="button" class="${(cur || "") === v ? "on" : ""}" data-pl="${key}" data-id="${id}" data-v="${v}">${n}</button>`).join("")}</span>`;
+  function drawPanel() {
+    if (panel.hidden) return;
+    const U = D.ui;
+    if (panelKind === "layout") {
+      panel.innerHTML = `<b>레이아웃</b><small>섹션 라벨 · 제목 · 설명 · 위쪽 메뉴 이름은 화면에서 글자를 눌러 바로 고쳐요. 첫 화면 위치는 파란 ✥ · ◢ 손잡이로.</small>` +
+        U.order.map((id, i) => {
+          const o = U.sec[id] || {};
+          return `<div class="ed-sec-row ${o.hidden ? "off" : ""}">
+            <b>${PF.esc(PF.SEC_NAMES[id] || id)}</b>
+            <span class="ctl">
+              <button type="button" data-pl="up" data-id="${id}" title="위로" ${i ? "" : "disabled"}>↑</button>
+              <button type="button" data-pl="down" data-id="${id}" title="아래로" ${i < U.order.length - 1 ? "" : "disabled"}>↓</button>
+              <button type="button" data-pl="hide" data-id="${id}" title="숨기기 / 보이기">${o.hidden ? "보이기" : "숨기기"}</button>
+            </span>
+            <span class="opts">
+              ${seg("폭", "width", o.width, [["narrow", "좁게"], ["", "보통"], ["wide", "넓게"]], id)}
+              ${seg("제목", "align", o.align, [["", "왼쪽"], ["center", "가운데"]], id)}
+            </span>
+          </div>`;
+        }).join("") +
+        `<button type="button" class="ed-add" data-pl="reset-layout">순서 · 숨김 · 폭 처음으로</button>`;
+    } else {
+      const F = U.font || {};
+      const names = Object.keys(PF.FONTS);
+      const sel = (key, cur, list, dft) => `<select data-pf="${key}">${list.map((n) => `<option value="${n === dft ? "" : n}" ${((cur || "") === (n === dft ? "" : n)) ? "selected" : ""}>${n}${n === dft ? " (기본)" : ""}</option>`).join("")}</select>`;
+      const textFonts = names.filter((n) => !/Mono|Coding/.test(n));
+      panel.innerHTML = `<b>글꼴</b>
+        <div class="ed-font-row"><span>본문</span>${sel("body", F.body, textFonts, "Pretendard")}</div>
+        <div class="ed-font-row"><span>제목</span>${sel("head", F.head, textFonts, "Pretendard")}</div>
+        <div class="ed-font-row"><span>라벨</span>${sel("label", F.label, ["JetBrains Mono", "IBM Plex Mono", "Nanum Gothic Coding", ...textFonts], "JetBrains Mono")}</div>
+        <div class="ed-font-row"><span>본문 크기</span><input type="range" min="85" max="135" step="5" value="${Math.round((F.scale || 1) * 100)}" data-pf="scale"></div>
+        <div class="ed-font-prev"><div class="l">01 / PROJECTS</div><div class="h">만든 것을 사람들이 즐기는 순간</div><div class="b">보드게임의 콘셉트와 규칙을 기획하고 516명의 후원자에게 전달했습니다.</div></div>
+        <small>라벨 = 섹션 위 작은 영문 글씨, 날짜 같은 보조 글씨. 본문 크기 ${Math.round((F.scale || 1) * 100)}%</small>
+        <button type="button" class="ed-add" data-pl="reset-fonts">글꼴 처음으로</button>`;
+    }
+  }
+  panel.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-pl]");
+    if (!b) return;
+    e.stopPropagation();
+    const U = D.ui, id = b.dataset.id, k = b.dataset.pl;
+    snapshot();
+    if (k === "up" || k === "down") {
+      const i = U.order.indexOf(id), j = k === "up" ? i - 1 : i + 1;
+      if (j < 0 || j >= U.order.length) return;
+      [U.order[i], U.order[j]] = [U.order[j], U.order[i]];
+    } else if (k === "hide") {
+      U.sec[id].hidden = !U.sec[id].hidden;
+    } else if (k === "width" || k === "align") {
+      U.sec[id][k] = b.dataset.v || undefined;
+      if (!U.sec[id][k]) delete U.sec[id][k];
+    } else if (k === "reset-layout") {
+      if (!confirm("섹션 순서 · 숨김 · 폭 · 정렬을 처음으로 돌릴까요? (글자는 그대로)")) return;
+      delete U.order;
+      Object.values(U.sec).forEach((o) => { delete o.hidden; delete o.width; delete o.align; });
+    } else if (k === "reset-fonts") {
+      U.font = {};
+    }
+    changed();
+    PF.render();
+    drawPanel();
+  });
+  panel.addEventListener("input", (e) => {
+    const t = e.target.closest("[data-pf]");
+    if (!t) return;
+    const F = (D.ui.font = D.ui.font || {});
+    if (!panel._snap) { snapshot(); panel._snap = true; }
+    if (t.dataset.pf === "scale") F.scale = +t.value / 100;
+    else if (t.value) F[t.dataset.pf] = t.value; else delete F[t.dataset.pf];
+    PF.applyUI();
+    decorate();
+    changed();
+    if (t.tagName === "SELECT") drawPanel();
+    else { const sm = $("small", panel); if (sm) sm.textContent = `라벨 = 섹션 위 작은 영문 글씨, 날짜 같은 보조 글씨. 본문 크기 ${t.value}%`; }
+  });
+  panel.addEventListener("change", () => { panel._snap = false; });
 
   /* ---------- 그림 · 영상 넣기 ---------- */
   const okFile = (f) => /^(image|video)\//.test(f.type);

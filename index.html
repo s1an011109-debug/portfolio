@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap">
-  <link rel="stylesheet" href="styles.css?v=20261030-2">
+  <link rel="stylesheet" href="styles.css?v=20261030-3">
   <script>
     try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
   </script>
@@ -20,13 +20,8 @@
   <header class="top">
     <div class="shell top-inner">
       <span class="mono" data-bind="year"></span>
-      <a class="top-name" href="#top">Portfolio of<br><b data-bind="nameEn"></b></a>
-      <nav class="top-nav" aria-label="주요 메뉴">
-        <a href="#projects">프로젝트</a>
-        <a href="#gamelog">게임 로그</a>
-        <a href="#resume">이력</a>
-        <a href="#about">About</a>
-      </nav>
+      <a class="top-name" href="#top"><span data-bind="topLabel"></span><br><b data-bind="nameEn"></b></a>
+      <nav class="top-nav" id="topNav" aria-label="주요 메뉴"></nav>
       <button class="theme-btn" type="button" aria-label="밝은/어두운 화면 전환">
         <span class="theme-dot"></span><span class="mono theme-label"></span>
       </button>
@@ -55,8 +50,8 @@
     </section>
 
     <!-- PROJECTS -->
-    <section class="sec shell" id="projects">
-      <div class="sec-head reveal">
+    <section class="sec shell" id="projects" data-sec="projects">
+      <div class="sec-head reveal" data-head="projects">
         <span class="sec-idx mono">01 / Projects</span>
         <h2>프로젝트</h2>
       </div>
@@ -64,8 +59,8 @@
     </section>
 
     <!-- PORTFOLIO FILES -->
-    <section class="sec shell files-sec" id="files">
-      <div class="files-copy reveal">
+    <section class="sec shell files-sec" id="files" data-sec="files">
+      <div class="files-copy reveal" data-head="files">
         <span class="sec-idx mono">Files</span>
         <h2>여기까지 보셨다면,<br>파일을 열어 보세요.</h2>
         <p class="sec-sub">급하시면 요약본을, 궁금하시면 상세본을. 둘 다 PDF로도 받을 수 있습니다.</p>
@@ -74,8 +69,8 @@
     </section>
 
     <!-- GAME LOG -->
-    <section class="sec shell" id="gamelog">
-      <div class="sec-head reveal">
+    <section class="sec shell" id="gamelog" data-sec="gamelog">
+      <div class="sec-head reveal" data-head="gamelog">
         <span class="sec-idx mono">02 / Game Log</span>
         <h2>게임 로그</h2>
         <p class="sec-sub">오래 플레이한 게임과 그 안에서 기획자로서 본 것들.</p>
@@ -85,11 +80,11 @@
     </section>
 
     <!-- 자유 섹션 (편집 모드에서 추가) -->
-    <div id="customSections"></div>
+    <div id="customSections" data-sec="custom"></div>
 
     <!-- RESUME -->
-    <section class="sec shell" id="resume">
-      <div class="sec-head reveal">
+    <section class="sec shell" id="resume" data-sec="resume">
+      <div class="sec-head reveal" data-head="resume">
         <span class="sec-idx mono">03 / Resume</span>
         <h2>이력</h2>
       </div>
@@ -97,8 +92,8 @@
     </section>
 
     <!-- ABOUT ME -->
-    <section class="sec shell" id="about">
-      <div class="sec-head reveal">
+    <section class="sec shell" id="about" data-sec="about">
+      <div class="sec-head reveal" data-head="about">
         <span class="sec-idx mono">04 / About Me</span>
         <h2 id="aboutTitle"></h2>
       </div>
@@ -131,7 +126,7 @@
        - content.js: 사이트에서 저장할 때마다 바뀌므로 매번 새로 받음
        - 나머지: BUILD 값이 바뀔 때만 새로 받음 (예전 파일이 섞여 화면이 비는 것 방지) */
     (function () {
-      var BUILD = "20261030-2";
+      var BUILD = "20261030-3";
       var editing = /[?&]edit\b/.test(location.search) || /^(localhost|127\.0\.0\.1)$/.test(location.hostname) || location.protocol === "file:";
       function fail(src) {
         if (document.querySelector(".load-error")) return;
@@ -147,6 +142,11 @@
       if (editing) {
         var l = document.createElement("link"); l.rel = "stylesheet"; l.href = "editor.css?v=" + BUILD; document.head.appendChild(l);
       }
+      // 마크다운 해석기 (못 불러와도 사이트는 동작 — 굵게·코드·링크만 되는 기본 모드)
+      function soft(src, next) { var s = document.createElement("script"); s.src = src; s.onload = next || null; document.body.appendChild(s); }
+      soft("https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js", function () {
+        soft("https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js", function () { if (window.PF && PF.render) PF.render(); });
+      });
       load("content.js?t=" + Date.now(), function () {
         load("main.js?v=" + BUILD, function () { if (editing) load("editor.js?v=" + BUILD); });
       });

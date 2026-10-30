@@ -20,6 +20,18 @@
     .replace(/`([^`]+?)`/g, "<code>$1</code>")
     .replace(/\[([^\]]+?)\]\(((?:https?:\/\/|assets\/|#)[^)\s]*)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
   const fmt = (s) => inline(esc(s).replace(/⟪(.*?)⟫/g, (_, t) => `<mark class="todo">${t || "채울 내용"}</mark>`));
+  /* 마크다운 → HTML (marked + DOMPurify, 못 불러오면 기본 꾸미기만) */
+  const md = (s) => {
+    const raw = String(s ?? "");
+    if (!raw.trim()) return "";
+    if (!window.marked || !window.DOMPurify) return fmt(raw).replace(/\n/g, "<br>");
+    const pre = raw.replace(/⟪(.*?)⟫/g, (_, t) => `<mark class="todo">${esc(t || "채울 내용")}</mark>`);
+    let html = window.marked.parse(pre, { gfm: true, breaks: true });
+    html = window.DOMPurify.sanitize(html, { ADD_ATTR: ["target"] });
+    return html
+      .replace(/<a /g, '<a target="_blank" rel="noopener" ')
+      .replace(/<img ([^>]*?)src="([^"]+)"/g, (m, pre2, u) => `<img loading="lazy" ${pre2}src="${PF.blobs[u] || u}"`);
+  };
   /* 유튜브 주소 → 영상 ID */
   const ytId = (u) => { const m = String(u || "").match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([\w-]{11})/); return m ? m[1] : (/^[\w-]{11}$/.test(u || "") ? u : ""); };
   const ytThumb = (id) => `<img src="https://i.ytimg.com/vi/${id}/maxresdefault.jpg" alt="" loading="lazy" onerror="if(!this.dataset.f){this.dataset.f=1;this.src='https://i.ytimg.com/vi/${id}/hqdefault.jpg'}"><button type="button" class="yt-play" data-yt="${id}" aria-label="영상 재생"><span>▶</span></button>`;
@@ -29,7 +41,7 @@
   const E = (path) => `data-path="${path}"`;
   const tags = (path) => `<span class="tags-wrap" data-list="${path}">${(get(path) || []).map((t, i) => `<span class="tag" ${E(`${path}.${i}`)}>${fmt(t)}</span>`).join("")}</span>`;
   const href = (path) => `href="${esc(PF.blobs[get(path)] || get(path) || "#")}" data-href="${path}"`;
-  Object.assign(PF, { get, fmt, plain, esc });
+  Object.assign(PF, { get, fmt, plain, esc, md });
 
   /* ---------- 미디어 (영상 / 이미지 / 슬라이드 / 자리표시) ---------- */
   const mediaIO = new IntersectionObserver((entries) => {
@@ -110,14 +122,14 @@
       switch (b.type) {
         case "h2": return `<div class="b-txt" data-item="${p}"><h3 class="b-h2" ${t("text")}</h3></div>`;
         case "h": return `<div class="b-txt" data-item="${p}"><h4 class="b-h" ${t("text")}</h4></div>`;
-        case "p": return `<div class="b-txt" data-item="${p}"><p class="b-p" ${t("text")}</p></div>`;
+        case "p": return `<div class="b-txt" data-item="${p}"><div class="b-p b-md" data-md ${E(p + ".text")}>${md(b.text)}</div></div>`;
         case "lp": return `<div class="b-txt" data-item="${p}"><p class="b-p b-lp"><strong class="b-lab" ${t("label")}</strong><span ${t("text")}</span></p></div>`;
         case "ul": return `<div class="b-txt" data-item="${p}"><ul class="b-ul" data-list="${p}.lines">${(b.lines || []).map((x, k) => `<li ${E(`${p}.lines.${k}`)}>${fmt(x)}</li>`).join("")}</ul></div>`;
-        case "quote": return `<div class="b-txt" data-item="${p}"><p class="b-quote" ${t("text")}</p></div>`;
+        case "quote": return `<div class="b-txt" data-item="${p}"><div class="b-quote b-md" data-md ${E(p + ".text")}>${md(b.text)}</div></div>`;
         case "hr": return `<div class="b-hr" data-item="${p}"><hr></div>`;
         case "btn": return `<div class="b-txt" data-item="${p}"><a class="b-btn" ${href(p + ".url")} target="_blank" rel="noopener"><span ${t("label")}</span> ↗</a></div>`;
         case "fold": return `<div class="b-txt" data-item="${p}"><details class="b-fold" ${ed ? "open" : ""}><summary><span ${t("summary")}</span></summary>
-            <div class="b-fold-body ${b.code ? "code" : ""}" ${t("text")}</div></details></div>`;
+            ${b.code ? `<div class="b-fold-body code" ${t("text")}</div>` : `<div class="b-fold-body b-md" data-md ${E(p + ".text")}>${md(b.text)}</div>`}</details></div>`;
         case "table": {
           const rows = b.rows || [];
           return `<div class="b-txt" data-item="${p}"><div class="b-table-wrap"><table class="b-table">${rows.map((r, ri) => `<tr>${r.map((c, ci) => {
@@ -147,6 +159,7 @@
 
   /* ---------- 화면 그리기 (편집 후 다시 호출됨) ---------- */
   function render() {
+    try { applyUI(); } catch (e) { console.error("[레이아웃·글꼴] 적용 실패", e); }
     try {
       $$("[data-bind]").forEach((el) => { el.dataset.path = "meta." + el.dataset.bind; el.innerHTML = show(el.dataset.path); });
       document.title = `${plain(D.meta.name)} — ${plain(D.meta.role)} Portfolio`;
@@ -356,6 +369,96 @@
   }
   PF.applyLayout = applyLayout;
 
+  /* ---------- 섹션 배치 · 고정 문구 · 메뉴 · 글꼴 (편집 모드 '레이아웃' / '글꼴' 패널) ---------- */
+  const SEC_NAMES = { projects: "프로젝트", files: "포트폴리오 파일", gamelog: "게임 로그", custom: "자유 섹션", resume: "이력", about: "About Me" };
+  const NAV_DEFAULT = { projects: "프로젝트", gamelog: "게임 로그", resume: "이력", about: "About" };
+  const headDefaults = {};
+  $$("[data-head]").forEach((h) => {
+    const id = h.dataset.head, idx = $(".sec-idx", h), h2 = $("h2", h), sub = $(".sec-sub", h);
+    headDefaults[id] = {
+      idx: idx ? idx.textContent.trim() : "",
+      title: h2 && id !== "about" ? h2.innerHTML.replace(/<br\s*\/?>/gi, "\n").replace(/<[^>]+>/g, "").trim() : "",
+      sub: sub ? sub.textContent.trim() : ""
+    };
+  });
+  PF.SEC_NAMES = SEC_NAMES;
+
+  const FONTS = {
+    "Pretendard": null,
+    "Noto Sans KR": "Noto+Sans+KR:wght@400;500;700;800",
+    "Gothic A1": "Gothic+A1:wght@400;500;700;800",
+    "IBM Plex Sans KR": "IBM+Plex+Sans+KR:wght@400;500;700",
+    "Nanum Gothic": "Nanum+Gothic:wght@400;700;800",
+    "Gowun Dodum": "Gowun+Dodum",
+    "Sunflower": "Sunflower:wght@300;500;700",
+    "Noto Serif KR": "Noto+Serif+KR:wght@400;600;700;900",
+    "Nanum Myeongjo": "Nanum+Myeongjo:wght@400;700;800",
+    "Gowun Batang": "Gowun+Batang:wght@400;700",
+    "Hahmlet": "Hahmlet:wght@400;600;800",
+    "Black Han Sans": "Black+Han+Sans",
+    "Do Hyeon": "Do+Hyeon",
+    "Jua": "Jua",
+    "JetBrains Mono": null,
+    "IBM Plex Mono": "IBM+Plex+Mono:wght@400;500",
+    "Nanum Gothic Coding": "Nanum+Gothic+Coding:wght@400;700"
+  };
+  PF.FONTS = FONTS;
+  const loadedFonts = new Set();
+  const ensureFont = (name) => {
+    const q = FONTS[name];
+    if (!q || loadedFonts.has(name)) return;
+    loadedFonts.add(name);
+    const l = document.createElement("link");
+    l.rel = "stylesheet";
+    l.href = `https://fonts.googleapis.com/css2?family=${q}&display=swap`;
+    document.head.appendChild(l);
+  };
+  const BASE_FONT = '"Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif';
+  const fontStack = (name, mono) => (!name || name === "Pretendard") ? (mono ? "" : BASE_FONT) : `"${name}", ${mono ? 'ui-monospace, Menlo, Consolas, monospace' : BASE_FONT}`;
+
+  function applyUI() {
+    D.ui = D.ui || {};
+    const U = D.ui;
+    U.sec = U.sec || {};
+    D.meta.topLabel = D.meta.topLabel ?? "Portfolio of";
+    const main = $("main"), ed = PF.editing;
+    const ids = $$("[data-sec]").map((el) => el.dataset.sec);
+    // 순서: 저장된 순서 + 새로 생긴 섹션은 뒤에
+    U.order = (U.order || []).filter((id) => ids.includes(id));
+    ids.forEach((id) => { if (!U.order.includes(id)) U.order.push(id); });
+    U.order.forEach((id) => { const el = $(`[data-sec="${id}"]`); if (el) main.appendChild(el); });
+    // 섹션별: 숨김 · 폭 · 제목 정렬 · 고정 문구
+    U.order.forEach((id) => {
+      const el = $(`[data-sec="${id}"]`), o = (U.sec[id] = U.sec[id] || {});
+      el.classList.toggle("sec-hidden", !!o.hidden);
+      el.dataset.width = o.width || "";
+      el.dataset.align = o.align || "";
+      const h = $(`[data-head="${id}"]`);
+      if (!h) return;
+      const dft = headDefaults[id] || {};
+      ["idx", "title", "sub"].forEach((k) => { if (o[k] === undefined) o[k] = dft[k] || ""; });
+      if (o.nav === undefined) o.nav = NAV_DEFAULT[id] || "";
+      const P = `ui.sec.${id}`;
+      h.innerHTML =
+        (o.idx || ed ? `<span class="sec-idx mono" ${E(P + ".idx")}>${fmt(o.idx)}</span>` : "") +
+        (id === "about" ? `<h2 id="aboutTitle"></h2>` : `<h2 ${E(P + ".title")}>${fmt(o.title)}</h2>`) +
+        (o.sub || ed ? `<p class="sec-sub" ${E(P + ".sub")}>${fmt(o.sub)}</p>` : "");
+    });
+    // 위 메뉴: 순서대로, 숨긴 섹션·이름 빈 메뉴는 빼고
+    $("#topNav").innerHTML = U.order.filter((id) => U.sec[id] && (ed || (!U.sec[id].hidden && plain(U.sec[id].nav).trim())) && id !== "custom" && $(`#${id}`))
+      .map((id) => `<a href="#${id}" ${E(`ui.sec.${id}.nav`)}>${fmt(U.sec[id].nav)}</a>`).join("");
+    // 글꼴 · 본문 크기
+    const F = (U.font = U.font || {});
+    [F.body, F.head, F.label].forEach((n) => n && ensureFont(n));
+    const root = document.documentElement.style;
+    const set = (k, v) => (v ? root.setProperty(k, v) : root.removeProperty(k));
+    set("--font", F.body ? fontStack(F.body) : "");
+    set("--font-head", F.head ? fontStack(F.head) : "");
+    set("--mono", F.label && F.label !== "JetBrains Mono" ? fontStack(F.label, true) : "");
+    set("--ts", F.scale && F.scale !== 1 ? String(F.scale) : "");
+  }
+  PF.applyUI = applyUI;
+
   /* 슬라이드 넘기기: meta.slideSeconds 초마다, 마우스를 올리면 멈춤 */
   let scIndex = 0, scTimer = 0, scHold = false;
   function goSlide(i) {
@@ -439,7 +542,7 @@
           ${w.facts.map((f, i) => `<div data-item="${p}.facts.${i}"><dt ${E(`${p}.facts.${i}.label`)}>${fmt(f.label)}</dt><dd ${E(`${p}.facts.${i}.value`)}>${fmt(f.value)}</dd></div>`).join("")}
         </dl>
         ${show2(w.steps.length, `<dl class="modal-steps" data-list="${p}.steps">${w.steps.map((s, i) => `
-          <div data-item="${p}.steps.${i}"><dt ${E(`${p}.steps.${i}.label`)}>${fmt(s.label)}</dt><dd ${E(`${p}.steps.${i}.text`)}>${fmt(s.text)}</dd></div>`).join("")}</dl>`)}
+          <div data-item="${p}.steps.${i}"><dt ${E(`${p}.steps.${i}.label`)}>${fmt(s.label)}</dt><dd class="b-md" data-md ${E(`${p}.steps.${i}.text`)}>${md(s.text)}</dd></div>`).join("")}</dl>`)}
         ${show2(w.tasks.length, `<div><h4 ${E(p + ".tasksTitle")}>${fmt(w.tasksTitle || "주요 업무")}</h4><ul class="tasks" data-list="${p}.tasks">${w.tasks.map((t, i) => `<li ${E(`${p}.tasks.${i}`)}>${fmt(t)}</li>`).join("")}</ul></div>`)}
         ${show2(w.blocks.length, `<div class="modal-blocks"><h4 ${E(p + ".blocksTitle")}>${fmt(w.blocksTitle || "자세한 이야기")}</h4>${blocks(p + ".blocks")}</div>`)}
         ${show2(w.links && w.links.length, `<div class="modal-links" data-list="${p}.links">${(w.links || []).map((l, i) => `<a data-item="${p}.links.${i}" ${href(`${p}.links.${i}.url`)} target="_blank" rel="noopener"><span ${E(`${p}.links.${i}.label`)}>${fmt(l.label)}</span> ↗</a>`).join("")}</div>`)}
@@ -524,9 +627,8 @@
     requestAnimationFrame(step);
   }
 
-  const navLinks = $$(".top-nav a");
   const secIO = new IntersectionObserver((entries) => entries.forEach((e) => {
-    if (e.isIntersecting) navLinks.forEach((a) => a.classList.toggle("active", a.getAttribute("href") === "#" + e.target.id));
+    if (e.isIntersecting) $$(".top-nav a").forEach((a) => a.classList.toggle("active", a.getAttribute("href") === "#" + e.target.id));
   }), { rootMargin: "-45% 0px -50% 0px" });
   $$("main section[id]").forEach((s) => secIO.observe(s));
 
