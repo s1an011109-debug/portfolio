@@ -79,7 +79,7 @@ window.PORTFOLIO = {
       "tags": [
         "콘텐츠",
         "캐릭터 연출",
-        "검수"
+        "데이터"
       ],
       "oneLine": "감정과 관계를 보여 주는 SD 연출이 왜 필요한지 설득해 \n게임에 넣었습니다.\n배드엔딩 CG는 거대 괴물에 미소녀의 모습을 섞자고 제안했고, \nAD 검토 후 반영됐습니다.\n출시 후 이 연출은 유저가 만든 이모티콘과 공식 4컷 만화에도 쓰였습니다.",
       "media": {
@@ -277,7 +277,7 @@ window.PORTFOLIO = {
       "title": "승리의 여신: 니케",
       "genre": "서브컬처 RPG",
       "platform": "모바일/PC",
-      "period": "⟪2022 —⟫",
+      "period": "2025 ~",
       "stats": [
         {
           "label": "지휘관 레벨",
@@ -299,7 +299,7 @@ window.PORTFOLIO = {
       "title": "명조: 워더링 웨이브",
       "genre": "서브컬처 RPG",
       "platform": "모바일/PC",
-      "period": "⟪2024 —⟫",
+      "period": "2025 ~",
       "stats": [
         {
           "label": "연각 레벨",
@@ -321,7 +321,7 @@ window.PORTFOLIO = {
       "title": "블루 아카이브",
       "genre": "서브컬처 RPG",
       "platform": "모바일/PC",
-      "period": "⟪2021 —⟫",
+      "period": "2026",
       "stats": [
         {
           "label": "선생 레벨",
@@ -344,8 +344,8 @@ window.PORTFOLIO = {
     },
     {
       "title": "사이퍼즈",
-      "genre": "",
-      "platform": "",
+      "genre": "AOS, MOBA",
+      "platform": "PC",
       "period": "",
       "stats": [
         {
@@ -363,9 +363,9 @@ window.PORTFOLIO = {
     },
     {
       "title": "Final Fantasy XIV",
-      "genre": "",
-      "platform": "",
-      "period": "",
+      "genre": "MMORPG",
+      "platform": "PC",
+      "period": "2021 ~ 2022",
       "stats": [
         {
           "label": "기록",
