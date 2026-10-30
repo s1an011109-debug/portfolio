@@ -240,7 +240,7 @@
               <span class="file-hook" ${E(p + ".hook")}>${fmt(f.hook)}</span>
               <span class="file-sheets"><span class="file-sheet"></span><span class="file-sheet"></span>${sheet}</span>
               <span class="file-info">
-                <h3>${name} <span class="mono"><span ${E(p + ".readTime")}>${fmt(f.readTime)}</span> ↗</span></h3>
+                <h3>${name} <span class="mono">↗</span></h3>
                 <p ${E(p + ".teaser")}>${fmt(f.teaser)}</p>
               </span>
             </a>
@@ -251,7 +251,7 @@
         const f = D.files[k];
         return `<a class="tray-item is-${k}" href="${esc(f.url)}" target="_blank" rel="noopener">
           <span class="tray-ico">${fmt(f.pages)}p</span>
-          <span><b>${name}</b><small>${fmt(f.teaser)}</small><small class="mono">읽는 시간 ${fmt(f.readTime)}</small></span>
+          <span><b>${name}</b><small>${fmt(f.teaser)}</small></span>
           <span class="go">↗</span></a>`;
       }).join("") + `<div class="tray-foot mono"><span>PDF</span><span><a href="${esc(D.files.summary.pdf)}">요약본</a> / <a href="${esc(D.files.detail.pdf)}">상세본</a></span></div>`;
 
