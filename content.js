@@ -114,7 +114,7 @@ window.PORTFOLIO = {
         },
         {
           "type": "h2",
-          "text": "나르쟈 트라우마 코드: 섬세함의 필요성을 느끼다"
+          "text": "나르쟈 트라우마 코드: 섬세함과 기획의 준비성을 깨닫다"
         },
         {
           "type": "img",
@@ -126,16 +126,13 @@ window.PORTFOLIO = {
           "wide": true
         },
         {
-          "type": "h",
-          "text": "이슈"
-        },
-        {
           "type": "p",
           "text": ""
         },
         {
-          "type": "h",
-          "text": "성과"
+          "type": "lp",
+          "label": "성과",
+          "text": "공식 4컷 만화에 SD 캐릭터와 공명하는 내용의 만화가 올라오고 유저들 사이에서도 호감의 이미지를 심어주었습니다."
         },
         {
           "type": "img",
@@ -143,7 +140,7 @@ window.PORTFOLIO = {
             "type": "image",
             "src": "assets/mvumth2i85m-ce62aaf6810d4969847bad5182a7d4.png"
           },
-          "caption": "",
+          "caption": "나르쟈 관련된 유저들의 반응과 공식 4컷 만화",
           "wide": true
         },
         {
