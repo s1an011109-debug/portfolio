@@ -114,7 +114,33 @@ window.PORTFOLIO = {
         },
         {
           "type": "h2",
-          "text": "나르쟈 트라우마 코드: 개발에 필요한 리소스를 모두 파악할 것을 깨닫다."
+          "text": "나르쟈 트라우마 코드: 캐릭터의 ==감정과 매력을 전달하는 연출== 제안"
+        },
+        {
+          "type": "lp",
+          "label": "이슈",
+          "text": "트라우마 코드 콘텐츠에서, 유저들에게 서브컬쳐의 색과 캐릭터의 매력을 전달하는 부분이 부족하다는 피드백을 받는 상황이었습니다."
+        },
+        {
+          "type": "img",
+          "media": {
+            "type": "images",
+            "src": [
+              "assets/mw3hcg512vq-fvfxzkxq-kalptam4ygm9fkzdy6scg.webp",
+              "assets/mw3hcg51e2m-huzldhim6dyqpxw-xsjzfr9dbpght6.webp"
+            ]
+          },
+          "caption": "나르쟈와 함께 하는 캐릭터 엘리시온",
+          "wide": false
+        },
+        {
+          "type": "lp",
+          "label": "발상 계기",
+          "text": ""
+        },
+        {
+          "type": "p",
+          "text": "나르쟈의 일러스트에는 항상 같이 있는 괴수 엘리시온이 있습니다. \n처음 발상단계에서는 해당 일러스트와 설정에 존재하는 엘리시온이 \"왜\" 있는지에 대해서 개연성을 부여하고자 했습니다. 그 방향성으로 해당 캐릭터에 서사를 부여하여 인게임에서"
         },
         {
           "type": "img",
@@ -124,10 +150,6 @@ window.PORTFOLIO = {
           },
           "caption": "트라우마 코드 나르쟈 E01 탐식의 괴물",
           "wide": true
-        },
-        {
-          "type": "p",
-          "text": ""
         },
         {
           "type": "lp",
