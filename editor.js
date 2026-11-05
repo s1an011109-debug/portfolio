@@ -481,7 +481,7 @@
   /* ---------- 글자를 고르면 색 팔레트: {빨강:글자} · ==형광펜== 으로 감싸기 ---------- */
   const pal = document.createElement("div");
   pal.className = "ed-pal"; pal.hidden = true;
-  pal.innerHTML = Object.keys(PF.COLORS).map((n) => `<button type="button" data-c="${n}" title="${n} 글자" style="color:var(--t-${PF.COLORS[n]})">가</button>`).join("") +
+  pal.innerHTML = `<button type="button" data-c="b" title="굵게 (Ctrl+B)"><b>B</b></button>` + Object.keys(PF.COLORS).map((n) => `<button type="button" data-c="${n}" title="${n} 글자" style="color:var(--t-${PF.COLORS[n]})">가</button>`).join("") +
     `<button type="button" data-c="hl" title="형광펜"><mark class="hl">가</mark></button><button type="button" data-c="x" title="색 빼기">✕</button>`;
   document.body.appendChild(pal);
   const selField = () => {
@@ -502,13 +502,28 @@
     pal.style.top = Math.max(8, r.top - pal.offsetHeight - 8) + "px";
   });
   pal.addEventListener("pointerdown", (e) => e.preventDefault()); // 선택이 풀리지 않게
-  pal.addEventListener("click", (e) => {
-    const b = e.target.closest("[data-c]");
-    if (!b || !selField()) return;
-    const t = getSelection().toString(), c = b.dataset.c;
+  /* c: "b" 굵게(다시 누르면 해제) · "hl" 형광펜 · "x" 색 빼기 · 그 밖엔 글자색 이름 */
+  const applyFmt = (c) => {
+    if (!selField()) return;
+    const t = getSelection().toString();
+    if (c === "b") {
+      const m = t.match(/^\*\*([\s\S]+)\*\*$/);
+      document.execCommand("insertText", false, m ? m[1] : `**${t}**`);
+      return;
+    }
     const bare = t.replace(/^\{(?:빨강|주황|노랑|초록|파랑|보라|회색):([\s\S]*)\}$/, "$1").replace(/^==([\s\S]*)==$/, "$1");
     const out = c === "x" ? bare : c === "hl" ? `==${bare}==` : `{${c}:${bare}}`;
     document.execCommand("insertText", false, out);
+  };
+  pal.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-c]");
+    if (b) applyFmt(b.dataset.c);
+  });
+  document.addEventListener("keydown", (e) => {
+    if (PF.editing && (e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === "b" && selField()) {
+      e.preventDefault();
+      applyFmt("b");
+    }
   });
 
   function act(ctl) {
