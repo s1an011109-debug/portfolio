@@ -80,7 +80,7 @@ window.PORTFOLIO = {
       "oneLine": "감정과 관계를 보여 주는 SD 연출이 왜 필요한지 설득해 게임에 넣었습니다. \n배드엔딩 CG는 거대 괴물에 미소녀의 모습을 섞자고 제안했고, AD 검토 후 반영됐습니다.\n출시 후 해당 연출이 유저가 만든 이모티콘과 공식 4컷 만화에도 사용 됐습니다.",
       "media": {
         "type": "image",
-        "src": "assets/mvovsu2ndn2-ogtag-1200-default.jpg"
+        "src": "assets/mwagfatpce0-101278-302413-4420.png"
       },
       "tasks": [
         "트라우마 코드 연출 일부 담당",
