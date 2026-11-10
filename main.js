@@ -376,8 +376,8 @@
   PF.applyLayout = applyLayout;
 
   /* ---------- 섹션 배치 · 고정 문구 · 메뉴 · 글꼴 (편집 모드 '레이아웃' / '글꼴' 패널) ---------- */
-  const SEC_NAMES = { projects: "프로젝트", gamelog: "게임 로그", custom: "자유 섹션", resume: "이력", about: "About Me" };
-  const NAV_DEFAULT = { projects: "프로젝트", gamelog: "게임 로그", resume: "이력", about: "About" };
+  const SEC_NAMES = { projects: "프로젝트", gamelog: "게임 로그", custom: "자유 섹션", resume: "이력" };
+  const NAV_DEFAULT = { projects: "프로젝트", gamelog: "게임 로그", resume: "이력" };
   const headDefaults = {};
   $$("[data-head]").forEach((h) => {
     const id = h.dataset.head, idx = $(".sec-idx", h), h2 = $("h2", h), sub = $(".sec-sub", h);

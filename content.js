@@ -594,34 +594,24 @@ window.PORTFOLIO = {
         "nav": "프로젝트"
       },
       "gamelog": {
-        "idx": "02 / GAME LOG",
+        "idx": "03 / GAME LOG",
         "title": "게임 로그",
         "sub": "오래 플레이한 게임과 그 안에서 기획자로서 본 것들. \n최신 업데이트 2026-11-05",
         "nav": "게임 로그"
       },
       "custom": {},
       "resume": {
-        "idx": "03 / Resume",
+        "idx": "02 / Resume",
         "title": "이력",
         "sub": "",
-        "nav": "이력"
-      },
-      "about": {
-        "idx": "04 / ABOUT ME",
-        "title": "",
-        "sub": "",
-        "nav": "About Me",
-        "off": {
-          "sub": true
-        }
+        "nav": "이력 · About"
       }
     },
     "order": [
       "projects",
-      "gamelog",
-      "custom",
       "resume",
-      "about"
+      "gamelog",
+      "custom"
     ],
     "font": {}
   }

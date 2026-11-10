@@ -214,3 +214,9 @@
 .gl-icon .ed-drop { font-size: 11px; padding: 6px; }
 .gl-icon .ed-drop small, .gl-icon .ed-yt-btn { display: none; }
 .gl-icon .media.ph > span { display: none; }
+
+/* 이력 카드(어두운 바탕)에서 편집 표시가 보이게 */
+.rs-card .ed-parts button { color: var(--rs-card-ink2); background: transparent; border-color: rgba(255, 255, 255, .3); }
+.rs-card .ed-parts button:hover { color: #ff9a80; border-color: #ff9a80; }
+.editing .rs-card [data-path]:empty::before { color: var(--rs-card-ink2); }
+.about-h[data-path]:empty::before { color: var(--ink-3); }

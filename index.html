@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap">
-  <link rel="stylesheet" href="styles.css?v=20261110-4">
+  <link rel="stylesheet" href="styles.css?v=20261110-6">
   <script>
     try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
   </script>
@@ -58,10 +58,32 @@
       <div class="cards" id="projectCards"></div>
     </section>
 
+    <!-- 이력 + About Me (같은 칸) -->
+    <section class="sec shell" id="resume" data-sec="resume">
+      <div class="rs-frame">
+        <aside class="rs-card reveal">
+          <div class="sec-head" data-head="resume">
+            <span class="sec-idx mono">02 / Resume</span>
+            <h2>이력</h2>
+          </div>
+          <div class="rs-photo" id="resumePhoto"></div>
+          <div class="rs-id" id="resumeId"></div>
+          <ul class="rs-tags" id="aboutTags"></ul>
+        </aside>
+        <div class="rs-main">
+          <div class="resume" id="resumeList"></div>
+          <div class="about-wrap">
+            <h3 class="about-h" id="aboutTitle"></h3>
+            <div class="about reveal" id="aboutBody"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- GAME LOG -->
     <section class="sec shell" id="gamelog" data-sec="gamelog">
       <div class="sec-head reveal" data-head="gamelog">
-        <span class="sec-idx mono">02 / Game Log</span>
+        <span class="sec-idx mono">03 / Game Log</span>
         <h2>게임 로그</h2>
         <p class="sec-sub">오래 플레이한 게임과 그 안에서 기획자로서 본 것들.</p>
       </div>
@@ -73,36 +95,7 @@
 
     <!-- 자유 섹션 (편집 모드에서 추가) -->
     <div id="customSections" data-sec="custom"></div>
-
-    <!-- RESUME -->
-    <section class="sec shell" id="resume" data-sec="resume">
-      <div class="rs-frame">
-        <aside class="rs-card reveal">
-          <div class="sec-head" data-head="resume">
-            <span class="sec-idx mono">03 / Resume</span>
-            <h2>이력</h2>
-          </div>
-          <div class="rs-photo" id="resumePhoto"></div>
-          <div class="rs-id" id="resumeId"></div>
-        </aside>
-        <div class="resume" id="resumeList"></div>
-      </div>
-    </section>
-
-    <!-- ABOUT ME -->
-    <section class="sec shell" id="about" data-sec="about">
-      <div class="rs-frame">
-        <aside class="rs-card reveal">
-          <div class="sec-head" data-head="about">
-            <span class="sec-idx mono">04 / About Me</span>
-            <h2 id="aboutTitle"></h2>
-          </div>
-          <ul class="rs-tags" id="aboutTags"></ul>
-        </aside>
-        <div class="about reveal" id="aboutBody"></div>
-      </div>
-    </section>
-  </main>
+    </main>
 
   <!-- 떠다니는 포트폴리오 파일 -->
   <div class="dock" id="dock">
@@ -129,7 +122,7 @@
        - content.js: 사이트에서 저장할 때마다 바뀌므로 매번 새로 받음
        - 나머지: BUILD 값이 바뀔 때만 새로 받음 (예전 파일이 섞여 화면이 비는 것 방지) */
     (function () {
-      var BUILD = "20261110-4";
+      var BUILD = "20261110-6";
       var editing = /[?&]edit\b/.test(location.search) || /^(localhost|127\.0\.0\.1)$/.test(location.hostname) || location.protocol === "file:";
       function fail(src) {
         if (document.querySelector(".load-error")) return;
