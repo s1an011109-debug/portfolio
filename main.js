@@ -254,10 +254,12 @@
       const ed = PF.editing;
       $("#projectCards").dataset.list = "works";
       $("#projectCards").innerHTML = D.works.map((w, j) => {
-        const media = hasMedia(w.media) || ed;
+        // 카드 그림은 슬라이드·상세 그림과 따로 관리: 처음엔 같은 그림을 복사해 두고 그 뒤로는 독립
+        if (w.cardMedia === undefined) w.cardMedia = w.media ? JSON.parse(JSON.stringify(w.media)) : null;
+        const media = hasMedia(w.cardMedia) || ed;
         return `
         <div class="card reveal ${media ? "" : "no-media"}" role="button" tabindex="0" data-work="${j}" data-item="works.${j}">
-          ${media ? `<div class="card-media" data-slot="works.${j}.media"><span class="card-status" ${E(`works.${j}.status`)}>${fmt(w.status)}</span><span class="card-play mono">PLAYING</span></div>` : ""}
+          ${media ? `<div class="card-media" data-slot="works.${j}.cardMedia"><span class="card-status" ${E(`works.${j}.status`)}>${fmt(w.status)}</span><span class="card-play mono">PLAYING</span></div>` : ""}
           <div class="card-body">
             ${media ? "" : `<span class="card-status" ${E(`works.${j}.status`)}>${fmt(w.status)}</span>`}
             <div class="card-top mono"><span ${E(`works.${j}.period`)}>${fmt(w.period)}</span><span ${E(`works.${j}.team`)}>${fmt(w.team)}</span></div>
@@ -270,7 +272,7 @@
       }).join("");
       $$("#projectCards .card-media").forEach((cm) => {
         const j = +cm.closest("[data-work]").dataset.work;
-        cm.prepend(makeMedia(D.works[j].media, plain(D.works[j].title), `works.${j}.media`));
+        cm.prepend(makeMedia(D.works[j].cardMedia, plain(D.works[j].title), `works.${j}.cardMedia`));
       });
 
     } catch (e) { console.error("[프로젝트 카드] 그리기 실패", e); }
