@@ -516,6 +516,11 @@ mark.todo { background: var(--todo); color: inherit; border-radius: 4px; padding
   #projectCards > .card:first-child h3 { font-size: clamp(26px, 2.6vw, 36px); letter-spacing: -0.04em; }
   #projectCards > .card:first-child .one { font-size: 16px; line-height: 1.7; }
 }
+/* 프로젝트 카드: 화면 폭에 따라 1 → 2 → 3 → 4개씩 (PC 넓은 화면은 4개) */
+#projectCards { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 640px) { #projectCards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1000px) { #projectCards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1360px) { #projectCards { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; } }
 .card.no-media { background: var(--surface-2); border-color: transparent; }
 .card.no-media .card-body { padding: 26px 24px 26px; }
 .card.no-media .card-status { position: static; justify-self: start; background: var(--bg); backdrop-filter: none; }
