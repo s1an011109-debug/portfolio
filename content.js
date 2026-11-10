@@ -13,7 +13,7 @@ window.PORTFOLIO = {
     "roleKo": "게임 콘텐츠 기획, 시스템 기획",
     "heroImage": "assets/mvoxhl71ae7-1161e04c-8088-4c28-9047-e99977.png",
     "slideSeconds": 5,
-    "email": "",
+    "email": "s1an011109@gmail.com",
     "keywords": [
       "캐릭터 연출",
       "필드/수집 콘텐츠",
@@ -539,13 +539,13 @@ window.PORTFOLIO = {
       "y": 1.44
     },
     "note": {
-      "x": -3.39,
-      "y": 2.29,
-      "w": 111.42
+      "x": -0.77,
+      "y": 1.66,
+      "w": 111.01
     }
   },
   "about": {
-    "title": "About Me",
+    "title": "More",
     "photo": {
       "type": "image",
       "src": "assets/mvoxhl71ae7-1161e04c-8088-4c28-9047-e99977.png"
@@ -561,7 +561,7 @@ window.PORTFOLIO = {
           "type": "image",
           "src": "assets/mvuj8hgttex-maxresdefault.jpg"
         },
-        "caption": "NEON GENESIS EVANGELION 애니메이션을 가장 좋아합니다",
+        "caption": "NEON GENESIS EVANGELION 애니메이션을 \n가장 좋아합니다",
         "wide": false
       },
       {
@@ -579,7 +579,7 @@ window.PORTFOLIO = {
           "type": "image",
           "src": "assets/mvukj618opc-c61e8efd-1d97-4404-ad59-457bec.webp"
         },
-        "caption": "피규어 및 굿즈",
+        "caption": "피규어 및 굿즈 10종 이상 보유",
         "wide": false
       }
     ],
