@@ -663,7 +663,7 @@
       const top = modal.getBoundingClientRect().top + 90;
       let cur = 0;
       list.forEach((x, i) => { if (x.el.getBoundingClientRect().top <= top + 4) cur = i; });
-      if (modal.scrollTop + modal.clientHeight >= modal.scrollHeight - 4) cur = list.length - 1;
+      if (modal.scrollTop > 40 && modal.scrollTop + modal.clientHeight >= modal.scrollHeight - 4) cur = list.length - 1;
       links.forEach((a, i) => a.classList.toggle("on", i === cur));
       const on = links[cur];
       if (on && nav.scrollWidth > nav.clientWidth + 2 && getComputedStyle(nav).overflowX !== "visible") nav.scrollTo({ left: on.offsetLeft - 40, behavior: "smooth" });

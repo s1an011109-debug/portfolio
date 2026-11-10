@@ -244,7 +244,11 @@ window.PORTFOLIO = {
         "type": "image",
         "src": "assets/mwagvs8p7f0-2026-11-10-180738.png"
       },
-      "tasks": [],
+      "tasks": [
+        "팀장으로 기획 · 제작 · 펀딩 · 배송 전 과정 총괄",
+        "⟪맡은 기획 업무⟫",
+        "2022 보드게임 페스타 오프라인 전시"
+      ],
       "links": [
         {
           "label": "텀블벅 페이지",
@@ -255,6 +259,46 @@ window.PORTFOLIO = {
         {
           "type": "h2",
           "text": "조별과제에서 시작된 프로젝트"
+        },
+        {
+          "type": "p",
+          "text": "⟪수업 조별과제에서 펀딩까지 이어진 과정⟫"
+        },
+        {
+          "type": "h2",
+          "text": "내가 맡은 기획: ⟪콘셉트와 규칙⟫"
+        },
+        {
+          "type": "h",
+          "text": "01. ⟪사례 제목⟫"
+        },
+        {
+          "type": "lp",
+          "label": "이슈",
+          "text": "⟪어떤 문제가 있었는지⟫"
+        },
+        {
+          "type": "lp",
+          "label": "판단",
+          "text": "⟪어떻게 판단했는지⟫"
+        },
+        {
+          "type": "lp",
+          "label": "제안과 협의",
+          "text": "⟪무엇을 제안하고 어떻게 설득했는지⟫"
+        },
+        {
+          "type": "lp",
+          "label": "반영 결과",
+          "text": "⟪반영된 결과⟫"
+        },
+        {
+          "type": "h2",
+          "text": "펀딩 결과"
+        },
+        {
+          "type": "p",
+          "text": "후원자 **516명**, 모금액 **13,098,000원**, 최종 달성률 **727%**를 기록했습니다."
         }
       ],
       "steps": [],
@@ -266,7 +310,9 @@ window.PORTFOLIO = {
       "slidePeriod": "2022",
       "slideRole": "팀장",
       "slideTitle": "플레이어님, 어느 성좌가 좋아?",
-      "slideLine": "콘셉트와 규칙을 기획한 보드게임으로 **516명의 후원과 1,309만 원을 모았습니다.**"
+      "slideLine": "콘셉트와 규칙을 기획한 보드게임으로 **516명의 후원과 1,309만 원을 모았습니다.**",
+      "tasksTitle": "담당 업무",
+      "lead": "팀장으로 기획부터 배송까지 맡아 내놓은 보드게임입니다.\n후원자 516명에게 13,098,000원을 모아 목표의 727%를 달성했습니다."
     },
     {
       "id": "luka",
@@ -295,25 +341,37 @@ window.PORTFOLIO = {
         "⟪기타 업무⟫"
       ],
       "links": [],
-      "steps": [
+      "steps": [],
+      "blocks": [
         {
+          "type": "h2",
+          "text": "기획한 콘텐츠: NPC 노아와 꽃 수집·강화"
+        },
+        {
+          "type": "lp",
           "label": "배경",
           "text": "⟪필드 탐색에 동기가 부족했던 점 등 이 콘텐츠가 필요했던 이유⟫"
         },
         {
+          "type": "lp",
           "label": "구조",
           "text": "필드 곳곳에서 꽃을 모아 NPC 노아에게 건네면 강화를 받도록 해서 탐색, 수집, 강화가 한 흐름으로 이어지게 했습니다."
         },
         {
+          "type": "h2",
+          "text": "전시와 반응"
+        },
+        {
+          "type": "lp",
           "label": "전시",
           "text": "BIC 2024 루키 부문 온라인/오프라인 전시, 청강 크로니클 2024 전시"
         },
         {
+          "type": "lp",
           "label": "반응",
           "text": "⟪플레이테스트 반응이나 수치⟫"
         }
       ],
-      "blocks": [],
       "facts": [],
       "cardMedia": {
         "type": "image",
@@ -322,7 +380,9 @@ window.PORTFOLIO = {
       "slidePeriod": "2024",
       "slideRole": "NPC 노아 콘텐츠 기획",
       "slideTitle": "LUKA: AZURE FIELD",
-      "slideLine": "전투 없는 RPG에서 꽃 수집을 NPC 강화 보상으로 연결하는 콘텐츠를 기획했습니다."
+      "slideLine": "전투 없는 RPG에서 꽃 수집을 NPC 강화 보상으로 연결하는 콘텐츠를 기획했습니다.",
+      "tasksTitle": "담당 업무",
+      "lead": "전투 없이 바다를 탐험하는 RPG입니다. 꽃을 모아 NPC에게 전달하고 강화를 받는 콘텐츠를 기획했습니다. 유적 레벨디자인과 보이스 디렉팅에도 참여했습니다."
     },
     {
       "id": "voice",
@@ -346,12 +406,7 @@ window.PORTFOLIO = {
         "⟪맡은 업무⟫"
       ],
       "links": [],
-      "steps": [
-        {
-          "label": "수상",
-          "text": "청강문화산업대학교 제2회 알발 페스타 1등"
-        }
-      ],
+      "steps": [],
       "cardMedia": {
         "type": "image",
         "src": "assets/mvoyhx89ls7-1.png"
@@ -359,7 +414,29 @@ window.PORTFOLIO = {
       "slidePeriod": "2021",
       "slideRole": "⟪역할⟫",
       "slideTitle": "사랑을 위해서라면 목소리를 내야해!",
-      "slideLine": "**목소리로 선택지와 감정을 인식**하는 미소녀 연애 시뮬레이션 게임으로, 교내 프로젝트 대회인 제2회 알발 페스타에서 1등을 받은 미소녀 연애 시뮬레이션입니다."
+      "slideLine": "**목소리로 선택지와 감정을 인식**하는 미소녀 연애 시뮬레이션 게임으로, 교내 프로젝트 대회인 제2회 알발 페스타에서 1등을 받은 미소녀 연애 시뮬레이션입니다.",
+      "tasksTitle": "담당 업무",
+      "lead": "**목소리로 선택지와 감정을 인식**하는 미소녀 연애 시뮬레이션 게임으로, 교내 프로젝트 대회인 제2회 알발 페스타에서 1등을 받았습니다.",
+      "facts": [],
+      "blocks": [
+        {
+          "type": "h2",
+          "text": "프로젝트 소개"
+        },
+        {
+          "type": "p",
+          "text": "⟪목소리로 선택지와 감정을 인식하는 방식, 개발 환경⟫"
+        },
+        {
+          "type": "h2",
+          "text": "수상"
+        },
+        {
+          "type": "lp",
+          "label": "수상",
+          "text": "청강문화산업대학교 제2회 알발 페스타 1등"
+        }
+      ]
     },
     {
       "id": "etc",
@@ -386,12 +463,7 @@ window.PORTFOLIO = {
         "VR 프로젝트로 제3회 알발 페스타 2등"
       ],
       "links": [],
-      "steps": [
-        {
-          "label": "수상",
-          "text": "제3회 알발 페스타 2등 (VR)"
-        }
-      ],
+      "steps": [],
       "cardMedia": {
         "type": "image",
         "src": "assets/mvuerwcvizz-2026-10-30-122411.png"
@@ -399,7 +471,29 @@ window.PORTFOLIO = {
       "slidePeriod": "2022",
       "slideRole": "⟪역할⟫",
       "slideTitle": "기타 프로젝트",
-      "slideLine": "KT 산학 프로젝트, 넥슨 MOD 게임 개발"
+      "slideLine": "KT 산학 프로젝트, 넥슨 MOD 게임 개발",
+      "tasksTitle": "담당 업무",
+      "lead": "KT 산학 프로젝트, 넥슨 MOD 게임 개발\n그리고 알발 페스타 2등을 받은 VR 프로젝트입니다.",
+      "facts": [],
+      "blocks": [
+        {
+          "type": "h2",
+          "text": "산학 협력 · MOD 프로젝트"
+        },
+        {
+          "type": "p",
+          "text": "⟪KT 산학 프로젝트와 넥슨 MOD 게임 개발에서 맡은 일⟫"
+        },
+        {
+          "type": "h2",
+          "text": "VR 프로젝트"
+        },
+        {
+          "type": "lp",
+          "label": "수상",
+          "text": "제3회 알발 페스타 2등 (VR)"
+        }
+      ]
     }
   ],
   "gameLogs": [
