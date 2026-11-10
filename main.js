@@ -130,22 +130,53 @@
   /* 글 · 그림 블록 (프로젝트 상세, 자유 섹션, About Me)
      h2 큰 제목 · h 소제목 · p 글 · lp 라벨 글 · ul 목록 · img 그림/영상(여러 장=갤러리)
      yt 유튜브 · table 표 · fold 접기 · quote 강조 상자 · hr 구분선 · btn 링크 버튼 */
+  /* 아직 채우지 않은 자리(⟪ ⟫)는 편집 모드에서만 보이고, 방문자 화면에서는 숨김 */
+  const hasTodo = (s) => /⟪/.test(String(s ?? ""));
+  const viewText = (s, ed) => (ed ? s : String(s ?? "").replace(/\s*[\/·,]?\s*⟪[^⟫]*⟫/g, ""));
+  function hiddenBlocks(list) {
+    const hide = new Set();
+    const txt = (b) => [b.text, b.label, b.summary, (b.lines || []).join(" "), (b.rows || []).map((r) => r.join(" ")).join(" ")].filter(Boolean).join(" ");
+    const isHead = (b) => b.type === "h2" || b.type === "h";
+    const isBody = (b) => !isHead(b) && b.type !== "hr";
+    let any = false;
+    list.forEach((b, i) => {
+      if (hasTodo(txt(b))) { hide.add(i); any = true; }
+      else if (b.type === "p" && !String(b.text || "").trim()) hide.add(i);
+    });
+    if (!any) return hide;
+    // 내용이 모두 숨겨져 제목만 남은 소제목도 함께 숨김
+    list.forEach((b, i) => {
+      if (!isHead(b) || hide.has(i)) return;
+      let ok = false;
+      for (let k = i + 1; k < list.length; k++) {
+        const n = list[k];
+        if (n.type === "h2" || (b.type === "h" && n.type === "h")) break;
+        if (isBody(n) && !hide.has(k)) { ok = true; break; }
+      }
+      if (!ok) hide.add(i);
+    });
+    return hide;
+  }
   function blocks(path) {
     const list = get(path) || [];
     const ed = PF.editing;
+    const hide = ed ? new Set() : hiddenBlocks(list);
     return `<div class="blocks" data-list="${path}">${list.map((b, i) => {
+      if (hide.has(i)) return "";
       const p = `${path}.${i}`;
       return tone(one(b, p), p, b.tone);
     }).join("")}</div>`;
   }
   /* 블록 색: 블록 바깥 요소에 data-tone */
   const tone = (html, p, c) => (c ? html.replace(`data-item="${p}"`, `data-item="${p}" data-tone="${esc(c)}"`) : html);
+  /* 목차에 보일 짧은 이름 (편집 모드에서만 칸이 보임) */
+  const tocChip = (b, p) => (PF.editing ? `<div class="b-toc-ed mono" title="비워 두면 목차에서 빠집니다 (목차 이름을 하나라도 정하면, 이름 있는 제목만 목차에 나옵니다)"><span>목차 이름</span><i ${E(p + ".toc")}>${fmt(b.toc || "")}</i></div>` : "");
   function one(b, p) {
     const ed = PF.editing, t = (k) => `${E(`${p}.${k}`)}>${fmt(b[k])}`;
     {
       switch (b.type) {
-        case "h2": return `<div class="b-txt" data-item="${p}"><h3 class="b-h2" ${t("text")}</h3></div>`;
-        case "h": return `<div class="b-txt" data-item="${p}"><h4 class="b-h" ${t("text")}</h4></div>`;
+        case "h2": return `<div class="b-txt" data-item="${p}" data-toc="${esc(b.toc || "")}">${tocChip(b, p)}<h3 class="b-h2" ${t("text")}</h3></div>`;
+        case "h": return `<div class="b-txt" data-item="${p}" data-toc="${esc(b.toc || "")}">${tocChip(b, p)}<h4 class="b-h" ${t("text")}</h4></div>`;
         case "p": return `<div class="b-txt" data-item="${p}"><div class="b-p b-md" data-md ${E(p + ".text")}>${md(b.text)}</div></div>`;
         case "lp": return `<div class="b-txt" data-item="${p}"><p class="b-p b-lp"><strong class="b-lab" ${t("label")}</strong><span ${t("text")}</span></p></div>`;
         case "ul": return `<div class="b-txt" data-item="${p}"><ul class="b-ul" data-list="${p}.lines">${(b.lines || []).map((x, k) => `<li ${E(`${p}.lines.${k}`)}>${fmt(x)}</li>`).join("")}</ul></div>`;
@@ -637,36 +668,43 @@
   const modal = $("#modal");
   let current = null;
 
-  /* 상세 창 목차: 제목(h2·h)을 누르면 그 자리로 바로 이동 */
+  /* 상세 창 목차: 누르면 그 제목으로 바로 이동 (모바일에서는 접이식) */
   let tocSpy = null;
-  function buildToc(keep) {
+  function buildToc() {
     const nav = $(".modal-toc", modal);
     if (!nav) return;
     const items = [];
     const tk = $(".modal-tasks", modal);
-    if (tk) items.push({ el: tk, lv: 1, text: plain(tk.querySelector("h4").textContent) || "담당 업무" });
-    $$(".b-h2, .b-h", modal).forEach((h) => items.push({ el: h, lv: h.classList.contains("b-h2") ? 1 : 2, text: h.textContent.trim() }));
+    if (tk) items.push({ el: tk, lv: 1, text: tk.querySelector("h4").textContent.trim() || "담당 업무" });
+    const heads = $$(".b-txt:has(> .b-h2), .b-txt:has(> .b-h)", modal).map((box) => ({
+      el: box.querySelector(".b-h2, .b-h"), lv: box.querySelector(".b-h2") ? 1 : 2,
+      text: (box.dataset.toc || "").trim(), full: box.querySelector(".b-h2, .b-h").textContent.trim(),
+    }));
+    const custom = heads.some((x) => x.text);   // 목차 이름을 정해 둔 프로젝트는 그 제목만 목차에
+    heads.forEach((x) => { if (custom ? x.text : x.full) items.push({ el: x.el, lv: custom ? 1 : x.lv, text: custom ? x.text : x.full }); });
     const list = items.filter((x) => x.text);
     if (list.length < 2) { nav.hidden = true; return; }
     nav.hidden = false;
-    nav.innerHTML = `<p class="toc-t">목차</p>` + list.map((x, i) => `<a href="#" class="toc-a lv${x.lv}" data-i="${i}">${esc(x.text)}</a>`).join("");
-    list.forEach((x) => { x.el.classList.add("toc-target"); });
-    const links = $$(".toc-a", nav);
+    nav.classList.remove("open");
+    nav.innerHTML = `<p class="toc-t">목차</p><button type="button" class="toc-toggle" aria-expanded="false"><span class="toc-now"></span><i aria-hidden="true">▾</i></button><div class="toc-list">${list.map((x, i) => `<a href="#" class="toc-a lv${x.lv}" data-i="${i}">${esc(x.text)}</a>`).join("")}</div>`;
+    list.forEach((x) => x.el.classList.add("toc-target"));
+    const links = $$(".toc-a", nav), now = $(".toc-now", nav);
     nav.onclick = (e) => {
+      if (e.target.closest(".toc-toggle")) { const o = nav.classList.toggle("open"); $(".toc-toggle", nav).setAttribute("aria-expanded", o); return; }
       const a = e.target.closest(".toc-a");
       if (!a) return;
       e.preventDefault(); e.stopPropagation();
+      nav.classList.remove("open"); $(".toc-toggle", nav).setAttribute("aria-expanded", "false");
       list[+a.dataset.i].el.scrollIntoView({ behavior: "smooth", block: "start" });
     };
-    // 지금 읽는 곳 표시
+    // 지금 읽는 구간 표시 (제목이 화면 위쪽 기준선을 지나면 그 항목)
     const mark = () => {
-      const top = modal.getBoundingClientRect().top + 90;
+      const line = modal.getBoundingClientRect().top + (matchMedia("(max-width: 960px)").matches ? 110 : 80);
       let cur = 0;
-      list.forEach((x, i) => { if (x.el.getBoundingClientRect().top <= top + 4) cur = i; });
+      list.forEach((x, i) => { if (x.el.getBoundingClientRect().top <= line) cur = i; });
       if (modal.scrollTop > 40 && modal.scrollTop + modal.clientHeight >= modal.scrollHeight - 4) cur = list.length - 1;
       links.forEach((a, i) => a.classList.toggle("on", i === cur));
-      const on = links[cur];
-      if (on && nav.scrollWidth > nav.clientWidth + 2 && getComputedStyle(nav).overflowX !== "visible") nav.scrollTo({ left: on.offsetLeft - 40, behavior: "smooth" });
+      now.textContent = list[cur].text;
     };
     if (tocSpy) modal.removeEventListener("scroll", tocSpy);
     tocSpy = mark; modal.addEventListener("scroll", tocSpy, { passive: true });
@@ -688,38 +726,38 @@
     const st = modal.scrollTop;
     // 역할·기간·구성·상태 이름표도 고칠 수 있게 (처음엔 기본 이름을 복사)
     w.factLabels = Object.assign({ role: "역할", period: "기간", team: "구성", status: "상태" }, w.factLabels || {});
-    const fixed = [["role"], ["period"], ["team"], ["status"]].map(([f]) => [w.factLabels[f], f]).filter(([, f]) => ed || plain(w[f]).trim());
+    const fixed = [["role"], ["period"], ["team"], ["status"]].map(([f]) => [w.factLabels[f], f]).filter(([, f]) => ed || (plain(w[f]).trim() && !hasTodo(w[f])));
     const show2 = (cond, html) => (cond || ed ? html : "");
     $("#modalBody").innerHTML = `
       <div class="modal-media" data-slot="${p}.media"></div>
       <div class="modal-text">
         <header class="modal-head">
           ${show2(w.kind, `<span class="kind-pill" ${E(p + ".kind")}>${fmt(w.kind)}</span>`)}
-          <p class="mono modal-genre" ${E(p + ".genre")}>${fmt(w.genre)}</p>
+          ${show2(ed || plain(viewText(w.genre, ed)).trim(), `<p class="mono modal-genre" ${E(p + ".genre")}>${fmt(viewText(w.genre, ed))}</p>`)}
           <h2 id="modalTitle" ${E(p + ".title")}>${fmt(w.title)}</h2>
           ${show2(w.lead, `<p class="modal-lead" ${E(p + ".lead")}>${fmt(w.lead)}</p>`)}
         </header>
         <dl class="modal-facts" data-list="${p}.facts">
           ${fixed.map(([k, f]) => `<div><dt ${E(`${p}.factLabels.${f}`)}>${fmt(k)}</dt><dd ${E(`${p}.${f}`)}>${fmt(w[f])}</dd></div>`).join("")}
-          ${w.facts.map((f, i) => `<div data-item="${p}.facts.${i}"><dt ${E(`${p}.facts.${i}.label`)}>${fmt(f.label)}</dt><dd ${E(`${p}.facts.${i}.value`)}>${fmt(f.value)}</dd></div>`).join("")}
+          ${w.facts.map((f, i) => (!ed && (hasTodo(f.label) || hasTodo(f.value)) ? "" : `<div data-item="${p}.facts.${i}"><dt ${E(`${p}.facts.${i}.label`)}>${fmt(f.label)}</dt><dd ${E(`${p}.facts.${i}.value`)}>${fmt(f.value)}</dd></div>`)).join("")}
         </dl>
         <div class="modal-cols">
         <nav class="modal-toc" aria-label="이 페이지 목차" hidden></nav>
         <div class="modal-main">
         ${show2(w.steps.length, `<dl class="modal-steps" data-list="${p}.steps">${w.steps.map((s, i) => `
           <div data-item="${p}.steps.${i}"><dt ${E(`${p}.steps.${i}.label`)}>${fmt(s.label)}</dt><dd class="b-md" data-md ${E(`${p}.steps.${i}.text`)}>${md(s.text)}</dd></div>`).join("")}</dl>`)}
-        ${show2(w.tasks.length, `<div class="modal-tasks"><h4 ${E(p + ".tasksTitle")}>${fmt(w.tasksTitle || "주요 업무")}</h4><ul class="tasks" data-list="${p}.tasks">${w.tasks.map((t, i) => `<li ${E(`${p}.tasks.${i}`)}>${fmt(t)}</li>`).join("")}</ul></div>`)}
-        ${show2(w.blocks.length, `<div class="modal-blocks"><h4 ${E(p + ".blocksTitle")}>${fmt(w.blocksTitle || "자세한 이야기")}</h4>${blocks(p + ".blocks")}</div>`)}
+        ${show2(w.tasks.some((t) => !hasTodo(t)), `<div class="modal-tasks"><h4 ${E(p + ".tasksTitle")}>${fmt(w.tasksTitle || "주요 업무")}</h4><ul class="tasks" data-list="${p}.tasks">${w.tasks.map((t, i) => (!ed && hasTodo(t) ? "" : `<li ${E(`${p}.tasks.${i}`)}>${fmt(t)}</li>`)).join("")}</ul></div>`)}
+        ${show2(w.blocks.length, `<div class="modal-blocks">${ed || plain(w.blocksTitle).trim() ? `<h4 class="mb-title" ${E(p + ".blocksTitle")}>${fmt(w.blocksTitle || "")}</h4>` : ""}${blocks(p + ".blocks")}</div>`)}
         ${show2(w.links && w.links.length, `<div class="modal-links" data-list="${p}.links">${(w.links || []).map((l, i) => `<a data-item="${p}.links.${i}" ${href(`${p}.links.${i}.url`)} target="_blank" rel="noopener"><span ${E(`${p}.links.${i}.label`)}>${fmt(l.label)}</span> ↗</a>`).join("")}</div>`)}
         </div>
         </div>
       </div>`;
     fillSlots(modal);
-    buildToc(!!keepScroll);
     // 프로젝트마다 고유 주소 (#work-아이디) — 링크로 바로 열 수 있게
     if (w.id && location.hash !== "#work-" + w.id) history.replaceState(null, "", "#work-" + w.id);
     if (!modal.open) modal.showModal();
     modal.scrollTop = keepScroll ? st : 0;
+    buildToc();   // 창이 열려 크기가 잡힌 뒤에 목차 위치 계산
     if (!keepScroll) $(".modal-close").focus({ preventScroll: true });
     if (PF.onRender) PF.onRender();
   }
