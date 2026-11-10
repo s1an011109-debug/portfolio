@@ -77,10 +77,10 @@ window.PORTFOLIO = {
         "캐릭터 연출",
         "데이터 관리"
       ],
-      "oneLine": "감정과 관계를 보여 주는 SD 연출이 왜 필요한지 설득해 게임에 넣었습니다. \n배드엔딩 CG는 거대 괴물에 미소녀의 모습을 섞자고 제안했고, AD 검토 후 반영됐습니다.\n출시 후 해당 연출이 유저가 만든 이모티콘과 공식 4컷 만화에도 사용 됐습니다.",
+      "oneLine": "신규 SD 연출의 제작 필요성을 설득하고, 배드엔딩 CG 방향을 제안해 반영했습니다.",
       "media": {
         "type": "image",
-        "src": "assets/mwagfatpce0-101278-302413-4420.png"
+        "src": "assets/mwaglz840yl-rjd2a1pxo8vb-xerd5u4pivstqb3wy.webp"
       },
       "tasks": [
         "트라우마 코드 연출 일부 담당",
@@ -201,7 +201,11 @@ window.PORTFOLIO = {
       "steps": [],
       "tasksTitle": "담당 업무",
       "blocksTitle": "",
-      "lead": "나르쟈의 감정과 엘리시온의 역할을 전달하기 위해 SD 연출을 제안하고, 신규 리소스 제작 필요성을 설득했습니다.\n배드엔딩에서는 캐릭터의 외형적 매력을 유지하는 CG 방향을 제안해 반영했습니다."
+      "lead": "나르쟈의 감정과 엘리시온의 역할을 전달하기 위해 SD 연출을 제안하고, 신규 리소스 제작 필요성을 설득했습니다.\n배드엔딩에서는 캐릭터의 외형적 매력을 유지하는 CG 방향을 제안해 반영했습니다.",
+      "cardMedia": {
+        "type": "image",
+        "src": "assets/mwagfatpce0-101278-302413-4420.png"
+      }
     },
     {
       "id": "seongjwa",
@@ -217,7 +221,7 @@ window.PORTFOLIO = {
         "팀장",
         "펀딩 성공"
       ],
-      "oneLine": "팀장으로 기획부터 배송까지 맡아 내놓은 보드게임입니다. 후원자 516명에게 13,098,000원을 모아 목표의 727%를 달성했습니다.",
+      "oneLine": "콘셉트와 규칙을 기획한 보드게임으로 **516명의 후원과 1,309만 원을 모았습니다.**",
       "media": {
         "type": "image",
         "src": "assets/mvoxnaxpbpz-eyjidwnrzxqioij0dw1ibgj1zy1pbw.webp"
@@ -236,7 +240,11 @@ window.PORTFOLIO = {
         }
       ],
       "steps": [],
-      "facts": []
+      "facts": [],
+      "cardMedia": {
+        "type": "image",
+        "src": "assets/mvoxnaxpbpz-eyjidwnrzxqioij0dw1ibgj1zy1pbw.webp"
+      }
     },
     {
       "id": "luka",
@@ -254,7 +262,7 @@ window.PORTFOLIO = {
         "졸업작품",
         "**유니티**"
       ],
-      "oneLine": "2024년 청강문화산업대학교 졸업작품입니다. 전투 없이 진행되는 RPG로 스토리라인에 따라 자유롭게 바다를 여행하는 것을 재미요소로 삼았습니다.\n필드에서 꽃을 찾아 NPC에게 가져가면 강화를 받는 수집, 강화 콘텐츠 기획, 프로빌딩을 이용한 유적 레벨디자인 그리고 보이스 디렉팅과 관련된 성우 관련 작업을 진행했습니다.",
+      "oneLine": "전투 없는 RPG에서 꽃 수집을 NPC 강화 보상으로 연결하는 콘텐츠를 기획했습니다.",
       "media": {
         "type": "image",
         "src": "assets/mvoye7gakrh-1732259293255.png"
@@ -284,7 +292,11 @@ window.PORTFOLIO = {
         }
       ],
       "blocks": [],
-      "facts": []
+      "facts": [],
+      "cardMedia": {
+        "type": "image",
+        "src": "assets/mvoye7gakrh-1732259293255.png"
+      }
     },
     {
       "id": "voice",
@@ -313,7 +325,11 @@ window.PORTFOLIO = {
           "label": "수상",
           "text": "청강문화산업대학교 제2회 알발 페스타 1등"
         }
-      ]
+      ],
+      "cardMedia": {
+        "type": "image",
+        "src": "assets/mvoyhx89ls7-1.png"
+      }
     },
     {
       "id": "etc",
@@ -345,7 +361,11 @@ window.PORTFOLIO = {
           "label": "수상",
           "text": "제3회 알발 페스타 2등 (VR)"
         }
-      ]
+      ],
+      "cardMedia": {
+        "type": "image",
+        "src": "assets/mvuerwcvizz-2026-10-30-122411.png"
+      }
     }
   ],
   "gameLogs": [
