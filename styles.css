@@ -612,3 +612,74 @@ mark.hl { background: linear-gradient(transparent 55%, color-mix(in srgb, #f5c04
 .b-hr[data-tone] hr { border-color: var(--tone); border-top-width: 2px; }
 .b-fig[data-tone] .b-media { outline: 2px solid var(--tone); outline-offset: 3px; }
 .b-fig[data-tone] figcaption { color: var(--tone); }
+
+
+/* ---------- 상세 페이지 가독성 (목차 · 넓은 폭 · 글자 크기) ---------- */
+:root { --body-ink: #444; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --body-ink: #d6d4ce; } }
+:root[data-theme="dark"] { --body-ink: #d6d4ce; }
+
+.modal { width: min(1240px, 100% - 48px); scroll-behavior: smooth; }
+/* 메인 이미지: 기존 16:9의 절반 정도 높이 */
+.modal-media { aspect-ratio: auto; height: clamp(150px, 19vw, 250px); }
+.modal-media .media img, .modal-media .media video { object-position: center 35%; }
+
+.modal-text { padding: 22px clamp(20px, 4vw, 48px) 56px; gap: 14px; }
+.modal-head { gap: 4px; }
+.modal-text h2 { font-size: clamp(28px, 3.4vw, 40px); }
+.modal-lead { font-size: calc(18px * var(--ts, 1)); line-height: 1.7; color: var(--body-ink); margin-top: 2px; max-width: 920px; }
+/* 역할·기간·회사: 그대로 두고 세로 여백만 줄임 */
+.modal-facts { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-top: 2px; }
+.modal-facts div { padding: 8px 14px; }
+.modal-facts dt { font-size: 11.5px; line-height: 1.3; }
+.modal-facts dd { font-size: 15px; line-height: 1.4; }
+
+/* 왼쪽 목차 + 오른쪽 본문 */
+.modal-cols { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 20px clamp(28px, 4vw, 56px); margin-top: 12px; align-items: start; }
+.modal-cols:has(.modal-toc[hidden]) { grid-template-columns: minmax(0, 1fr); }
+.modal-main { display: grid; gap: 28px; min-width: 0; max-width: 880px; }
+.modal-toc { position: sticky; top: 22px; display: grid; gap: 2px; max-height: calc(100vh - 120px); overflow-y: auto; padding-right: 6px; border-left: 2px solid var(--line); }
+.modal-toc[hidden] { display: none; }
+.toc-t { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; color: var(--ink-3); padding: 0 0 8px 14px; }
+.toc-a { display: block; padding: 7px 10px 7px 14px; margin-left: -2px; border-left: 2px solid transparent; font-size: 14.5px; line-height: 1.45; font-weight: 600; color: var(--ink-2); letter-spacing: -0.02em; }
+.toc-a.lv2 { padding-left: 26px; font-weight: 500; font-size: 14px; }
+.toc-a:hover { color: var(--ink); background: var(--surface-2); }
+.toc-a.on { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); }
+.toc-target { scroll-margin-top: 24px; }
+
+/* 글자: 본문 17px / 진한 #444 / 줄간격 1.7 / 문단 간격 22px */
+.modal-main .b-md, .modal-main .b-lp, .modal-main .modal-steps dd, .modal-main ul.tasks li, .modal-main .b-ul li { font-size: calc(17px * var(--ts, 1)); line-height: 1.7; color: var(--body-ink); }
+.modal-main .b-p { max-width: none; }
+.modal-main .b-md p { margin: 0 0 22px; }
+.modal-main .b-md p:last-child { margin-bottom: 0; }
+.modal-main .blocks { gap: 22px 24px; }
+/* 사례 제목: 22~24px 굵게, 진한 색 (회색 소제목 스타일 덮어쓰기) */
+.modal-main .b-h { font-size: 24px; font-weight: 800; color: var(--ink); line-height: 1.35; letter-spacing: -0.035em; margin-top: 14px; }
+.modal-main .b-h2 { font-size: clamp(26px, 2.6vw, 30px); color: var(--ink); margin-top: 24px; padding-top: 26px; }
+.modal-main .modal-blocks .b-h { font-size: 24px; }
+/* 판단·제안과 협의·반영 결과: 본문과 같은 크기, 굵게 */
+.modal-main .b-lab { font-size: 1em; font-weight: 800; color: var(--accent) !important; margin-right: 10px; }
+/* 캡션: 13~14px, 기울임 없음 */
+.modal-main .b-fig figcaption { font-size: 14px; font-style: normal; color: var(--ink-2); line-height: 1.5; }
+/* 담당 업무 / 자세한 이야기 소제목 */
+.modal-main h4:not(.b-h) { font-size: 15px; color: var(--ink-2); font-weight: 700; margin-bottom: 10px; }
+.modal-main .modal-tasks > h4 { font-size: 22px; color: var(--ink); font-weight: 800; letter-spacing: -0.03em; }
+.modal-main .modal-steps dt { font-size: 13px; }
+.modal-links a { font-size: 15px; }
+
+@media (max-width: 960px) {
+  .modal { width: calc(100% - 24px); }
+  .modal-cols { grid-template-columns: minmax(0, 1fr); gap: 0; margin-top: 0; }
+  /* 모바일: 위에 붙는 가로 목차 */
+  .modal-toc { position: sticky; top: 0; z-index: 3; grid-auto-flow: column; grid-auto-columns: max-content; gap: 6px; max-height: none; overflow-x: auto; overflow-y: hidden; border-left: 0; padding: 10px 0; width: calc(100% - 118px); margin: 0 0 14px; background: var(--surface); border-bottom: 1px solid var(--line); scrollbar-width: none; }
+  .modal-toc::-webkit-scrollbar { display: none; }
+  .toc-t { display: none; }
+  .toc-a, .toc-a.lv2 { padding: 7px 14px; margin: 0; border: 1px solid var(--line); border-radius: 99px; font-size: 13.5px; font-weight: 600; white-space: nowrap; }
+  .toc-a.on { border-color: var(--accent); }
+  .toc-target { scroll-margin-top: 64px; }
+  .modal-main .b-h { font-size: 22px; }
+  .modal-main .b-md, .modal-main .b-lp { font-size: calc(16.5px * var(--ts, 1)); }
+}
+.modal-text .modal-toc a.toc-a:not(.x):not(.y) { text-decoration: none; color: var(--ink-2); }
+.modal-text .modal-toc a.toc-a:not(.x):not(.y):hover { color: var(--ink); }
+.modal-text .modal-toc a.toc-a.on:not(.x):not(.y) { color: var(--accent); }

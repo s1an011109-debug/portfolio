@@ -619,6 +619,42 @@
   /* ---------- 상세 모달 ---------- */
   const modal = $("#modal");
   let current = null;
+
+  /* 상세 창 목차: 제목(h2·h)을 누르면 그 자리로 바로 이동 */
+  let tocSpy = null;
+  function buildToc(keep) {
+    const nav = $(".modal-toc", modal);
+    if (!nav) return;
+    const items = [];
+    const tk = $(".modal-tasks", modal);
+    if (tk) items.push({ el: tk, lv: 1, text: plain(tk.querySelector("h4").textContent) || "담당 업무" });
+    $$(".b-h2, .b-h", modal).forEach((h) => items.push({ el: h, lv: h.classList.contains("b-h2") ? 1 : 2, text: h.textContent.trim() }));
+    const list = items.filter((x) => x.text);
+    if (list.length < 2) { nav.hidden = true; return; }
+    nav.hidden = false;
+    nav.innerHTML = `<p class="toc-t">목차</p>` + list.map((x, i) => `<a href="#" class="toc-a lv${x.lv}" data-i="${i}">${esc(x.text)}</a>`).join("");
+    list.forEach((x) => { x.el.classList.add("toc-target"); });
+    const links = $$(".toc-a", nav);
+    nav.onclick = (e) => {
+      const a = e.target.closest(".toc-a");
+      if (!a) return;
+      e.preventDefault(); e.stopPropagation();
+      list[+a.dataset.i].el.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    // 지금 읽는 곳 표시
+    const mark = () => {
+      const top = modal.getBoundingClientRect().top + 90;
+      let cur = 0;
+      list.forEach((x, i) => { if (x.el.getBoundingClientRect().top <= top + 4) cur = i; });
+      if (modal.scrollTop + modal.clientHeight >= modal.scrollHeight - 4) cur = list.length - 1;
+      links.forEach((a, i) => a.classList.toggle("on", i === cur));
+      const on = links[cur];
+      if (on && nav.scrollWidth > nav.clientWidth + 2 && getComputedStyle(nav).overflowX !== "visible") nav.scrollTo({ left: on.offsetLeft - 40, behavior: "smooth" });
+    };
+    if (tocSpy) modal.removeEventListener("scroll", tocSpy);
+    tocSpy = mark; modal.addEventListener("scroll", tocSpy, { passive: true });
+    mark();
+  }
   function openWork(j, keepScroll) {
     const w = D.works[j], p = `works.${j}`;
     if (!w) return modal.close();
@@ -648,13 +684,19 @@
           ${fixed.map(([k, f]) => `<div><dt>${k}</dt><dd ${E(`${p}.${f}`)}>${fmt(w[f])}</dd></div>`).join("")}
           ${w.facts.map((f, i) => `<div data-item="${p}.facts.${i}"><dt ${E(`${p}.facts.${i}.label`)}>${fmt(f.label)}</dt><dd ${E(`${p}.facts.${i}.value`)}>${fmt(f.value)}</dd></div>`).join("")}
         </dl>
+        <div class="modal-cols">
+        <nav class="modal-toc" aria-label="이 페이지 목차" hidden></nav>
+        <div class="modal-main">
         ${show2(w.steps.length, `<dl class="modal-steps" data-list="${p}.steps">${w.steps.map((s, i) => `
           <div data-item="${p}.steps.${i}"><dt ${E(`${p}.steps.${i}.label`)}>${fmt(s.label)}</dt><dd class="b-md" data-md ${E(`${p}.steps.${i}.text`)}>${md(s.text)}</dd></div>`).join("")}</dl>`)}
-        ${show2(w.tasks.length, `<div><h4 ${E(p + ".tasksTitle")}>${fmt(w.tasksTitle || "주요 업무")}</h4><ul class="tasks" data-list="${p}.tasks">${w.tasks.map((t, i) => `<li ${E(`${p}.tasks.${i}`)}>${fmt(t)}</li>`).join("")}</ul></div>`)}
+        ${show2(w.tasks.length, `<div class="modal-tasks"><h4 ${E(p + ".tasksTitle")}>${fmt(w.tasksTitle || "주요 업무")}</h4><ul class="tasks" data-list="${p}.tasks">${w.tasks.map((t, i) => `<li ${E(`${p}.tasks.${i}`)}>${fmt(t)}</li>`).join("")}</ul></div>`)}
         ${show2(w.blocks.length, `<div class="modal-blocks"><h4 ${E(p + ".blocksTitle")}>${fmt(w.blocksTitle || "자세한 이야기")}</h4>${blocks(p + ".blocks")}</div>`)}
         ${show2(w.links && w.links.length, `<div class="modal-links" data-list="${p}.links">${(w.links || []).map((l, i) => `<a data-item="${p}.links.${i}" ${href(`${p}.links.${i}.url`)} target="_blank" rel="noopener"><span ${E(`${p}.links.${i}.label`)}>${fmt(l.label)}</span> ↗</a>`).join("")}</div>`)}
+        </div>
+        </div>
       </div>`;
     fillSlots(modal);
+    buildToc(!!keepScroll);
     // 프로젝트마다 고유 주소 (#work-아이디) — 링크로 바로 열 수 있게
     if (w.id && location.hash !== "#work-" + w.id) history.replaceState(null, "", "#work-" + w.id);
     if (!modal.open) modal.showModal();
