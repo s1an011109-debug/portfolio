@@ -214,6 +214,12 @@
       /* ★ 켠 프로젝트 = 첫 화면 슬라이드 */
       const featured = D.works.map((w, j) => [w, j]).filter(([w]) => w.featured);
       // 슬라이드 설명은 카드 설명(oneLine)과 따로 관리: 처음엔 카드 설명의 첫 줄만 가져와 겹침을 줄임
+      D.works.forEach((w) => {
+        // 슬라이드의 기간·역할·제목도 카드와 따로 관리 (처음엔 같은 글을 복사)
+        if (w.slidePeriod === undefined) w.slidePeriod = w.period || "";
+        if (w.slideRole === undefined) w.slideRole = w.role || "";
+        if (w.slideTitle === undefined) w.slideTitle = w.title || "";
+      });
       D.works.forEach((w) => { if (w.slideLine === undefined) w.slideLine = String(w.oneLine || "").split("\n")[0].trim(); });
 
       /* 첫 화면 대표 프로젝트 슬라이드 (★ 대표작이 순서대로) */
@@ -229,8 +235,8 @@
         <div class="sc-cap">
           ${featured.map(([w, j], i) => `
             <div class="sc-text ${i === scIndex ? "on" : ""}" data-work="${j}">
-              <p class="sc-meta mono"><span ${E(`works.${j}.period`)}>${fmt(w.period)}</span> / <span ${E(`works.${j}.role`)}>${fmt(w.role)}</span></p>
-              <h2 class="sc-title" ${E(`works.${j}.title`)}>${fmt(w.title)}</h2>
+              <p class="sc-meta mono"><span ${E(`works.${j}.slidePeriod`)}>${fmt(w.slidePeriod)}</span> / <span ${E(`works.${j}.slideRole`)}>${fmt(w.slideRole)}</span></p>
+              <h2 class="sc-title" ${E(`works.${j}.slideTitle`)}>${fmt(w.slideTitle)}</h2>
               <p class="sc-one" ${E(`works.${j}.slideLine`)}>${fmt(w.slideLine)}</p>
             </div>`).join("")}
           <div class="sc-dots" role="tablist">${featured.map(([w], i) => `<button type="button" role="tab" aria-selected="${i === scIndex}" aria-label="${i + 1}번째: ${esc(plain(w.title))}" data-sc="${i}"><i></i></button>`).join("")}</div>

@@ -416,7 +416,7 @@
     if (/\.blocks$/.test(p)) return (BLOCK_TPL[kind] || BLOCK_TPL.p)();
     if (/steps$/.test(p)) return { label: "POINT", text: "" };
     if (p === "glance") return { value: "0", unit: "", label: "새 성과", sub: "" };
-    if (p === "works") return { id: "w" + Date.now().toString(36), featured: false, kind: "프로젝트", title: "새 프로젝트", genre: "", lead: "", role: "", period: "", team: "", status: "", tags: [], oneLine: "", slideLine: "", media: null, cardMedia: null, facts: [], steps: [{ label: "PROBLEM", text: "" }, { label: "APPROACH", text: "" }, { label: "RESULT", text: "" }], tasks: [], links: [], blocks: [] };
+    if (p === "works") return { id: "w" + Date.now().toString(36), featured: false, kind: "프로젝트", title: "새 프로젝트", genre: "", lead: "", role: "", period: "", team: "", status: "", tags: [], oneLine: "", slideLine: "", slideTitle: "", slidePeriod: "", slideRole: "", media: null, cardMedia: null, facts: [], steps: [{ label: "PROBLEM", text: "" }, { label: "APPROACH", text: "" }, { label: "RESULT", text: "" }], tasks: [], links: [], blocks: [] };
     if (p === "gameLogs") return { title: "새 게임", genre: "", platform: "", period: "", stats: [{ label: "기록", value: "" }, { label: "기록", value: "" }], insight: "", tags: [], media: null };
     if (p === "resume") return { group: "새 그룹", items: [] };
     if (/^resume\.\d+\.items$/.test(p)) return { period: "", title: "새 항목", desc: "", badge: "" };
