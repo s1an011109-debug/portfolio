@@ -112,7 +112,7 @@ window.PORTFOLIO = {
         },
         {
           "type": "p",
-          "text": "출시한 캐릭터들의 과거 서사를 풀어주는 콘텐츠입니다."
+          "text": "캐릭터의 과거와 트라우마를 따라가는 개인 스토리 콘텐츠입니다. 이야기와 전투를 진행하며 캐릭터가 겪은 사건과 감정, 다른 인물과의 관계를 알아갈 수 있습니다."
         },
         {
           "type": "h2",
@@ -136,7 +136,7 @@ window.PORTFOLIO = {
               "assets/mw3hcg51e2m-huzldhim6dyqpxw-xsjzfr9dbpght6.webp"
             ]
           },
-          "caption": "나르쟈의 일러스트에 함께 등장하는 엘리시온",
+          "caption": "나르쟈의 일러스트에서 뒤에서 함께 등장하는 엘리시온",
           "wide": false
         },
         {
@@ -236,7 +236,7 @@ window.PORTFOLIO = {
       "oneLine": "콘셉트와 규칙을 기획한 보드게임으로 **516명의 후원과 1,309만 원을 모았습니다.**",
       "media": {
         "type": "image",
-        "src": "assets/mvoxnaxpbpz-eyjidwnrzxqioij0dw1ibgj1zy1pbw.webp"
+        "src": "assets/mwagvs8p7f0-2026-11-10-180738.png"
       },
       "tasks": [],
       "links": [
