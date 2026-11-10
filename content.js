@@ -213,7 +213,11 @@ window.PORTFOLIO = {
       "cardMedia": {
         "type": "image",
         "src": "assets/mwagfatpce0-101278-302413-4420.png"
-      }
+      },
+      "slidePeriod": "2025.06 — 2025.12",
+      "slideRole": "콘텐츠 기획 인턴",
+      "slideTitle": "카오스 제로 나이트메어",
+      "slideLine": "신규 SD 연출의 제작 필요성을 설득하고, 배드엔딩 CG 방향을 제안해 반영했습니다."
     },
     {
       "id": "seongjwa",
@@ -252,7 +256,11 @@ window.PORTFOLIO = {
       "cardMedia": {
         "type": "image",
         "src": "assets/mvoxnaxpbpz-eyjidwnrzxqioij0dw1ibgj1zy1pbw.webp"
-      }
+      },
+      "slidePeriod": "2022",
+      "slideRole": "팀장",
+      "slideTitle": "플레이어님, 어느 성좌가 좋아?",
+      "slideLine": "콘셉트와 규칙을 기획한 보드게임으로 **516명의 후원과 1,309만 원을 모았습니다.**"
     },
     {
       "id": "luka",
@@ -304,7 +312,11 @@ window.PORTFOLIO = {
       "cardMedia": {
         "type": "image",
         "src": "assets/mvoye7gakrh-1732259293255.png"
-      }
+      },
+      "slidePeriod": "2024",
+      "slideRole": "NPC 노아 콘텐츠 기획",
+      "slideTitle": "LUKA: AZURE FIELD",
+      "slideLine": "전투 없는 RPG에서 꽃 수집을 NPC 강화 보상으로 연결하는 콘텐츠를 기획했습니다."
     },
     {
       "id": "voice",
@@ -319,7 +331,7 @@ window.PORTFOLIO = {
         "서브컬처",
         "연애 시뮬레이션"
       ],
-      "oneLine": "**목소리로 선택지와 감정을 인식**하는 미소녀 연애 시뮬레이션 게임으로, 교내 프로젝트 대회인 제2회 알발 페스타에서 1등을 받은 미소녀 연애 시뮬레이션입니다.",
+      "oneLine": "**목소리로 선택지와 감정을 인식**하는 미소녀 연애 시뮬레이션 게임으로, 교내 프로젝트 대회인 제2회 알발 페스타에서 1등을 받았습니다.",
       "media": {
         "type": "image",
         "src": "assets/mvoyhx89ls7-1.png"
@@ -337,7 +349,11 @@ window.PORTFOLIO = {
       "cardMedia": {
         "type": "image",
         "src": "assets/mvoyhx89ls7-1.png"
-      }
+      },
+      "slidePeriod": "2021",
+      "slideRole": "⟪역할⟫",
+      "slideTitle": "사랑을 위해서라면 목소리를 내야해!",
+      "slideLine": "**목소리로 선택지와 감정을 인식**하는 미소녀 연애 시뮬레이션 게임으로, 교내 프로젝트 대회인 제2회 알발 페스타에서 1등을 받은 미소녀 연애 시뮬레이션입니다."
     },
     {
       "id": "etc",
@@ -373,7 +389,11 @@ window.PORTFOLIO = {
       "cardMedia": {
         "type": "image",
         "src": "assets/mvuerwcvizz-2026-10-30-122411.png"
-      }
+      },
+      "slidePeriod": "2022",
+      "slideRole": "⟪역할⟫",
+      "slideTitle": "기타 프로젝트",
+      "slideLine": "KT 산학 프로젝트, 넥슨 MOD 게임 개발"
     }
   ],
   "gameLogs": [
@@ -642,7 +662,7 @@ window.PORTFOLIO = {
       "gamelog": {
         "idx": "03 / GAME LOG",
         "title": "게임 로그",
-        "sub": "오래 플레이한 게임과 그 안에서 기획자로서 본 것들. \n최신 업데이트 2026-11-05",
+        "sub": "즐겨온 게임과 주요 플레이 기록입니다.\n업데이트 2026-11-05",
         "nav": "게임 로그"
       },
       "custom": {},
