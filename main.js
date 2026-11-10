@@ -213,6 +213,8 @@
     try {
       /* ★ 켠 프로젝트 = 첫 화면 슬라이드 */
       const featured = D.works.map((w, j) => [w, j]).filter(([w]) => w.featured);
+      // 슬라이드 설명은 카드 설명(oneLine)과 따로 관리: 처음엔 카드 설명의 첫 줄만 가져와 겹침을 줄임
+      D.works.forEach((w) => { if (w.slideLine === undefined) w.slideLine = String(w.oneLine || "").split("\n")[0].trim(); });
 
       /* 첫 화면 대표 프로젝트 슬라이드 (★ 대표작이 순서대로) */
       const sc = $("#showcase");
@@ -229,7 +231,7 @@
             <div class="sc-text ${i === scIndex ? "on" : ""}" data-work="${j}">
               <p class="sc-meta mono"><span ${E(`works.${j}.period`)}>${fmt(w.period)}</span> / <span ${E(`works.${j}.role`)}>${fmt(w.role)}</span></p>
               <h2 class="sc-title" ${E(`works.${j}.title`)}>${fmt(w.title)}</h2>
-              <p class="sc-one" ${E(`works.${j}.oneLine`)}>${fmt(w.oneLine)}</p>
+              <p class="sc-one" ${E(`works.${j}.slideLine`)}>${fmt(w.slideLine)}</p>
             </div>`).join("")}
           <div class="sc-dots" role="tablist">${featured.map(([w], i) => `<button type="button" role="tab" aria-selected="${i === scIndex}" aria-label="${i + 1}번째: ${esc(plain(w.title))}" data-sc="${i}"><i></i></button>`).join("")}</div>
         </div>` : `<div class="sc-empty">프로젝트 카드의 ★을 켜면 여기에 슬라이드로 나옵니다.</div>`;
