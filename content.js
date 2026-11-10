@@ -189,7 +189,7 @@ window.PORTFOLIO = {
             "type": "image",
             "src": "assets/mwag7tmqwzx-2026-11-10-174859.png"
           },
-          "caption": "왼쪽 그림: 공식 4컷 만화. \n오른쪽 그림: 유저들의 반응",
+          "caption": "유저 제작 이모티콘 실제 사례",
           "wide": true
         },
         {
