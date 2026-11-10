@@ -725,11 +725,6 @@
     $$("iframe", modal).forEach((f) => f.remove());
     if (/^#work-/.test(location.hash)) history.replaceState(null, "", location.pathname + location.search);
   });
-  // 상세 창 위 '링크 복사'
-  $(".modal-copy").addEventListener("click", async () => {
-    try { await navigator.clipboard.writeText(location.href); PF.toast("이 프로젝트 링크를 복사했어요"); }
-    catch (e) { PF.toast(location.href); }
-  });
   // 주소에 #work-아이디 가 있으면 그 프로젝트를 바로 열기
   const openFromHash = () => {
     const m = location.hash.match(/^#work-(.+)$/);

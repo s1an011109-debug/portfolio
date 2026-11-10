@@ -359,8 +359,7 @@ mark.todo { background: var(--todo); color: inherit; border-radius: 4px; padding
 .modal-bar { position: sticky; top: 0; z-index: 4; height: 0; display: flex; justify-content: flex-end; align-items: flex-start; gap: 8px; padding: 0 14px; overflow: visible; }
 .modal-bar > * { margin-top: 14px; }
 .modal-close { width: 36px; height: 36px; border-radius: 50%; background: color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter: blur(6px); }
-.modal-copy { height: 36px; padding: 0 14px; border-radius: 99px; background: color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter: blur(6px); }
-.modal-copy:hover, .modal-close:hover { background: var(--bg); }
+.modal-close:hover { background: var(--bg); }
 .modal-media { position: relative; aspect-ratio: 16 / 9; background: var(--surface-2); }
 .modal-media .media { position: absolute; inset: 0; }
 .modal-text { padding: 28px clamp(20px, 4vw, 40px) 40px; display: grid; gap: 22px; }
@@ -671,7 +670,7 @@ mark.hl { background: linear-gradient(transparent 55%, color-mix(in srgb, #f5c04
   .modal { width: calc(100% - 24px); }
   .modal-cols { grid-template-columns: minmax(0, 1fr); gap: 0; margin-top: 0; }
   /* 모바일: 위에 붙는 가로 목차 */
-  .modal-toc { position: sticky; top: 0; z-index: 3; grid-auto-flow: column; grid-auto-columns: max-content; gap: 6px; max-height: none; overflow-x: auto; overflow-y: hidden; border-left: 0; padding: 10px 0; width: calc(100% - 118px); margin: 0 0 14px; background: var(--surface); border-bottom: 1px solid var(--line); scrollbar-width: none; }
+  .modal-toc { position: sticky; top: 0; z-index: 3; grid-auto-flow: column; grid-auto-columns: max-content; gap: 6px; max-height: none; overflow-x: auto; overflow-y: hidden; border-left: 0; padding: 10px 0; width: calc(100% - 56px); margin: 0 0 14px; background: var(--surface); border-bottom: 1px solid var(--line); scrollbar-width: none; }
   .modal-toc::-webkit-scrollbar { display: none; }
   .toc-t { display: none; }
   .toc-a, .toc-a.lv2 { padding: 7px 14px; margin: 0; border: 1px solid var(--line); border-radius: 99px; font-size: 13.5px; font-weight: 600; white-space: nowrap; }
