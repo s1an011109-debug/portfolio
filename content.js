@@ -553,7 +553,7 @@ window.PORTFOLIO = {
         },
         {
           "period": "Work",
-          "title": "Excel, PowerPoint, Word, Photoshop, Clip Studio, Blender",
+          "title": "Excel, PowerPoint, Word, Photoshop, \nClip Studio, Blender",
           "desc": ""
         },
         {
