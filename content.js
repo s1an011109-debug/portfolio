@@ -80,7 +80,7 @@ window.PORTFOLIO = {
       "oneLine": "신규 SD 연출의 제작 필요성을 설득하고, 배드엔딩 CG 방향을 제안해 반영했습니다.",
       "media": {
         "type": "image",
-        "src": "assets/mwaglz840yl-rjd2a1pxo8vb-xerd5u4pivstqb3wy.webp"
+        "src": "assets/mwah0sa6hhm-czn-chaos-illustration-kr.png"
       },
       "tasks": [
         "트라우마 코드 연출 일부 담당",
