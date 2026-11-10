@@ -147,7 +147,7 @@ window.PORTFOLIO = {
           "type": "img",
           "media": {
             "type": "image",
-            "src": "assets/mwaf0r9r6cx-ce62aaf6810d4969847bad5182a7d4.jpg"
+            "src": "assets/mwaf1883ot1-mvumth2i85m-ce62aaf6810d496984.png"
           },
           "caption": "",
           "wide": true
@@ -186,7 +186,7 @@ window.PORTFOLIO = {
         "팀장",
         "펀딩 성공"
       ],
-      "oneLine": "팀장으로 기획부터 배송까지 맡아 내놓은 보드게임입니다.\n후원자 516명에게 13,098,000원을 모아 목표의 727%를 달성했습니다.",
+      "oneLine": "팀장으로 기획부터 배송까지 맡아 내놓은 보드게임입니다. 후원자 516명에게 13,098,000원을 모아 목표의 727%를 달성했습니다.",
       "media": {
         "type": "image",
         "src": "assets/mvoxnaxpbpz-eyjidwnrzxqioij0dw1ibgj1zy1pbw.webp"
@@ -232,7 +232,8 @@ window.PORTFOLIO = {
         "필드",
         "수집",
         "NPC",
-        "졸업작품"
+        "졸업작품",
+        "**유니티**"
       ],
       "oneLine": "2024년 청강문화산업대학교 졸업작품입니다. 전투 없이 진행되는 RPG로 스토리라인에 따라 자유롭게 바다를 여행하는 것을 재미요소로 삼았습니다.\n필드에서 꽃을 찾아 NPC에게 가져가면 강화를 받는 수집, 강화 콘텐츠 기획, 프로빌딩을 이용한 유적 레벨디자인 그리고 보이스 디렉팅과 관련된 성우 관련 작업을 진행했습니다.",
       "media": {
