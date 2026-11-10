@@ -63,14 +63,11 @@
 .ed-drop button:hover { background: #d9534f; }
 .editing .card-media > .card-status { z-index: 5; }
 .editing [data-cover] { overflow: hidden; }
-.editing .file:hover .file-sheet, .editing .file:focus-within .file-sheet { transform: none !important; }
-.editing .file-hook { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
 .editing .ed-over { outline: 3px solid var(--accent); outline-offset: 2px; }
 
 /* 링크 버튼 */
 .ed-link { display: inline-grid; place-items: center; width: 24px; height: 24px; margin-left: 6px; border-radius: 50%; background: var(--surface-2); font-size: 11px; vertical-align: middle; position: relative; z-index: 5; }
 .ed-link:hover { background: var(--accent-soft); }
-.file-body > .ed-link { position: absolute; right: 14px; bottom: 14px; }
 
 /* 편집 중엔 움직임 줄이기 */
 .editing .card:hover { transform: none; }

@@ -205,6 +205,8 @@
             ${blocks("about.blocks")}
           </div>`;
         fillSlots($("#aboutBody"));
+        const tg = $("#aboutTags");
+        if (tg) tg.innerHTML = (D.meta.keywords || []).map((k, i) => `<li ${E("meta.keywords." + i)}>${fmt(k)}</li>`).join("");
       }
 
     } catch (e) { console.error("[About Me] 그리기 실패", e); }
@@ -236,27 +238,7 @@
 
     } catch (e) { console.error("[첫 화면 슬라이드] 그리기 실패", e); }
     try {
-      /* 포트폴리오 파일 */
-      $("#filesStack").innerHTML = fileKinds.map(([k, name, en]) => {
-        const f = D.files[k], p = `files.${k}`;
-        const sheet = f.cover
-          ? `<span class="file-sheet" data-cover="${p}.cover"><img src="${src(f.cover)}" alt=""></span>`
-          : `<span class="file-sheet" data-cover="${p}.cover"><i class="l big"></i><i class="l w80"></i><i class="l w60"></i><i class="blk"></i><i class="l w40"></i></span>`;
-        return `
-          <div class="file is-${k} reveal">
-            <span class="file-tab mono">${en} <span ${E(p + ".pages")}>${fmt(f.pages)}</span>p</span>
-            <a class="file-pdf mono" ${href(p + ".pdf")} target="_blank" rel="noopener">PDF ↓</a>
-            <a class="file-body" ${href(p + ".url")} target="_blank" rel="noopener">
-              <span class="file-hook" ${E(p + ".hook")}>${fmt(f.hook)}</span>
-              <span class="file-sheets"><span class="file-sheet"></span><span class="file-sheet"></span>${sheet}</span>
-              <span class="file-info">
-                <h3>${name} <span class="mono">↗</span></h3>
-                <p ${E(p + ".teaser")}>${fmt(f.teaser)}</p>
-              </span>
-            </a>
-          </div>`;
-      }).join("");
-
+      /* 포트폴리오 파일 (우측 아래 떠 있는 버튼) */
       $("#dockTray").innerHTML = fileKinds.map(([k, name]) => {
         const f = D.files[k];
         return `<a class="tray-item is-${k}" href="${esc(f.url)}" target="_blank" rel="noopener">
@@ -342,7 +324,21 @@
 
     } catch (e) { console.error("[자유 섹션] 그리기 실패", e); }
     try {
-      /* 이력 */
+      /* 이력 — 왼쪽 프로필 카드(사진 · 이름) + 오른쪽 항목들 */
+      const rp = $("#resumePhoto");
+      if (rp) {
+        const ph = D.about && D.about.photo;
+        rp.classList.toggle("empty", !ph && !PF.editing);
+        rp.dataset.slot = "about.photo";
+        rp.innerHTML = "";
+        if (ph || PF.editing) rp.appendChild(makeMedia(ph, "프로필 사진", "about.photo"));
+      }
+      const ri = $("#resumeId");
+      if (ri) ri.innerHTML = `
+        <b class="rs-name" ${E("meta.name")}>${fmt(D.meta.name)}</b>
+        <span class="rs-en" ${E("meta.nameEn")}>${fmt(D.meta.nameEn)}</span>
+        <span class="rs-role" ${E("meta.role")}>${fmt(D.meta.role)}</span>
+        ${PF.editing || plain(D.meta.email).trim() ? `<p class="rs-mail"><span class="mono">E-mail</span> <span ${E("meta.email")}>${fmt(D.meta.email)}</span></p>` : ""}`;
       $("#resumeList").dataset.list = "resume";
       $("#resumeList").innerHTML = D.resume.map((g, gi) => `
         <div class="resume-group reveal" data-item="resume.${gi}">
@@ -380,7 +376,7 @@
   PF.applyLayout = applyLayout;
 
   /* ---------- 섹션 배치 · 고정 문구 · 메뉴 · 글꼴 (편집 모드 '레이아웃' / '글꼴' 패널) ---------- */
-  const SEC_NAMES = { projects: "프로젝트", files: "포트폴리오 파일", gamelog: "게임 로그", custom: "자유 섹션", resume: "이력", about: "About Me" };
+  const SEC_NAMES = { projects: "프로젝트", gamelog: "게임 로그", custom: "자유 섹션", resume: "이력", about: "About Me" };
   const NAV_DEFAULT = { projects: "프로젝트", gamelog: "게임 로그", resume: "이력", about: "About" };
   const headDefaults = {};
   $$("[data-head]").forEach((h) => {
@@ -696,11 +692,9 @@
   document.addEventListener("click", (e) => { if (!dock.contains(e.target)) setDock(false); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") setDock(false); });
 
-  let filesVisible = false;
-  new IntersectionObserver(([e]) => { filesVisible = e.isIntersecting; onScroll(); }, { threshold: 0.25 }).observe($("#files"));
   function onScroll() {
     const past = window.scrollY > window.innerHeight * 0.6;
-    dock.classList.toggle("on", past && !filesVisible && !PF.editing);
+    dock.classList.toggle("on", past && !PF.editing);
     if (!dock.classList.contains("on")) setDock(false);
     $(".top").classList.toggle("scrolled", window.scrollY > 10);
     // 월페이퍼: 스크롤하면 살짝 느리게 따라옴

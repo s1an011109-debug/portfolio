@@ -182,9 +182,8 @@ mark.todo { background: var(--todo); color: inherit; border-radius: 4px; padding
 /* ---------- section ---------- */
 .sec { padding: clamp(72px, 12vh, 128px) 0; border-top: 1px solid var(--line); }
 .sec-head { display: grid; gap: 10px; margin-bottom: 44px; }
-#about .sec-head { margin-bottom: 14px; }
 .sec-idx { color: var(--accent); text-transform: uppercase; letter-spacing: .08em; }
-.sec-head h2, .files-copy h2 { font-size: clamp(30px, 4.4vw, 52px); font-weight: 800; letter-spacing: -0.04em; line-height: 1.18; }
+.sec-head h2 { font-size: clamp(30px, 4.4vw, 52px); font-weight: 800; letter-spacing: -0.04em; line-height: 1.18; }
 .sec-sub { color: var(--ink-2); font-size: 15px; }
 
 /* 스크롤 등장 효과: 스크립트가 돌고 '움직임 줄이기'가 꺼진 경우에만 숨겼다가 보여 줌 (안 되면 그냥 보임) */
@@ -232,42 +231,6 @@ mark.todo { background: var(--todo); color: inherit; border-radius: 4px; padding
 
 .tag { font-size: 12px; padding: 2px 9px; border-radius: 99px; background: var(--surface-2); color: var(--ink-2); white-space: nowrap; }
 
-/* ---------- portfolio files ---------- */
-.files-sec { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 48px; align-items: center; }
-.files-copy { display: grid; gap: 14px; }
-.files-stack { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; perspective: 1200px; }
-@media (max-width: 860px) { .files-sec { grid-template-columns: 1fr; } }
-@media (max-width: 520px) { .files-stack { grid-template-columns: 1fr; } }
-
-.file { position: relative; display: block; padding-top: 26px; }
-.file-tab { position: absolute; top: 0; left: 0; height: 30px; padding: 6px 16px 0; border-radius: 10px 10px 0 0; background: var(--surface-2); color: var(--ink-2); }
-.file-body { position: relative; display: block; aspect-ratio: 4 / 4.6; border-radius: 0 var(--radius) var(--radius) var(--radius); background: var(--surface-2); padding: 22px; overflow: visible; }
-.file-sheets { position: absolute; inset: 22px 22px auto; height: 62%; }
-.file-sheet { position: absolute; inset: 0; border-radius: 8px; background: var(--surface); box-shadow: 0 4px 18px -8px rgba(0, 0, 0, .25); transition: transform .6s var(--ease); overflow: hidden; }
-.file-sheet:nth-child(1) { transform: rotate(-4deg) translate(-4px, 6px); }
-.file-sheet:nth-child(2) { transform: rotate(3deg) translate(4px, 4px); }
-.file-sheet:nth-child(3) { transform: none; padding: 16px; display: grid; align-content: start; gap: 8px; }
-.file-sheet img { width: 100%; height: 100%; object-fit: cover; }
-.file-sheet .l { height: 7px; border-radius: 4px; background: var(--surface-2); }
-.file-sheet .l.w60 { width: 60%; } .file-sheet .l.w80 { width: 80%; } .file-sheet .l.w40 { width: 40%; }
-.file-sheet .l.big { height: 14px; width: 70%; background: var(--ink); opacity: .85; margin-bottom: 6px; }
-.file-sheet .blk { height: 54px; border-radius: 6px; background: var(--accent-soft); margin-top: 4px; }
-.file-info { position: absolute; left: 22px; right: 22px; bottom: 20px; display: grid; gap: 4px; }
-.file-info h3 { font-size: 22px; font-weight: 800; letter-spacing: -0.03em; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
-.file-info h3 .mono { color: var(--ink-3); font-weight: 400; }
-.file-info p { font-size: 13px; color: var(--ink-2); line-height: 1.5; }
-.file-hook { position: absolute; left: 50%; top: -14px; transform: translate(-50%, 6px); white-space: nowrap; background: var(--ink); color: var(--bg); padding: 6px 12px; border-radius: 99px; font-size: 12px; opacity: 0; transition: .35s var(--ease); pointer-events: none; z-index: 2; }
-.file-pdf { position: absolute; right: 16px; top: 4px; font-size: 12px; color: var(--ink-3); z-index: 3; }
-.file-pdf:hover { color: var(--accent); }
-.file.is-detail .file-body, .file.is-detail .file-tab { background: var(--ink); color: var(--bg); }
-.file.is-detail .file-info p, .file.is-detail .file-info h3 .mono { color: color-mix(in srgb, var(--bg) 70%, transparent); }
-.file.is-detail .file-tab { color: color-mix(in srgb, var(--bg) 75%, transparent); }
-.file:hover .file-sheet:nth-child(1), .file:focus-within .file-sheet:nth-child(1) { transform: rotate(-10deg) translate(-22px, -18px); }
-.file:hover .file-sheet:nth-child(2), .file:focus-within .file-sheet:nth-child(2) { transform: rotate(7deg) translate(18px, -26px); }
-.file:hover .file-sheet:nth-child(3), .file:focus-within .file-sheet:nth-child(3) { transform: translateY(-34px); }
-.file:hover .file-hook, .file:focus-within .file-hook { opacity: 1; transform: translate(-50%, 0); }
-.file-body:hover { transform: none; }
-
 /* ---------- cards w/ media ---------- */
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); gap: 28px; }
 .card { position: relative; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; text-align: left; transition: transform .45s var(--ease), box-shadow .45s var(--ease), border-color .3s; }
@@ -306,19 +269,40 @@ mark.todo { background: var(--todo); color: inherit; border-radius: 4px; padding
 @keyframes drift { to { transform: translateX(46px); } }
 .ph span { position: relative; font-family: var(--mono); font-size: 11px; color: var(--ink-3); border: 1px dashed var(--line); padding: 4px 10px; border-radius: 99px; background: color-mix(in srgb, var(--surface) 70%, transparent); }
 
-/* ---------- resume ---------- */
-.resume { display: grid; gap: 56px; }
-.resume-group { display: grid; grid-template-columns: 200px 1fr; gap: 24px; }
-.resume-group h3 { font-size: 15px; font-weight: 700; padding-top: 18px; border-top: 2px solid var(--ink); }
-.resume-group ol { border-top: 2px solid var(--ink); }
-.resume-item { display: grid; grid-template-columns: 180px 1fr; gap: 20px; padding: 18px 0; border-bottom: 1px solid var(--line); }
-.resume-item .mono { color: var(--ink-3); padding-top: 3px; }
+/* ---------- 이력 · About Me: 왼쪽 회색 카드 + 오른쪽 내용 ---------- */
+.rs-frame { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: clamp(28px, 4vw, 64px); align-items: start; }
+.rs-card { position: sticky; top: 92px; display: grid; gap: 22px; padding: clamp(24px, 2.4vw, 34px); border-radius: 28px; background: var(--surface-2); }
+.rs-card .sec-head { margin: 0; gap: 6px; }
+.rs-card .sec-head h2 { font-size: clamp(24px, 2.2vw, 30px); line-height: 1.15; letter-spacing: -0.03em; color: var(--blue); padding-left: 12px; border-left: 4px solid var(--blue); }
+.rs-card .sec-sub { font-size: 14px; }
+.rs-photo { aspect-ratio: 4 / 5; border-radius: 18px; overflow: hidden; background: var(--surface); position: relative; }
+.rs-photo.empty { display: none; }
+.rs-photo .media { position: absolute; inset: 0; }
+.rs-photo .media img { width: 100%; height: 100%; object-fit: cover; object-position: 52% 40%; display: block; }
+.rs-id { display: grid; gap: 4px; }
+.rs-name { font-size: 24px; font-weight: 800; letter-spacing: -0.03em; }
+.rs-en { font-size: 17px; color: var(--ink-2); }
+.rs-role { font-size: 15px; font-weight: 700; color: var(--blue); }
+.rs-mail { margin-top: 10px; font-size: 14px; color: var(--ink-2); }
+.rs-mail .mono { color: var(--blue); }
+.rs-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.rs-tags li { font-size: 12px; padding: 3px 11px; border-radius: 99px; background: var(--surface); color: var(--ink-2); }
+.resume { columns: 2; column-gap: clamp(32px, 4vw, 64px); }
+.resume-group { break-inside: avoid; margin-bottom: 40px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.resume-group h3 { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; color: var(--blue); margin-bottom: 12px; }
+.resume-item { display: grid; grid-template-columns: 128px minmax(0, 1fr); gap: 16px; padding: 9px 0; }
+.resume-item .mono { color: var(--ink-3); padding-top: 3px; font-size: 12px; }
 .resume-item b { font-weight: 650; }
 .resume-item p { color: var(--ink-2); font-size: 14px; }
 .badge { display: inline-block; margin-left: 8px; font-size: 11px; padding: 1px 8px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); font-weight: 600; vertical-align: 2px; }
+@media (max-width: 1000px) {
+  .rs-frame { grid-template-columns: minmax(0, 1fr); }
+  .rs-card { position: static; }
+  .rs-photo { max-width: 280px; }
+}
 @media (max-width: 760px) {
-  .resume-group, .resume-item { grid-template-columns: 1fr; gap: 6px; }
-  .resume-group ol { border-top: 0; }
+  .resume { columns: 1; }
+  .resume-item { grid-template-columns: 1fr; gap: 2px; }
 }
 
 /* ---------- footer ---------- */
@@ -574,7 +558,7 @@ mark.todo { background: var(--todo); color: inherit; border-radius: 4px; padding
 .sec-hidden { display: none !important; }
 .sec[data-width="narrow"], #customSections[data-width="narrow"] > .sec { width: min(860px, 100% - 32px); }
 .sec[data-width="wide"], #customSections[data-width="wide"] > .sec { width: min(1760px, 100% - 48px); }
-[data-align="center"] .sec-head, [data-align="center"] .files-copy, #customSections[data-align="center"] .sec-head { text-align: center; justify-items: center; }
+[data-align="center"] .sec-head, #customSections[data-align="center"] .sec-head { text-align: center; justify-items: center; }
 
 /* ---------- 글꼴 패널: 제목 글꼴 · 본문 크기 ---------- */
 h1, h2, h3, h4, .hero-title, .sc-title, .b-h2, .b-h, .gl-pop h3, .card h3, .modal-text h2 { font-family: var(--font-head, var(--font)); }

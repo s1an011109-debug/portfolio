@@ -546,7 +546,10 @@ window.PORTFOLIO = {
   },
   "about": {
     "title": "About Me",
-    "photo": null,
+    "photo": {
+      "type": "image",
+      "src": "assets/mvoxhl71ae7-1161e04c-8088-4c28-9047-e99977.png"
+    },
     "blocks": [
       {
         "type": "p",
@@ -590,12 +593,6 @@ window.PORTFOLIO = {
         "sub": "",
         "nav": "프로젝트"
       },
-      "files": {
-        "idx": "FILES",
-        "title": "기획 내용을\n문서로 정리했습니다.",
-        "sub": "핵심 내용을 담은 요약본과 세부 내용을 담은 상세본입니다. \n두 문서 모두 PDF로 확인하실 수 있습니다.",
-        "nav": ""
-      },
       "gamelog": {
         "idx": "02 / GAME LOG",
         "title": "게임 로그",
@@ -621,7 +618,6 @@ window.PORTFOLIO = {
     },
     "order": [
       "projects",
-      "files",
       "gamelog",
       "custom",
       "resume",
