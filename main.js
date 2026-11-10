@@ -89,6 +89,13 @@
     return box;
   }
   PF.makeMedia = makeMedia;
+  /* 그림이 불러와지면 가로형/세로형 표시 (load 는 버블링되지 않아 capture) */
+  document.addEventListener("load", (e) => {
+    const im = e.target;
+    if (im.tagName !== "IMG" || !im.naturalWidth) return;
+    const box = im.closest(".media");
+    if (box) box.classList.toggle("land", im.naturalWidth >= im.naturalHeight * 1.05);
+  }, true);
 
   function setPlaying(box, on) {
     if (reduceMotion) on = false;

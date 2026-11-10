@@ -682,3 +682,14 @@ mark.hl { background: linear-gradient(transparent 55%, color-mix(in srgb, #f5c04
 .modal-text .modal-toc a.toc-a:not(.x):not(.y) { text-decoration: none; color: var(--ink-2); }
 .modal-text .modal-toc a.toc-a:not(.x):not(.y):hover { color: var(--ink); }
 .modal-text .modal-toc a.toc-a.on:not(.x):not(.y) { color: var(--accent); }
+
+/* 그림 블록: 원본 비율 그대로 — 위아래 빈 여백 없이 박스 높이를 그림에 맞춤 */
+.b-media:not(.b-yt):not(.is-gallery):has(.media:not(.ph)) { aspect-ratio: auto; background: none; overflow: visible; border-radius: 0; }
+.b-media:not(.b-yt):not(.is-gallery):has(.media:not(.ph)) .media { position: static; background: none; }
+.b-media:not(.b-yt):not(.is-gallery) .media img,
+.b-media:not(.b-yt):not(.is-gallery) .media video { display: block; width: auto; height: auto; max-width: 100%; max-height: min(78vh, 900px); object-fit: contain; border-radius: 12px; }
+/* 가로로 넓은 그림은 칸을 꽉 채우고, 세로로 긴 그림은 화면 높이 안에서만 */
+.b-fig.wide .b-media .media.land img,
+.b-fig.wide .b-media .media.land video { width: 100%; max-height: none; }
+.b-media.is-gallery .media.gallery img { background: none; }
+.b-media .media.ph { min-height: 160px; position: relative; }
