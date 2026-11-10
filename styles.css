@@ -70,7 +70,7 @@ img, video { display: block; max-width: 100%; }
 h1, h2, h3, p { margin: 0; }
 ul, ol { margin: 0; padding: 0; list-style: none; }
 .mono { font-family: var(--mono); font-size: 12px; letter-spacing: .02em; }
-.shell { width: min(1200px, 100% - 32px); margin-inline: auto; }
+.shell { width: min(1560px, 100% - 80px); margin-inline: auto; }
 .skip { position: absolute; left: -999px; }
 .skip:focus { left: 16px; top: 16px; z-index: 99; background: var(--ink); color: var(--bg); padding: 8px 12px; border-radius: 8px; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
@@ -568,7 +568,7 @@ mark.todo { background: var(--todo); color: inherit; border-radius: 4px; padding
 /* ---------- 레이아웃 패널: 숨김 · 폭 · 정렬 ---------- */
 .sec-hidden { display: none !important; }
 .sec[data-width="narrow"], #customSections[data-width="narrow"] > .sec { width: min(860px, 100% - 32px); }
-.sec[data-width="wide"], #customSections[data-width="wide"] > .sec { width: min(1440px, 100% - 32px); }
+.sec[data-width="wide"], #customSections[data-width="wide"] > .sec { width: min(1760px, 100% - 48px); }
 [data-align="center"] .sec-head, [data-align="center"] .files-copy, #customSections[data-align="center"] .sec-head { text-align: center; justify-items: center; }
 
 /* ---------- 글꼴 패널: 제목 글꼴 · 본문 크기 ---------- */
