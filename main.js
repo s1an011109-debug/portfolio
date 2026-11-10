@@ -11,6 +11,7 @@
 
   /* 편집 모드(editor.js)와 공유하는 객체 */
   const PF = window.PF = { editing: false, blobs: {}, onRender: null };
+  let glOpen = null; // 게임 로그에서 열려 있는 카드 번호
 
   /* ⟪…⟫ 는 아직 채우지 않은 자리 → 형광펜으로 표시 */
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -292,36 +293,36 @@
 
     } catch (e) { console.error("[프로젝트 카드] 그리기 실패", e); }
     try {
-      /* 게임 로그 — 기록표처럼 한 줄씩 (그림이 있으면 왼쪽에) */
+      /* 게임 로그 — 앱 아이콘 격자. 아이콘을 누르면 정보 카드가 뜨고, 나머지 아이콘은 어두워짐 */
       const ed = PF.editing;
       const filled = (v) => plain(v).trim() !== "";
       $("#logCards").dataset.list = "gameLogs";
       $("#logCards").innerHTML = D.gameLogs.map((g, i) => {
         const p = `gameLogs.${i}`;
-        const media = (g.media && g.media.src) || ed;
+        const hasImg = !!(g.media && g.media.src);
         const stats = (g.stats || []).slice(0, 3).map((s, k) => [s, k]).filter(([s]) => ed || filled(s.value));
         const meta = [["platform", g.platform], ["genre", g.genre], ["period", g.period]].filter(([, v]) => ed || filled(v));
         return `
-        <article class="log-row reveal ${media ? "" : "no-media"}" data-genre="${esc(plain(g.genre))}" data-item="${p}">
-          ${media ? `<div class="log-media card-media" data-slot="${p}.media"></div>` : ""}
-          <div class="log-head">
+        <article class="gl-item" data-genre="${esc(plain(g.genre))}" data-item="${p}" data-i="${i}">
+          <div class="gl-icon" role="button" tabindex="0" aria-haspopup="dialog" aria-expanded="false" aria-label="${esc(plain(g.title))} 정보 보기" ${hasImg || ed ? `data-slot="${p}.media"` : ""}>${hasImg || ed ? "" : `<span class="gl-fallback">${esc(plain(g.title))}</span>`}</div>
+          ${ed ? `<button type="button" class="gl-edit" title="내용 고치기 (카드 열기)" aria-label="내용 고치기">✎</button>` : ""}
+          <div class="gl-pop" role="dialog" aria-label="${esc(plain(g.title))}">
             <h3 ${E(p + ".title")}>${fmt(g.title)}</h3>
-            <p class="log-meta">${meta.map(([k, v]) => `<span ${E(`${p}.${k}`)}>${fmt(v)}</span>`).join("")}</p>
-          </div>
-          ${stats.length ? `<dl class="log-stats">${stats.map(([s, k]) => `<div><dt ${E(`${p}.stats.${k}.label`)}>${fmt(s.label)}</dt><dd ${E(`${p}.stats.${k}.value`)}>${fmt(s.value)}</dd></div>`).join("")}</dl>` : `<div class="log-stats empty"></div>`}
-          <div class="log-note">
-            ${ed || filled(g.insight) ? `<p class="log-insight" ${E(p + ".insight")}>${fmt(g.insight)}</p>` : ""}
-            <div class="tags">${tags(`${p}.tags`)}</div>
+            ${meta.length ? `<p class="gl-meta">${meta.map(([k, v]) => `<span ${E(`${p}.${k}`)}>${fmt(v)}</span>`).join("")}</p>` : ""}
+            ${stats.length ? `<dl class="gl-stats">${stats.map(([s, k]) => `<div><dt ${E(`${p}.stats.${k}.label`)}>${fmt(s.label)}</dt><dd ${E(`${p}.stats.${k}.value`)}>${fmt(s.value)}</dd></div>`).join("")}</dl>` : ""}
+            ${ed || filled(g.insight) ? `<div class="gl-note"><span class="gl-note-l">인사이트</span><p ${E(p + ".insight")}>${fmt(g.insight)}</p></div>` : ""}
+            ${ed || (g.tags || []).length ? `<div class="tags">${tags(`${p}.tags`)}</div>` : ""}
           </div>
         </article>`;
       }).join("");
-      $$("#logCards .log-media").forEach((cm) => {
-        const i = +cm.closest("[data-item]").dataset.item.split(".")[1];
-        cm.prepend(makeMedia(D.gameLogs[i].media, plain(D.gameLogs[i].title), `gameLogs.${i}.media`));
+      $$("#logCards .gl-icon[data-slot]").forEach((ic) => {
+        const i = +ic.closest("[data-item]").dataset.item.split(".")[1];
+        ic.prepend(makeMedia(D.gameLogs[i].media, plain(D.gameLogs[i].title), `gameLogs.${i}.media`));
       });
 
       const genres = ["전체", ...new Set(D.gameLogs.map((g) => plain(g.genre).trim()).filter(Boolean))];
       $("#logFilter").innerHTML = genres.map((g, i) => `<button type="button" aria-pressed="${i === 0}">${esc(g)}</button>`).join("");
+      glSet(glOpen != null && D.gameLogs[glOpen] ? glOpen : null); // 다시 그려도 열어 둔 카드 유지
 
     } catch (e) { console.error("[게임 로그] 그리기 실패", e); }
     try {
@@ -556,7 +557,68 @@
     const b = e.target.closest("button"); if (!b) return;
     $$("#logFilter button").forEach((x) => x.setAttribute("aria-pressed", x === b));
     $$("#logCards [data-genre]").forEach((c) => c.classList.toggle("hide", b.textContent !== "전체" && c.dataset.genre !== b.textContent));
+    glSet(null);
   });
+
+  /* ---------- 게임 로그: 아이콘 → 정보 카드 (나머지는 어둡게) ---------- */
+  function glPlace(it) {
+    const pop = $(".gl-pop", it), panel = $("#logPanel");
+    if (!pop || !panel) return;
+    const pr = panel.getBoundingClientRect();
+    const w = Math.max(220, Math.min(440, pr.width - 16, innerWidth - 16));
+    pop.style.width = w + "px";
+    pop.style.visibility = "hidden";
+    const a = it.getBoundingClientRect(), h = pop.offsetHeight;
+    const lo = Math.max(8, pr.left + 8), hi = Math.min(innerWidth - 8, pr.right - 8) - w;
+    const L = hi < lo ? lo : Math.min(Math.max(a.left + a.width / 2 - w / 2, lo), hi);
+    const above = a.top - h - 14 >= 8 || a.bottom + h + 14 > innerHeight;
+    pop.dataset.side = above ? "above" : "below";
+    pop.style.left = (L - a.left) + "px";
+    pop.style.top = (above ? -(h + 14) : a.height + 14) + "px";
+    pop.style.setProperty("--ax", Math.min(Math.max(a.left + a.width / 2 - L, 22), w - 22) + "px");
+    pop.style.visibility = "";
+  }
+  function glSet(i) {
+    glOpen = i;
+    const grid = $("#logCards");
+    if (!grid) return;
+    grid.classList.toggle("has-open", i != null);
+    $$(".gl-item", grid).forEach((it) => {
+      const on = +it.dataset.i === i;
+      it.classList.toggle("open", on);
+      $(".gl-icon", it).setAttribute("aria-expanded", on);
+      if (on) glPlace(it);
+    });
+  }
+  /* 편집기(editor.js)도 클릭을 캡처 단계에서 먼저 가로채므로, 같은 단계에서 먼저 등록해 둔다 */
+  addEventListener("click", (e) => {
+    const grid = $("#logCards");
+    if (!grid) return;
+    const t = e.target;
+    const ic = t.closest("#logCards .gl-icon, #logCards .gl-edit");
+    if (ic) {
+      if (PF.editing && ic.classList.contains("gl-icon")) return; // 편집 중 아이콘 클릭 = 그림 바꾸기(✎ 버튼으로 카드 열기)
+      const i = +ic.closest(".gl-item").dataset.i;
+      glSet(glOpen === i ? null : i);
+      return;
+    }
+    if (t.closest("#logCards .ed-ctl")) return glSet(null); // ↑↓✕ 하면 번호가 바뀌니 닫기
+    if (glOpen == null || t.closest("#logCards .gl-pop, .ed-pal, .ed-bar")) return;
+    glSet(null);
+  }, true);
+  document.addEventListener("keydown", (e) => {
+    const ic = e.target.closest && e.target.closest("#logCards .gl-icon");
+    if (ic && !PF.editing && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      const i = +ic.closest(".gl-item").dataset.i;
+      glSet(glOpen === i ? null : i);
+    } else if (e.key === "Escape" && glOpen != null) {
+      const it = $(`#logCards .gl-item[data-i="${glOpen}"] .gl-icon`);
+      glSet(null);
+      if (it && !PF.editing) it.focus();
+    }
+  });
+  addEventListener("resize", () => { if (glOpen != null) glSet(glOpen); });
 
   /* ---------- 상세 모달 ---------- */
   const modal = $("#modal");
