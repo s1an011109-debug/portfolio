@@ -80,7 +80,7 @@ window.PORTFOLIO = {
       "oneLine": "신규 SD 연출의 제작 필요성을 설득하고, 배드엔딩 CG 방향을 제안해 반영했습니다.",
       "media": {
         "type": "image",
-        "src": "assets/mwah0sa6hhm-czn-chaos-illustration-kr.png"
+        "src": "assets/mwah1emyqjg-czn-chaos-illustration-kr.png"
       },
       "tasks": [
         "트라우마 코드 연출 일부 담당",
@@ -217,7 +217,13 @@ window.PORTFOLIO = {
       "slidePeriod": "2025.06 — 2025.12",
       "slideRole": "콘텐츠 기획 인턴",
       "slideTitle": "카오스 제로 나이트메어",
-      "slideLine": "신규 SD 연출의 제작 필요성을 설득하고, 배드엔딩 CG 방향을 제안해 반영했습니다."
+      "slideLine": "신규 SD 연출의 제작 필요성을 설득하고, 배드엔딩 CG 방향을 제안해 반영했습니다.",
+      "factLabels": {
+        "role": "역할",
+        "period": "기간",
+        "team": "회사",
+        "status": "상태"
+      }
     },
     {
       "id": "seongjwa",
