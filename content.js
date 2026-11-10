@@ -83,8 +83,8 @@ window.PORTFOLIO = {
         "src": "assets/mwah1emyqjg-czn-chaos-illustration-kr.png"
       },
       "tasks": [
-        "트라우마 코드 연출 일부 담당",
-        "데이터 수정 및 검수 - 아트팀과 그림자 적용 기준을 정하고, 엔진 데이터 수정, 재검수 및 콘텐츠 QA 대응"
+        "나르쟈 트라우마 코드의 SD 감정 연출·배드엔딩 CG 방향 제안",
+        "프랍 그림자 적용 기준 협의, 엔진 데이터 수정 및 재검수 및 콘텐츠 QA 대응"
       ],
       "links": [
         {
@@ -120,7 +120,7 @@ window.PORTFOLIO = {
         },
         {
           "type": "h",
-          "text": "01. 제작 필요성을 설득해 반영한 SD 감정 연출"
+          "text": "SD: 새 리소스를 왜 만들어야 하는지 어떻게 설명했을까?"
         },
         {
           "type": "lp",
@@ -136,7 +136,7 @@ window.PORTFOLIO = {
               "assets/mw3hcg51e2m-huzldhim6dyqpxw-xsjzfr9dbpght6.webp"
             ]
           },
-          "caption": "나르쟈의 일러스트에서 뒤에서 함께 등장하는 엘리시온",
+          "caption": "나르쟈의 뒤편에 함께 등장하는 동반 캐릭터, 엘리시온",
           "wide": false
         },
         {
@@ -165,7 +165,7 @@ window.PORTFOLIO = {
         },
         {
           "type": "h",
-          "text": "02. 배드엔딩의 괴물화와 캐릭터 매력을 함께 살린 CG 제안"
+          "text": "CG: 어두운 결말과 캐릭터 매력을 어떻게 함께 살렸을까?"
         },
         {
           "type": "img",
