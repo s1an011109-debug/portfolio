@@ -145,9 +145,12 @@ window.PORTFOLIO = {
         },
         {
           "type": "img",
-          "media": null,
+          "media": {
+            "type": "image",
+            "src": "assets/mwaf0r9r6cx-ce62aaf6810d4969847bad5182a7d4.jpg"
+          },
           "caption": "",
-          "wide": false
+          "wide": true
         },
         {
           "type": "img",
