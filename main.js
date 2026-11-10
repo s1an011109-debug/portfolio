@@ -679,7 +679,9 @@
       delete w.problem; delete w.approach; delete w.result;
     }
     const st = modal.scrollTop;
-    const fixed = [["역할", "role"], ["기간", "period"], ["구성", "team"], ["상태", "status"]].filter(([, f]) => ed || plain(w[f]).trim());
+    // 역할·기간·구성·상태 이름표도 고칠 수 있게 (처음엔 기본 이름을 복사)
+    w.factLabels = Object.assign({ role: "역할", period: "기간", team: "구성", status: "상태" }, w.factLabels || {});
+    const fixed = [["role"], ["period"], ["team"], ["status"]].map(([f]) => [w.factLabels[f], f]).filter(([, f]) => ed || plain(w[f]).trim());
     const show2 = (cond, html) => (cond || ed ? html : "");
     $("#modalBody").innerHTML = `
       <div class="modal-media" data-slot="${p}.media"></div>
@@ -691,7 +693,7 @@
           ${show2(w.lead, `<p class="modal-lead" ${E(p + ".lead")}>${fmt(w.lead)}</p>`)}
         </header>
         <dl class="modal-facts" data-list="${p}.facts">
-          ${fixed.map(([k, f]) => `<div><dt>${k}</dt><dd ${E(`${p}.${f}`)}>${fmt(w[f])}</dd></div>`).join("")}
+          ${fixed.map(([k, f]) => `<div><dt ${E(`${p}.factLabels.${f}`)}>${fmt(k)}</dt><dd ${E(`${p}.${f}`)}>${fmt(w[f])}</dd></div>`).join("")}
           ${w.facts.map((f, i) => `<div data-item="${p}.facts.${i}"><dt ${E(`${p}.facts.${i}.label`)}>${fmt(f.label)}</dt><dd ${E(`${p}.facts.${i}.value`)}>${fmt(f.value)}</dd></div>`).join("")}
         </dl>
         <div class="modal-cols">
