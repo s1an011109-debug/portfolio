@@ -14,12 +14,7 @@ window.PORTFOLIO = {
     "heroImage": "assets/mvoxhl71ae7-1161e04c-8088-4c28-9047-e99977.png",
     "slideSeconds": 5,
     "email": "s1an011109@gmail.com",
-    "keywords": [
-      "캐릭터 연출",
-      "필드/수집 콘텐츠",
-      "데이터 검수",
-      "서브컬쳐"
-    ],
+    "keywords": [],
     "headline": [
       "만든 것을 사람들이 즐기는\n순간이 좋아 게임을 만듭니다."
     ],
@@ -636,7 +631,7 @@ window.PORTFOLIO = {
         "idx": "02 / Resume",
         "title": "이력",
         "sub": "",
-        "nav": "이력 · About"
+        "nav": "이력서"
       }
     },
     "order": [
