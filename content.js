@@ -10,7 +10,7 @@ window.PORTFOLIO = {
     "name": "정시안",
     "nameEn": "Jung Sian",
     "role": "Game Designer",
-    "roleKo": "게임 콘텐츠 기획, 시스템 기획",
+    "roleKo": "",
     "heroImage": "assets/mvoxhl71ae7-1161e04c-8088-4c28-9047-e99977.png",
     "slideSeconds": 5,
     "email": "s1an011109@gmail.com",
@@ -95,7 +95,7 @@ window.PORTFOLIO = {
       "blocks": [
         {
           "type": "h2",
-          "text": "게임 소개 및 트라우마 코드 콘텐츠 설명"
+          "text": "게임 소개"
         },
         {
           "type": "yt",
