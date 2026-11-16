@@ -19,8 +19,11 @@
   /* 글자색: {빨강:글자} · 형광펜: ==글자== */
   const COLORS = { 빨강: "red", 주황: "orange", 노랑: "yellow", 초록: "green", 파랑: "blue", 보라: "purple", 회색: "gray" };
   PF.COLORS = COLORS;
+  /* 색상코드: {#ff8800:글자} (3자리·6자리 16진수) */
+  PF.hex = (s) => { const m = String(s || "").trim().match(/^#?([0-9a-f]{3}|[0-9a-f]{6})$/i); return m ? "#" + m[1].toLowerCase() : ""; };
   const colorize = (h) => h
     .replace(/\{(빨강|주황|노랑|초록|파랑|보라|회색):([^{}\n]+?)\}/g, (_, c, t) => `<span class="c-${COLORS[c]}">${t}</span>`)
+    .replace(/\{(#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{3})):([^{}\n]+?)\}/g, (_, c, t) => `<span style="color:${c}">${t}</span>`)
     .replace(/==([^=\n]+?)==/g, '<mark class="hl">$1</mark>');
   const inline = (h) => colorize(h)
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
@@ -221,7 +224,14 @@
       const art = $("#heroArt");
       art.dataset.cover = "meta.heroImage";
       art.innerHTML = D.meta.heroImage ? `<img src="${src(D.meta.heroImage)}" alt="" fetchpriority="high" decoding="async">` : "";
-      document.body.classList.toggle("has-art", !!D.meta.heroImage);
+      /* 레이어: 일러스트 위에 겹쳐 놓는 그림들 (뒤에서부터 차례로 쌓임) */
+      const layers = D.meta.heroLayers || [];
+      $("#heroLayers").innerHTML = layers.map((l, i) =>
+        `<img class="hero-layer" data-layer="${i}" src="${src(l.src)}" alt="" draggable="false" style="left:${+l.x || 0}%;top:${+l.y || 0}%;width:${+l.w || 40}%;opacity:${(l.o ?? 100) / 100}">`).join("");
+      document.body.classList.toggle("has-art", !!D.meta.heroImage || layers.length > 0);
+      /* 첫 화면 배경색 (색상코드) */
+      const hero = $(".hero"), hbg = PF.hex(D.meta.heroBg);
+      if (hbg) { hero.style.setProperty("--hbg", hbg); hero.dataset.bg = "1"; } else { hero.style.removeProperty("--hbg"); delete hero.dataset.bg; }
       applyLayout();
       $("#headline").dataset.list = "meta.headline";
       $("#headline").innerHTML = D.meta.headline.map((l, i) =>
@@ -793,7 +803,7 @@
     $(".top").classList.toggle("scrolled", window.scrollY > 10);
     // 월페이퍼: 스크롤하면 살짝 느리게 따라옴
     const art = $("#heroArt");
-    if (!reduceMotion && art && window.scrollY < window.innerHeight * 1.2) art.style.setProperty("--py", `${window.scrollY * 0.12}px`);
+    if (!reduceMotion && art && window.scrollY < window.innerHeight * 1.2) { art.style.setProperty("--py", `${window.scrollY * 0.12}px`); const ly = $("#heroLayers"); if (ly) ly.style.setProperty("--py", `${window.scrollY * 0.12}px`); }
   }
   addEventListener("scroll", onScroll, { passive: true });
 

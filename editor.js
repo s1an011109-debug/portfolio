@@ -211,18 +211,45 @@
         `<button type="button" class="ed-grip" data-grip="move" contenteditable="false" title="끌어서 옮기기 · 방향키로 미세 조정 · 두 번 누르면 처음 자리로">✥</button>` +
         `<span class="ed-resize" data-grip="size" contenteditable="false" title="끌어서 크기 조절"></span>`);
     });
-    const art = $("#heroArt");
-    if (art && !art.querySelector(".ed-art-tools")) {
-      const z = Math.round(((D.layout || {}).art || {}).z * 100 || 100);
-      art.insertAdjacentHTML("beforeend", `
+    /* 도구 상자는 첫 화면(.hero) 바로 아래에 둬서 카드·그림에 가려지지 않게 (다시 그릴 때마다 최신 상태로 교체) */
+    const hero = $(".hero");
+    if (hero) {
+      const old = hero.querySelector(":scope > .ed-art-tools"), keep = old ? old.scrollTop : 0;
+      if (old) old.remove();
+      hero.insertAdjacentHTML("beforeend", artToolsHTML());
+      const nu = hero.querySelector(":scope > .ed-art-tools"); if (nu) nu.scrollTop = keep;
+    }
+    $$(".hero-layer").forEach((im, i) => im.classList.toggle("sel", i === selLayer));
+  }
+  /* ---------- 첫 화면 일러스트 도구: 크기 · 레이어(그림 겹치기) · 색상코드 ---------- */
+  let selLayer = -1;
+  const layersOf = () => (D.meta.heroLayers = D.meta.heroLayers || []);
+  const hex6 = (h) => { const x = PF.hex(h); return x.length === 4 ? "#" + [...x.slice(1)].map((c) => c + c).join("") : x; };
+  function artToolsHTML() {
+    const z = Math.round(((D.layout || {}).art || {}).z * 100 || 100);
+    const L = layersOf(), sl = L[selLayer];
+    const rows = L.map((l, i) => `<li data-lay="sel" data-i="${i}" class="${i === selLayer ? "sel" : ""}"><img src="${PF.blobs[l.src] || l.src}" alt=""><span>그림 ${i + 1}</span>` +
+      `<button type="button" data-lay="up" data-i="${i}" title="앞으로 (위에 겹침)">↑</button><button type="button" data-lay="down" data-i="${i}" title="뒤로">↓</button><button type="button" data-lay="del" data-i="${i}" title="이 그림 빼기">✕</button></li>`).reverse().join("");
+    const bg = PF.hex(D.meta.heroBg);
+    return `
         <span class="ed-art-tools" contenteditable="false">
           <span class="mono">일러스트</span>
           <label title="일러스트 크기">크기 <input type="range" min="40" max="300" step="5" value="${z}" data-art-zoom><b class="mono">${z}%</b></label>
           <button type="button" data-art-reset title="일러스트 위치 · 크기 처음으로">↺</button>
           <button type="button" data-layout-reset title="첫 화면 배치 전부 처음으로">배치 초기화</button>
-          <small>그림을 끌어서 옮기기</small>
-        </span>`);
-    }
+          <span class="ed-lay-h mono">레이어 · 그림 겹쳐 넣기 (위쪽이 앞)</span>
+          ${L.length ? `<ul class="ed-lay-list">${rows}</ul>` : ""}
+          <button type="button" data-lay="add">+ 그림 추가</button>
+          ${sl ? `<label>크기 <input type="range" min="5" max="250" step="1" value="${sl.w || 40}" data-lay-w><b class="mono">${Math.round(sl.w || 40)}%</b></label>
+          <label>투명도 <input type="range" min="5" max="100" step="1" value="${sl.o ?? 100}" data-lay-o><b class="mono">${Math.round(sl.o ?? 100)}%</b></label>
+          <label>가로 <input type="range" min="-30" max="130" step="1" value="${sl.x ?? 50}" data-lay-x><b class="mono">${Math.round(sl.x ?? 50)}%</b></label>
+          <label>세로 <input type="range" min="-30" max="130" step="1" value="${sl.y ?? 50}" data-lay-y><b class="mono">${Math.round(sl.y ?? 50)}%</b></label>` : (L.length ? "<small>목록에서 그림을 고르거나, 그림을 눌러 선택해 끌어 옮기세요</small>" : "")}
+          <span class="ed-lay-h mono">색상코드</span>
+          <label title="첫 화면 배경색">배경색 <input type="color" value="${hex6(bg) || "#f4f1ea"}" data-hbg-pick><input type="text" class="hex" maxlength="7" placeholder="#f4f1ea" value="${bg}" data-hbg-hex></label>
+          <button type="button" data-hbg-clear title="배경색 빼기">기본색</button>
+          <small>글자를 고르면 나오는 색 팔레트에서도 #코드를 넣을 수 있어요</small>
+          <small>일러스트 그림은 끌어서 옮기기</small>
+        </span>`;
   }
   const round = (n) => Math.round(n * 100) / 100;
   const layoutOf = (key) => { D.layout = D.layout || {}; return (D.layout[key] = D.layout[key] || {}); };
@@ -307,6 +334,100 @@
       snapshot(); D.layout = {}; changed(); PF.render();
     }
   }, true);
+
+  /* 레이어: 그림 추가 · 선택 · 순서 · 삭제 */
+  const layFile = document.createElement("input");
+  layFile.type = "file"; layFile.accept = "image/*"; layFile.multiple = true; layFile.hidden = true;
+  document.body.appendChild(layFile);
+  layFile.addEventListener("change", () => {
+    const fs = [...layFile.files].filter((f) => /^image\//.test(f.type));
+    layFile.value = "";
+    if (!fs.length) return;
+    snapshot();
+    fs.forEach((f) => { layersOf().push({ src: addFile(f), x: 50, y: 50, w: 40, o: 100 }); selLayer = layersOf().length - 1; });
+    changed(); PF.render();
+  });
+  addEventListener("click", (e) => {
+    if (!PF.editing) return;
+    const b = e.target.closest("[data-lay]");
+    if (b) {
+      e.stopPropagation(); e.preventDefault();
+      const k = b.dataset.lay, i = +b.dataset.i, L = layersOf();
+      if (k === "add") return layFile.click();
+      if (k === "sel") { selLayer = i; return PF.render(); }
+      snapshot();
+      if (k === "del") { L.splice(i, 1); selLayer = Math.min(selLayer, L.length - 1); if (selLayer === i) selLayer = -1; }
+      else if (k === "up" && i < L.length - 1) { [L[i], L[i + 1]] = [L[i + 1], L[i]]; if (selLayer === i) selLayer = i + 1; }
+      else if (k === "down" && i > 0) { [L[i], L[i - 1]] = [L[i - 1], L[i]]; if (selLayer === i) selLayer = i - 1; }
+      changed(); PF.render();
+      return;
+    }
+    if (e.target.closest("[data-hbg-clear]")) {
+      e.stopPropagation(); snapshot(); delete D.meta.heroBg; changed(); PF.render();
+    }
+  }, true);
+  let layDrag = null, layRange = false;
+  const layImg = (i) => $(`.hero-layer[data-layer="${i}"]`);
+  document.addEventListener("pointerdown", (e) => {
+    if (!PF.editing || e.button !== 0) return;
+    const im = e.target.closest && e.target.closest(".hero-layer");
+    if (!im) return;
+    e.preventDefault();
+    const i = +im.dataset.layer, l = layersOf()[i];
+    if (!l) return;
+    if (selLayer !== i) { selLayer = i; $$(".hero-layer").forEach((x, k) => x.classList.toggle("sel", k === i)); const t = $(".hero > .ed-art-tools"); if (t) { const keep = t.scrollTop; t.outerHTML = artToolsHTML(); const nu = $(".hero > .ed-art-tools"); if (nu) nu.scrollTop = keep; } }
+    layDrag = { i, l, x0: e.clientX, y0: e.clientY, lx: l.x || 0, ly: l.y || 0, box: $("#heroLayers").getBoundingClientRect(), moved: false, im };
+    try { im.setPointerCapture(e.pointerId); } catch (er) {}
+    document.body.classList.add("ed-dragging");
+  });
+  document.addEventListener("pointermove", (e) => {
+    if (!layDrag) return;
+    const dx = e.clientX - layDrag.x0, dy = e.clientY - layDrag.y0;
+    if (!layDrag.moved) { if (Math.abs(dx) + Math.abs(dy) < 3) return; layDrag.moved = true; snapshot(); }
+    layDrag.l.x = round(Math.max(-30, Math.min(130, layDrag.lx + dx / layDrag.box.width * 100)));
+    layDrag.l.y = round(Math.max(-30, Math.min(130, layDrag.ly + dy / layDrag.box.height * 100)));
+    layDrag.im.style.left = layDrag.l.x + "%"; layDrag.im.style.top = layDrag.l.y + "%";
+  });
+  const layUp = () => { if (!layDrag) return; const moved = layDrag.moved; layDrag = null; document.body.classList.remove("ed-dragging"); if (moved) changed(); };
+  document.addEventListener("pointerup", layUp);
+  document.addEventListener("pointercancel", layUp);
+  document.addEventListener("input", (e) => {
+    const t = e.target;
+    if (!t.closest) return;
+    const w = t.closest("[data-lay-w]"), o = t.closest("[data-lay-o]"), px = t.closest("[data-lay-x]"), py = t.closest("[data-lay-y]");
+    if (w || o || px || py) {
+      const l = layersOf()[selLayer], im = layImg(selLayer);
+      if (!l) return;
+      if (!layRange) { snapshot(); layRange = true; }
+      if (w) { l.w = +t.value; if (im) im.style.width = l.w + "%"; }
+      else if (px) { l.x = +t.value; if (im) im.style.left = l.x + "%"; }
+      else if (py) { l.y = +t.value; if (im) im.style.top = l.y + "%"; }
+      else { l.o = +t.value; if (im) im.style.opacity = l.o / 100; }
+      t.nextElementSibling.textContent = t.value + "%";
+      return;
+    }
+    // 배경색 색상코드
+    if (t.closest("[data-hbg-pick]")) setHeroBg(t.value, true);
+    else if (t.closest("[data-hbg-hex]")) { const h = PF.hex(t.value); if (h) setHeroBg(h, false); }
+  });
+  document.addEventListener("change", (e) => {
+    if (e.target.closest && e.target.closest("[data-lay-w], [data-lay-o], [data-lay-x], [data-lay-y]")) { layRange = false; changed(); }
+    if (e.target.closest && e.target.closest("[data-hbg-pick], [data-hbg-hex]")) { bgSnap = false; changed(); const f = e.target.closest("[data-hbg-hex]"); if (f && !PF.hex(f.value)) f.value = PF.hex(D.meta.heroBg); }
+  });
+  let bgSnap = false;
+  function setHeroBg(v, fromPick) {
+    const h = PF.hex(v);
+    if (!h) return;
+    if (!bgSnap) { snapshot(); bgSnap = true; }
+    D.meta.heroBg = h;
+    const hero = $(".hero"); hero.style.setProperty("--hbg", h); hero.dataset.bg = "1";
+    const box = $(".hero > .ed-art-tools");
+    if (box) {
+      const hx = box.querySelector("[data-hbg-hex]"), pk = box.querySelector("[data-hbg-pick]");
+      if (fromPick && hx) hx.value = h;
+      if (!fromPick && pk) pk.value = hex6(h);
+    }
+  }
 
   const isStrList = (p) => { const v = PF.get(p); return Array.isArray(v) && /(tags|keywords|headline|tasks|lines)$/.test(p); };
 
@@ -482,7 +603,8 @@
   const pal = document.createElement("div");
   pal.className = "ed-pal"; pal.hidden = true;
   pal.innerHTML = `<button type="button" data-c="b" title="굵게 (Ctrl+B)"><b>B</b></button>` + Object.keys(PF.COLORS).map((n) => `<button type="button" data-c="${n}" title="${n} 글자" style="color:var(--t-${PF.COLORS[n]})">가</button>`).join("") +
-    `<button type="button" data-c="hl" title="형광펜"><mark class="hl">가</mark></button><button type="button" data-c="x" title="색 빼기">✕</button>`;
+    `<button type="button" data-c="hl" title="형광펜"><mark class="hl">가</mark></button><button type="button" data-c="x" title="색 빼기">✕</button>` +
+    `<span class="ed-pal-hex" title="색상코드로 글자색 정하기"><input type="color" value="#c4552f" data-hex-pick><input type="text" maxlength="7" placeholder="#ff8800" data-hex-in><button type="button" data-hex-go>적용</button></span>`;
   document.body.appendChild(pal);
   const selField = () => {
     const sel = getSelection();
@@ -491,7 +613,33 @@
     const f = n && n.closest("[data-path]");
     return f && f.isContentEditable && f.contains(sel.focusNode) ? f : null;
   };
+  /* 색상코드 칸을 누르면 글 칸의 포커스가 빠지므로, 고른 글자의 위치(글자 수)를 먼저 기억해 둠 */
+  let savedSel = null;
+  const saveSel = () => {
+    const f = selField();
+    if (!f) return;
+    const r = getSelection().getRangeAt(0), pre = document.createRange();
+    pre.selectNodeContents(f); pre.setEnd(r.startContainer, r.startOffset);
+    const start = pre.toString().length;
+    savedSel = { f, start, end: start + r.toString().length };
+  };
+  const applyHex = (v) => {
+    const h = PF.hex(v);
+    if (!h) return PF.toast("색상코드를 #ff8800 처럼 넣어 주세요");
+    if (!savedSel) return;
+    const { f, start, end } = savedSel;
+    savedSel = null;
+    f.focus();                                   // 글 칸이 다시 열리며 원문(글자만) 상태가 됨
+    const tn = f.firstChild;
+    if (!tn || tn.nodeType !== 3) return;
+    const r = document.createRange();
+    r.setStart(tn, Math.min(start, tn.length)); r.setEnd(tn, Math.min(end, tn.length));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    applyFmt(h);
+    pal.hidden = true;
+  };
   document.addEventListener("selectionchange", () => {
+    if (pal.contains(document.activeElement)) return;   // 색상코드 입력 중에는 팔레트 유지
     const f = PF.editing && selField();
     if (!f) { pal.hidden = true; return; }
     const r = getSelection().getRangeAt(0).getBoundingClientRect();
@@ -501,7 +649,12 @@
     pal.style.left = Math.max(8, Math.min(innerWidth - pal.offsetWidth - 8, r.left + r.width / 2 - pal.offsetWidth / 2)) + "px";
     pal.style.top = Math.max(8, r.top - pal.offsetHeight - 8) + "px";
   });
-  pal.addEventListener("pointerdown", (e) => e.preventDefault()); // 선택이 풀리지 않게
+  pal.addEventListener("pointerdown", (e) => { if (e.target.closest("input")) { saveSel(); return; } e.preventDefault(); }); // 선택이 풀리지 않게
+  pal.addEventListener("change", (e) => { if (e.target.closest("[data-hex-pick]")) applyHex(e.target.value); });
+  pal.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && e.target.closest("[data-hex-in]")) { e.preventDefault(); applyHex(e.target.value); }
+    e.stopPropagation();
+  });
   /* c: "b" 굵게(다시 누르면 해제) · "hl" 형광펜 · "x" 색 빼기 · 그 밖엔 글자색 이름 */
   const applyFmt = (c) => {
     if (!selField()) return;
@@ -511,13 +664,14 @@
       document.execCommand("insertText", false, m ? m[1] : `**${t}**`);
       return;
     }
-    const bare = t.replace(/^\{(?:빨강|주황|노랑|초록|파랑|보라|회색):([\s\S]*)\}$/, "$1").replace(/^==([\s\S]*)==$/, "$1");
+    const bare = t.replace(/^\{(?:빨강|주황|노랑|초록|파랑|보라|회색|#[0-9a-fA-F]{3,6}):([\s\S]*)\}$/, "$1").replace(/^==([\s\S]*)==$/, "$1");
     const out = c === "x" ? bare : c === "hl" ? `==${bare}==` : `{${c}:${bare}}`;
     document.execCommand("insertText", false, out);
   };
   pal.addEventListener("click", (e) => {
     const b = e.target.closest("[data-c]");
     if (b) applyFmt(b.dataset.c);
+    else if (e.target.closest("[data-hex-go]")) applyHex($("[data-hex-in]", pal).value);
   });
   document.addEventListener("keydown", (e) => {
     if (PF.editing && (e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === "b" && selField()) {

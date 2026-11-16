@@ -717,3 +717,9 @@ mark.hl { background: linear-gradient(transparent 55%, color-mix(in srgb, #f5c04
 .card h3 { line-height: 1.3; }
 .b-fig figcaption, .rs-main .b-fig figcaption, .about-main .b-fig figcaption { font-style: normal; font-size: 14px; line-height: 1.5; }
 .b-md, .b-ul li { line-height: 1.7; }
+
+/* ---------- 첫 화면: 레이어(겹쳐 놓은 그림) · 배경색 ---------- */
+.hero[data-bg] { background: linear-gradient(to bottom, var(--hbg) 0, var(--hbg) calc(100% - 90px), transparent 100%); }
+.hero-layers { position: absolute; top: 0; right: 0; bottom: 0; width: 72%; z-index: 0; pointer-events: none; transform: translateY(var(--py, 0px)); }
+.hero-layer { position: absolute; max-width: none; height: auto; translate: -50% -50%; user-select: none; -webkit-user-drag: none; animation: art-in 1.2s .2s var(--ease) both; }
+@media (max-width: 1024px) { .hero-layers { position: absolute; width: 100%; bottom: auto; height: min(70vw, 520px); transform: none; } }
